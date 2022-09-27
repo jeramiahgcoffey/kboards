@@ -1,16 +1,17 @@
-require('dotenv').config();
-require('express-async-errors');
+import 'express-async-errors';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Connect DB
-const connectDB = require('./db/connect');
+import connectDB from './db/connect.js';
 
 // Routers
-const authRouter = require('./routes/authRouter');
+import authRouter from './routes/authRouter.js';
 
 // Middleware
-const errorHandlerMiddleware = require('./middleware/error-handler');
+import errorHandlerMiddleware from './middleware/error-handler.js';
 
-const express = require('express');
+import express from 'express';
 const app = express();
 
 app.get('/', (req, res) => {

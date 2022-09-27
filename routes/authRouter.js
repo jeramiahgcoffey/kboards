@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 router.post('/login', (req, res) => {
@@ -9,4 +9,4 @@ router.post('/register', (req, res) => {
   res.send('register');
 });
 
-module.exports = router;
+export default router;
