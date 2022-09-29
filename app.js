@@ -1,26 +1,30 @@
+import express from 'express';
 import 'express-async-errors';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// Connect DB
 import connectDB from './db/connect.js';
 
-// Routers
 import authRouter from './routes/authRouter.js';
 
-// Middleware
 import errorHandlerMiddleware from './middleware/error-handler.js';
 
-import express from 'express';
 const app = express();
 
+// Middleware
+app.use(express.json());
+
+// Routes
 app.get('/', (req, res) => {
   res.send('kanban api');
 });
+
 app.use('/api/v1/auth', authRouter);
 
+// Middleware
 app.use(errorHandlerMiddleware);
 
+// Start server
 const port = process.env.PORT || 3000;
 const start = async () => {
   try {
