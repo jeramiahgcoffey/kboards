@@ -1,13 +1,11 @@
 import express from 'express';
-import { getAllBoards, createBoard } from '../controllers/boards.js';
+import { getAllBoards, getBoard, createBoard } from '../controllers/boards.js';
 
 const router = express.Router();
 
 router.get('/', getAllBoards);
 
-router.get('/:id', (req, res) => {
-  res.send('get board');
-});
+router.get('/:boardId', getBoard);
 
 router.post('/', createBoard);
 
