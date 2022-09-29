@@ -7,8 +7,6 @@ import connectDB from './db/connect.js';
 
 import authRouter from './routes/authRouter.js';
 import boardsRouter from './routes/boardsRouter.js';
-import columnsRouter from './routes/columnsRouter.js';
-import tasksRouter from './routes/tasksRouter.js';
 
 import errorHandlerMiddleware from './middleware/error-handler.js';
 import authMiddleware from './middleware/authentication.js';
@@ -25,8 +23,6 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/boards', authMiddleware, boardsRouter);
-app.use('/api/v1/columns', authMiddleware, columnsRouter);
-app.use('/api/v1/tasks', authMiddleware, tasksRouter);
 
 // Middleware
 app.use(errorHandlerMiddleware);

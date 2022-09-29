@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import idValidator from 'mongoose-id-validator';
 
 const SubtaskSchema = new mongoose.Schema(
   {
@@ -20,24 +19,13 @@ const TaskSchema = new mongoose.Schema(
     subtasks: {
       type: [SubtaskSchema],
     },
-  },
-  { timestamps: true }
-);
-
-const ColumnSchema = new mongoose.Schema(
-  {
-    name: {
+    status: {
       type: String,
-      required: true,
-    },
-    tasks: {
-      type: [TaskSchema],
+      default: '',
     },
   },
   { timestamps: true }
 );
-
-ColumnSchema.plugin(idValidator);
 
 const BoardSchema = new mongoose.Schema(
   {
@@ -57,7 +45,10 @@ const BoardSchema = new mongoose.Schema(
       required: true,
     },
     columns: {
-      type: [ColumnSchema],
+      type: [String],
+    },
+    tasks: {
+      type: [TaskSchema],
     },
   },
   { timestamps: true }
