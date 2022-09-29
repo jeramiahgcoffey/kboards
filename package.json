@@ -20,6 +20,7 @@
     "http-status-codes": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.2",
+    "mongoose-id-validator": "^0.6.0",
     "rate-limiter": "^0.2.0",
     "xss-clean": "^0.1.1"
   },

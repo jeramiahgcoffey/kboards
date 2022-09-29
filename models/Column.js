@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import idValidator from 'mongoose-id-validator';
 
 const ColumnSchema = new mongoose.Schema(
   {
@@ -6,12 +7,6 @@ const ColumnSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    tasks: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Task',
-      },
-    ],
     boardId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Board',
@@ -20,6 +15,8 @@ const ColumnSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+ColumnSchema.plugin(idValidator);
 
 const Column = mongoose.model('Column', ColumnSchema);
 
