@@ -21,7 +21,8 @@ export const login = async (req, res) => {
     throw new NotFoundError('Invalid credentials');
   }
 
-  res.json(user);
+  const token = user.createJWT();
+  res.status(StatusCodes.OK).json({ user: { email: user.email }, token });
 };
 
 export const register = async (req, res) => {
