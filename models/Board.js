@@ -5,16 +5,18 @@ const BoardSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
+      maxlength: 25,
     },
     description: {
       type: String,
+      minlength: 3,
+      maxlength: 100,
     },
-    columns: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Column',
-      },
-    ],
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
   { timestamps: true }
 );

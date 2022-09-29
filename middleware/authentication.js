@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const auth = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     throw new UnauthenticatedError('Invalid authentication');
   }
 

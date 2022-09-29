@@ -12,6 +12,11 @@ const ColumnSchema = new mongoose.Schema(
         ref: 'Task',
       },
     ],
+    boardId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Board',
+      required: true,
+    },
   },
   { timestamps: true }
 );
