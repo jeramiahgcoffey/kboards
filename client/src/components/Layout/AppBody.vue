@@ -1,8 +1,20 @@
+<script setup>
+import { useStore } from "../../stores/store";
+import BodyColumn from "./BodyColumn.vue";
+import BodyNewColumn from "./BodyNewColumn.vue";
+
+const store = useStore();
+
+function getColumnTasks(column) {
+  return this.store.selectedBoard.tasks.filter((t) => t.status === column);
+}
+</script>
+
 <template>
   <div class="bg-zinc-900 h-full p-6 overflow-y-hidden">
     <div class="flex flex-row h-full">
       <body-column
-        v-for="(column, index) in columns"
+        v-for="(column, index) in store.selectedBoard.columns"
         :key="index"
         :column="column"
         :tasks="getColumnTasks(column)"
@@ -11,33 +23,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import BodyColumn from "./BodyColumn.vue";
-import BodyNewColumn from "./BodyNewColumn.vue";
-
-export default {
-  components: {
-    BodyColumn,
-    BodyNewColumn,
-  },
-
-  props: {
-    board: {
-      type: Object,
-    },
-  },
-
-  computed: {
-    columns() {
-      return this.board.columns;
-    },
-  },
-
-  methods: {
-    getColumnTasks(column) {
-      return this.board.tasks.filter((t) => t.status === column);
-    },
-  },
-};
-</script>

@@ -1,3 +1,15 @@
+<script setup>
+import { onMounted } from "vue";
+import { useStore } from "../../stores/store";
+import SidebarLink from "./SidebarLink.vue";
+
+const store = useStore();
+
+onMounted(() => {
+  store.fetchBoards();
+});
+</script>
+
 <template>
   <div class="w-72 h-full bg-gray-900 text-cyan-400 flex-shrink-0">
     <div class="flex flex-col">
@@ -10,10 +22,9 @@
         </div>
         <div>
           <sidebar-link
-            v-for="(board, index) in boards"
-            :key="index"
-            :board="board"
-            :is-selected="board === selectedBoard"
+            v-for="board in store.boards"
+            :key="board._id"
+            :board="board.name"
           />
         </div>
       </div>
@@ -21,24 +32,3 @@
   </div>
   <!-- <img src="../../assets/logo.png" alt="" class="max-w-md"> -->
 </template>
-
-<script>
-import SidebarLink from "./SidebarLink.vue";
-
-export default {
-  components: {
-    SidebarLink,
-  },
-
-  props: {
-    boards: {
-      type: Array,
-      required: true,
-    },
-    selectedBoard: {
-      type: String,
-      required: true,
-    },
-  },
-};
-</script>

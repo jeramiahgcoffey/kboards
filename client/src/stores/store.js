@@ -20,6 +20,7 @@ export const useStore = defineStore("main", {
         .then((res) => {
           this.boards = res.data.boards;
           this.selectedBoard = this.boards[0];
+          console.log(this.selectedBoard);
         })
         .catch((e) => console.log(e));
     },
