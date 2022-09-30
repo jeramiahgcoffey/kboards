@@ -2,6 +2,7 @@
 import { onMounted } from "vue";
 import { useStore } from "../../../stores/store";
 import SidebarLink from "./SidebarLink.vue";
+import SidebarNewBoard from "./SidebarNewBoard.vue";
 
 const store = useStore();
 
@@ -27,6 +28,7 @@ onMounted(() => {
             :board="board"
             :is-selected="board._id === store.selectedBoard._id"
           />
+          <sidebar-new-board />
         </div>
       </div>
     </div>
