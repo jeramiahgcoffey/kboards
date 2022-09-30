@@ -9,10 +9,12 @@
           <h3 class="font-bold">All Boards (5)</h3>
         </div>
         <div>
-          <sidebar-link text="Marketing Campaign" :isSelected="true" />
-          <sidebar-link text="Personal Board" />
-          <sidebar-link text="Code Maintenance" />
-          <sidebar-link text="New UI" />
+          <sidebar-link
+            v-for="(board, index) in boards"
+            :key="index"
+            :board="board"
+            :is-selected="board === selectedBoard"
+          />
         </div>
       </div>
     </div>
@@ -26,6 +28,17 @@ import SidebarLink from "./SidebarLink.vue";
 export default {
   components: {
     SidebarLink,
+  },
+
+  props: {
+    boards: {
+      type: Array,
+      required: true,
+    },
+    selectedBoard: {
+      type: String,
+      required: true,
+    },
   },
 };
 </script>

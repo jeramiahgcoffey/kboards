@@ -1,9 +1,9 @@
 <template>
   <div
-    class="flex-shrink-0 flex justify-between items-center pl-4 h-24 bg-gray-700 text-gray-100"
+    class="flex-shrink-0 flex justify-between items-center pl-4 h-24 bg-gray-900 text-gray-100"
   >
     <div class="text-2xl">
-      <h2 class="">Marketing Campaign</h2>
+      <h2 class="">{{ title }}</h2>
     </div>
     <div class="flex">
       <div class="mr-4">
@@ -32,3 +32,13 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    title: {
+      type: String,
+    },
+  },
+};
+</script>

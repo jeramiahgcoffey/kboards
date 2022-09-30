@@ -20,7 +20,7 @@
       </svg>
     </div>
     <div>
-      {{ text }}
+      {{ board }}
     </div>
   </div>
 </template>
@@ -28,10 +28,7 @@
 <script>
 export default {
   props: {
-    text: {
-      type: String,
-      required: true,
-    },
+    board: String,
     isSelected: Boolean,
   },
 
