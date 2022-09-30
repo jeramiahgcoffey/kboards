@@ -1,29 +1,30 @@
 <template>
   <main>
     <div class="flex h-screen">
-      <app-sidebar />
-      <div class="flex-1 w-96">
+      <div class="flex flex-col flex-shrink-0">
+        <app-sidebar />
+      </div>
+      <div class="flex flex-col flex-grow h-full min-w-0">
         <app-header />
-        <div class="overflow-x-auto flex-nowrap">
 
+        <div class="flex-grow-1 overflow-auto h-screen">
           <app-body />
         </div>
       </div>
-
     </div>
   </main>
 </template>
 
 <script>
-import AppHeader from '../components/Layout/AppHeader.vue';
-import AppBody from '../components/Layout/AppBody.vue';
-import AppSidebar from '../components/Layout/AppSidebar.vue';
+import AppHeader from "../components/Layout/AppHeader.vue";
+import AppBody from "../components/Layout/AppBody.vue";
+import AppSidebar from "../components/Layout/AppSidebar.vue";
 
 export default {
   components: {
     AppHeader,
     AppSidebar,
-    AppBody
-  }
-}
+    AppBody,
+  },
+};
 </script>

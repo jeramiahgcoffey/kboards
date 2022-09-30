@@ -25,3 +25,25 @@ a,
   }
 } */
 
+.scrollbar::-webkit-scrollbar {
+  padding-left: 50px;
+
+
+  }
+
+.scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #f7f4ed;
+    padding-top: 30px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+    background:dimgrey;
+    border-radius: 100vh;
+    border: 3px solid #f6f7ed;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #c0a0b9;
+}
+
