@@ -1,7 +1,21 @@
+<script setup>
+import { computed } from "vue";
+import { useStore } from "../../../stores/store";
+
+const store = useStore();
+
+const props = defineProps(["board", "isSelected"]);
+
+const classes = computed(() => {
+  return props.isSelected ? "text-cyan-200 bg-gray-600" : "";
+});
+</script>
+
 <template>
   <div
     :class="classes"
     class="py-3 pl-6 flex hover:bg-gray-600 rounded-r-full w-11/12 cursor-pointer"
+    @click="store.setSelectedBoard(board)"
   >
     <div class="mr-2">
       <svg
@@ -20,22 +34,7 @@
       </svg>
     </div>
     <div>
-      {{ board }}
+      {{ board.name }}
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    board: String,
-    isSelected: Boolean,
-  },
-
-  computed: {
-    classes() {
-      return this.isSelected ? "text-cyan-200 bg-gray-600" : "";
-    },
-  },
-};
-</script>

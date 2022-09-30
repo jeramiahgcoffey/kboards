@@ -1,7 +1,7 @@
 <script setup>
 import AppHeader from "../components/Layout/AppHeader.vue";
 import AppBody from "../components/Layout/AppBody.vue";
-import AppSidebar from "../components/Layout/AppSidebar.vue";
+import AppSidebar from "../components/Layout/Sidebar/AppSidebar.vue";
 </script>
 
 <template>
