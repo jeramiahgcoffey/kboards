@@ -10,15 +10,19 @@ import boardsRouter from './routes/boardsRouter.js';
 
 import errorHandlerMiddleware from './middleware/error-handler.js';
 import authMiddleware from './middleware/authentication.js';
+import morgan from 'morgan';
+import cors from 'cors';
 
 const app = express();
 
 // Middleware
 app.use(express.json());
+// app.use(morgan('combined'));
+app.use(cors());
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('kanban api');
+  res.status(200).json({ msg: 'kanban api' });
 });
 
 app.use('/api/v1/auth', authRouter);
