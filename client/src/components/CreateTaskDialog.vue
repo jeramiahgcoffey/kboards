@@ -3,8 +3,8 @@ import { useStore } from "../stores/store";
 
 const store = useStore();
 
-function createBoard() {
-  store.createBoard();
+function createColumn() {
+  store.createColumn();
   store.appModalOpen = false;
 }
 </script>
@@ -17,7 +17,7 @@ function createBoard() {
           class="text-lg font-medium leading-6 text-gray-100"
           id="modal-title"
         >
-          Create Board
+          Add New Task
         </h3>
 
         <div class="form-control w-full">
@@ -28,16 +28,7 @@ function createBoard() {
             type="text"
             placeholder=""
             class="input input-bordered w-80 mb-2"
-            v-model="store.newBoard.name"
-          />
-          <label class="label">
-            <span class="label-text text-gray-100">Description:</span>
-          </label>
-          <input
-            type="text"
-            placeholder=""
-            class="input input-bordered w-80"
-            v-model="store.newBoard.description"
+            v-model="store.newColumn"
           />
         </div>
       </div>
@@ -47,7 +38,7 @@ function createBoard() {
     <button
       type="button"
       class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-500 bg-emerald-500 px-4 py-2 text-base font-medium text-gray-100 shadow-sm hover:bg-emerald-400 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-      @click="createBoard"
+      @click="createColumn"
     >
       Create
     </button>

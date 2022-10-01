@@ -17,7 +17,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-// app.use(morgan('combined'));
+app.use(morgan('combined'));
 app.use(cors());
 
 // Routes

@@ -3,6 +3,8 @@ import { useStore } from "../../stores/store";
 import BodyColumn from "./BodyColumn.vue";
 import BodyNewColumn from "./BodyNewColumn.vue";
 import CreateBoardDialog from "../CreateBoardDialog.vue";
+import AppModal from "../Shared/AppModal.vue";
+import CreateColumnDialog from "../CreateColumnDialog.vue";
 
 const store = useStore();
 
@@ -23,5 +25,8 @@ function getColumnTasks(column) {
       <body-new-column />
     </div>
   </div>
-  <create-board-dialog :is-open="store.isDialogOpen" />
+  <app-modal :is-open="store.isDialogOpen">
+    <create-board-dialog v-if="store.dialogContentName === 'createBoard'" />
+    <create-column-dialog v-if="store.dialogContentName === 'createColumn'" />
+  </app-modal>
 </template>

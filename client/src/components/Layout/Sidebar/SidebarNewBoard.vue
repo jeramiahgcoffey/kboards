@@ -8,7 +8,7 @@ const store = useStore();
   <!-- <label for="my-modal-2" class="btn modal-button"> -->
   <div
     class="py-5 pl-6 flex hover:bg-gray-600 rounded-r-full w-11/12 cursor-pointer text-emerald-400"
-    @click.stop="store.appModalOpen = true"
+    @click.stop="store.openAppModal('createBoard')"
   >
     <div class="mr-2">
       <svg

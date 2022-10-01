@@ -4,10 +4,12 @@ import axios from "axios";
 export const useStore = defineStore("main", {
   state: () => {
     return {
-      boards: [],
-      selectedBoard: {},
       appModalOpen: false,
+      boards: [],
+      dialogContentName: "",
       newBoard: {},
+      newColumn: "",
+      selectedBoard: {},
     };
   },
   getters: {
@@ -39,6 +41,36 @@ export const useStore = defineStore("main", {
           this.newBoard = {};
         })
         .catch((e) => console.log(e));
+    },
+
+    async createColumn() {
+      return await axios
+        .post(
+          `http://127.0.0.1:5001/api/v1/boards/${this.selectedBoard._id}/column`,
+          { name: this.newColumn }
+        )
+        .then((res) => {
+          const { board: updatedBoard } = res.data;
+          this.boards = this.boards.map((board) => {
+            if (board._id === updatedBoard._id) {
+              return updatedBoard;
+            }
+            return board;
+          });
+          this.selectedBoard = updatedBoard;
+          this.newColumn = "";
+        })
+        .catch((e) => console.log(e, "here"));
+    },
+
+    closeAppModal() {
+      this.appModalOpen = false;
+      this.dialogContentName = "";
+    },
+
+    openAppModal(dialogContentName) {
+      this.dialogContentName = dialogContentName;
+      this.appModalOpen = true;
     },
 
     setSelectedBoard(board) {
