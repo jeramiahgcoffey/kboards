@@ -6,7 +6,7 @@ const store = useStore();
 
 <template>
   <div
-    class="flex-shrink-0 flex justify-between items-center pl-4 h-24 bg-gray-900 text-gray-100"
+    class="flex-shrink-0 flex justify-between items-center pl-4 h-24 bg-zinc-800 text-gray-100 border-l-2 border-slate-500"
   >
     <div class="text-2xl">
       <h2 class="">{{ store.selectedBoard.name }}</h2>

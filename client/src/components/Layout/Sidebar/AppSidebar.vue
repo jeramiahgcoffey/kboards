@@ -12,7 +12,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-72 h-full bg-gray-900 text-cyan-400 flex-shrink-0">
+  <div class="w-72 h-full bg-zinc-800 text-gray-300 flex-shrink-0">
     <div class="flex flex-col">
       <div class="ml-6 my-4">
         <img src="../../../assets/logo.png" alt="Logo" class="h-20" />

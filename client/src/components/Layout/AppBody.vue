@@ -2,6 +2,7 @@
 import { useStore } from "../../stores/store";
 import BodyColumn from "./BodyColumn.vue";
 import BodyNewColumn from "./BodyNewColumn.vue";
+import CreateBoardDialog from "../CreateBoardDialog.vue";
 
 const store = useStore();
 
@@ -22,4 +23,5 @@ function getColumnTasks(column) {
       <body-new-column />
     </div>
   </div>
+  <create-board-dialog :is-open="store.isDialogOpen" />
 </template>

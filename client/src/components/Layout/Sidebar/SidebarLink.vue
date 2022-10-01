@@ -7,14 +7,14 @@ const store = useStore();
 const props = defineProps(["board", "isSelected"]);
 
 const classes = computed(() => {
-  return props.isSelected ? "text-cyan-200 bg-gray-600" : "";
+  return props.isSelected ? "text-gray-200 bg-gray-600" : "";
 });
 </script>
 
 <template>
   <div
     :class="classes"
-    class="py-3 pl-6 flex hover:bg-gray-600 rounded-r-full w-11/12 cursor-pointer"
+    class="py-3 pl-6 flex hover:bg-cyan-200 hover:text-gray-900 rounded-r-full w-11/12 cursor-pointer"
     @click="store.setSelectedBoard(board)"
   >
     <div class="mr-2">
