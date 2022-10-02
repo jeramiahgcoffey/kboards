@@ -3,8 +3,8 @@ import { useStore } from "../stores/store";
 
 const store = useStore();
 
-function createColumn() {
-  store.createColumn();
+function createTask() {
+  store.createTask();
   store.appModalOpen = false;
 }
 </script>
@@ -28,7 +28,7 @@ function createColumn() {
             type="text"
             placeholder=""
             class="input input-bordered w-80 mb-2"
-            v-model="store.newColumn"
+            v-model="store.newTask.title"
           />
         </div>
       </div>
@@ -38,7 +38,7 @@ function createColumn() {
     <button
       type="button"
       class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-500 bg-emerald-500 px-4 py-2 text-base font-medium text-gray-100 shadow-sm hover:bg-emerald-400 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-      @click="createColumn"
+      @click="createTask"
     >
       Create
     </button>

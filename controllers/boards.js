@@ -54,12 +54,15 @@ const createColumn = async (req, res) => {
 
 const createTask = async (req, res) => {
   const { boardId } = req.params;
-  const { title, status } = req.body;
+  // const { title, status } = req.body;
+  const { title } = req.body;
   const { userId } = req.user;
 
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
 
   if (!board) throw new BadRequestError(`Board ${boardId} not found`);
+  const status = board.columns[0];
+  if (!status) throw new BadRequestError('No column found');
 
   if (status && !board.columns.includes(status))
     throw new BadRequestError(`Column ${status} not found`);

@@ -1,8 +1,5 @@
 <script setup>
 import { defineProps, computed } from "vue";
-import { useStore } from "../../stores/store";
-
-const store = useStore();
 
 const props = defineProps(["isOpen"]);
 

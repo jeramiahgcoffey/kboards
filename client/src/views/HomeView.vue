@@ -1,6 +1,6 @@
 <script setup>
 import AppHeader from "../components/Layout/AppHeader.vue";
-import AppBody from "../components/Layout/AppBody.vue";
+import AppBody from "../components/Layout/Body/AppBody.vue";
 import AppSidebar from "../components/Layout/Sidebar/AppSidebar.vue";
 </script>
 

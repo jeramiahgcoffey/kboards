@@ -15,6 +15,7 @@ const store = useStore();
       <div class="mr-4">
         <div
           class="bg-gray-600 px-6 py-3 rounded-full text-md hover:text-cyan-200 cursor-pointer"
+          @click="store.openAppModal('createTask')"
         >
           + Add New Task
         </div>

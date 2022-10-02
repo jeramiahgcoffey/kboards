@@ -9,6 +9,10 @@ export const useStore = defineStore("main", {
       dialogContentName: "",
       newBoard: {},
       newColumn: "",
+      newTask: {
+        title: "",
+        description: "",
+      },
       selectedBoard: {},
     };
   },
@@ -22,45 +26,71 @@ export const useStore = defineStore("main", {
   },
   actions: {
     async fetchBoards() {
-      return await axios
-        .get("http://127.0.0.1:5001/api/v1/boards")
-        .then((res) => {
-          this.boards = res.data.boards;
-          this.selectedBoard = this.boards[0];
-        })
-        .catch((e) => console.log(e));
+      try {
+        const res = await axios.get("http://127.0.0.1:5001/api/v1/boards");
+        this.boards = res.data.boards;
+        this.selectedBoard = this.boards[0];
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     async createBoard() {
-      return await axios
-        .post("http://127.0.0.1:5001/api/v1/boards", this.newBoard)
-        .then((res) => {
-          const { board } = res.data;
-          this.boards.push(board);
-          this.selectedBoard = board;
-          this.newBoard = {};
-        })
-        .catch((e) => console.log(e));
+      try {
+        const res = await axios.post(
+          "http://127.0.0.1:5001/api/v1/boards",
+          this.newBoard
+        );
+        const { board } = res.data;
+        this.boards.push(board);
+        this.selectedBoard = board;
+        this.newBoard = {};
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     async createColumn() {
-      return await axios
-        .post(
+      try {
+        const res = await axios.post(
           `http://127.0.0.1:5001/api/v1/boards/${this.selectedBoard._id}/column`,
           { name: this.newColumn }
-        )
-        .then((res) => {
-          const { board: updatedBoard } = res.data;
-          this.boards = this.boards.map((board) => {
-            if (board._id === updatedBoard._id) {
-              return updatedBoard;
-            }
-            return board;
-          });
-          this.selectedBoard = updatedBoard;
-          this.newColumn = "";
-        })
-        .catch((e) => console.log(e, "here"));
+        );
+        const { board: updatedBoard } = res.data;
+        this.boards = this.boards.map((board) => {
+          if (board._id === updatedBoard._id) {
+            return updatedBoard;
+          }
+          return board;
+        });
+        this.selectedBoard = updatedBoard;
+        this.newColumn = "";
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async createTask() {
+      try {
+        const res = await axios.post(
+          `http://localhost:5001/api/v1/boards/${this.selectedBoard._id}/task`,
+          this.newTask
+        );
+        const { board: updatedBoard } = res.data;
+        this.boards = this.boards.map((board) => {
+          if (board._id === updatedBoard._id) {
+            return updatedBoard;
+          }
+          return board;
+        });
+        this.selectedBoard = updatedBoard;
+        this.newTask = {
+          title: "",
+          description: "",
+        };
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     closeAppModal() {

@@ -1,10 +1,11 @@
 <script setup>
-import { useStore } from "../../stores/store";
+import { useStore } from "../../../stores/store";
 import BodyColumn from "./BodyColumn.vue";
 import BodyNewColumn from "./BodyNewColumn.vue";
-import CreateBoardDialog from "../CreateBoardDialog.vue";
-import AppModal from "../Shared/AppModal.vue";
-import CreateColumnDialog from "../CreateColumnDialog.vue";
+import CreateBoardDialog from "../../CreateBoardDialog.vue";
+import AppModal from "../../Shared/AppModal.vue";
+import CreateColumnDialog from "../../CreateColumnDialog.vue";
+import CreateTaskDialog from "../../CreateTaskDialog.vue";
 
 const store = useStore();
 
@@ -28,5 +29,6 @@ function getColumnTasks(column) {
   <app-modal :is-open="store.isDialogOpen">
     <create-board-dialog v-if="store.dialogContentName === 'createBoard'" />
     <create-column-dialog v-if="store.dialogContentName === 'createColumn'" />
+    <create-task-dialog v-if="store.dialogContentName === 'createTask'" />
   </app-modal>
 </template>
