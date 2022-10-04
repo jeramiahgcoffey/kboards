@@ -9,13 +9,24 @@ export default new Vuex.Store({
     boards: [],
     selectedBoard: {},
   },
-  getters: {},
-  mutations: {},
+  getters: {
+    getBoards: (state) => state.boards,
+    getColumns: (state) => state.selectedBoard.columns,
+    getSelectedBoard: (state) => state.selectedBoard,
+  },
+  mutations: {
+    setBoards: (state, boards) => {
+      state.boards = boards;
+      state.selectedBoard = boards[0] || {};
+    },
+    setSelectedBoard: (state, board) => {
+      state.selectedBoard = board;
+    },
+  },
   actions: {
-    fetchBoards: async () => {
+    fetchBoards: async ({ commit }) => {
       const { data } = await createAPIRequest().get("/boards");
-      const { boards } = data;
-      console.log(boards);
+      commit("setBoards", data.boards);
     },
   },
   modules: {},

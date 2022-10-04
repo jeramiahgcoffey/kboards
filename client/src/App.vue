@@ -1,14 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer app permanent clipped>
-      <v-list-item>
-        <v-list-item-title> All Boards (?) </v-list-item-title>
-      </v-list-item>
-
-      <v-list shaped>
-        <v-list-item-group> </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer>
+    <AppDrawer />
 
     <v-app-bar app clipped-left class="p-0">
       <v-img class="p-0" height="50" max-width="220" src="./assets/logo.png">
@@ -31,8 +23,14 @@
 </template>
 
 <script>
+import AppDrawer from "@/components/Layout/AppDrawer";
+
 export default {
   name: "App",
+
+  components: {
+    AppDrawer,
+  },
 
   data: () => ({
     //
