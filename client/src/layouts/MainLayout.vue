@@ -5,7 +5,7 @@
         <q-toolbar-title class="text-weight-medium">
           <!-- Quasar App -->
           <div style="height: 70px; display: flex; align-items: center">
-            Platform Launch
+            {{ store.selectedBoard?.name || '' }}
           </div>
         </q-toolbar-title>
 
@@ -39,6 +39,8 @@
           <q-item
             v-for="board in store.boards"
             :key="board._id"
+            :active="store.selectedBoard?._id === board._id"
+            @click="store.selectedBoard = board"
             clickable
             v-ripple
           >
@@ -47,6 +49,15 @@
             </q-item-section>
             <q-item-section class="">{{ board.name }}</q-item-section>
           </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon color="accent" name="mdi-plus" />
+            </q-item-section>
+            <q-item-section class="text-accent">
+              Create New Board
+            </q-item-section>
+          </q-item>
         </q-list>
       </q-scroll-area>
 
@@ -54,7 +65,7 @@
         <q-card-section class="">
           <div class="row justify-center items-center q-mr-md">
             <q-icon color="yellow" size="26px" name="mdi-weather-sunny" />
-            <q-toggle v-model="isDarkMode" />
+            <q-toggle v-model="store.darkMode" />
             <q-icon color="purple" size="24px" name="mdi-weather-night" />
           </div>
         </q-card-section>
@@ -77,8 +88,7 @@ onMounted(async () => {
   await store.fetchBoards();
 });
 
-const isDrawerOpen = true;
-const isDarkMode = false;
+let isDrawerOpen = true;
 </script>
 
 <style lang="sass" scoped>

@@ -21,5 +21,6 @@ interface Board {
 
 export interface Store {
   boards: Board[];
+  darkMode: boolean;
   selectedBoard?: Board;
 }
