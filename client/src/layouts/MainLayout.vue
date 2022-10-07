@@ -50,7 +50,7 @@
             <q-item-section class="">{{ board.name }}</q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple>
+          <q-item @click="openCreateBoard" clickable v-ripple>
             <q-item-section avatar class="q-pl-xs">
               <q-icon color="accent" name="mdi-plus" />
             </q-item-section>
@@ -72,6 +72,10 @@
       </q-card>
     </q-drawer>
 
+    <app-dialog v-if="store.dialogContent">
+      <create-board v-if="store.dialogContent === 'createBoard'" />
+    </app-dialog>
+
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -81,12 +85,19 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useStore } from '../stores/store';
+import AppDialog from 'src/components/AppDialog.vue';
+import CreateBoard from 'src/components/dialogs/CreateBoard.vue';
 
 const store = useStore();
 
 onMounted(async () => {
   await store.fetchBoards();
 });
+
+const openCreateBoard = () => {
+  store.dialogContent = 'createBoard';
+  store.dialogOpen = true;
+};
 
 let isDrawerOpen = true;
 </script>

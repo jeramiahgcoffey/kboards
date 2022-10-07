@@ -7,6 +7,8 @@ export const useStore = defineStore('main', {
   state: (): Store => ({
     boards: [],
     darkMode: false,
+    dialogContent: '',
+    dialogOpen: false,
     selectedBoard: undefined,
   }),
 
