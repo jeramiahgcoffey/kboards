@@ -36,113 +36,16 @@
       </div>
       <q-scroll-area style="width: 100%; height: calc(100vh - 250px)">
         <q-list separator>
-          <q-item clickable v-ripple>
+          <q-item
+            v-for="board in store.boards"
+            :key="board._id"
+            clickable
+            v-ripple
+          >
             <q-item-section avatar class="q-pl-xs">
               <q-icon name="mdi-math-norm-box" />
             </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar class="q-pl-xs">
-              <q-icon name="mdi-math-norm-box" />
-            </q-item-section>
-            <q-item-section class="">Platform Launch</q-item-section>
+            <q-item-section class="">{{ board.name }}</q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>
@@ -165,6 +68,15 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue';
+import { useStore } from '../stores/store';
+
+const store = useStore();
+
+onMounted(async () => {
+  await store.fetchBoards();
+});
+
 const isDrawerOpen = true;
 const isDarkMode = false;
 </script>
