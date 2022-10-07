@@ -2,41 +2,160 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
+        <q-toolbar-title class="text-weight-medium">
+          <!-- Quasar App -->
+          <div style="height: 70px; display: flex; align-items: center">
+            Platform Launch
+          </div>
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          <q-btn
+            rounded
+            padding="sm md"
+            class="text-capitalize q-mr-sm"
+            color="accent"
+            icon="mdi-plus"
+            label="Add New Task"
+          />
+
+          <q-btn rounded flat icon="mdi-dots-vertical" padding="sm" />
+        </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+    <q-drawer v-model="isDrawerOpen" behavior="desktop" show-if-above bordered>
+      <q-toolbar class="bg-primary">
+        <q-img src="~assets/logo.png" height="70px" width="250px" />
+      </q-toolbar>
+      <div
+        style="letter-spacing: 1.8px"
+        class="text-caption text-weight-bold text-grey-7 q-pl-lg q-py-sm"
+      >
+        ALL BOARDS (?)
+      </div>
+      <q-scroll-area style="width: 100%; height: calc(100vh - 250px)">
+        <q-list separator>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar class="q-pl-xs">
+              <q-icon name="mdi-math-norm-box" />
+            </q-item-section>
+            <q-item-section class="">Platform Launch</q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+      <q-card square flat class="q-mx-md q-mt-md">
+        <q-card-section class="">
+          <div class="row justify-center items-center q-mr-md">
+            <q-icon color="yellow" size="26px" name="mdi-weather-sunny" />
+            <q-toggle v-model="isDarkMode" />
+            <q-icon color="purple" size="24px" name="mdi-weather-night" />
+          </div>
+        </q-card-section>
+      </q-card>
     </q-drawer>
 
     <q-page-container>
@@ -46,57 +165,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
-
-const essentialLinks: EssentialLinkProps[] = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-];
-
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+const isDrawerOpen = true;
+const isDarkMode = false;
 </script>
+
+<style lang="sass" scoped>
+.control-box
+  width: 80% !important
+  margin: auto !important
+  text-transform: uppercase !important
+</style>
