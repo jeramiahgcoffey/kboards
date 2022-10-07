@@ -18,6 +18,16 @@ export const useStore = defineStore('main', {
       state.selectedBoard?.tasks.filter((task) => task.status === column),
   },
   actions: {
+    async createBoard(payload: { name: string; description?: string }) {
+      try {
+        const {
+          data: { board },
+        } = await api.post('/boards', payload);
+        this.boards.push(board);
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async fetchBoards() {
       const {
         data: { boards },

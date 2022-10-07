@@ -5,14 +5,26 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <q-input dense v-model="address" autofocus />
+      <q-input dense v-model="boardName" autofocus />
     </q-card-section>
 
     <q-card-actions align="right" class="text-primary">
       <q-btn flat label="Cancel" v-close-popup />
-      <q-btn flat label="Add address" v-close-popup />
+      <q-btn flat label="Create Board" v-close-popup @click="createBoard" />
     </q-card-actions>
   </q-card>
 </template>
 
-<script setup></script>
+<script setup>
+import { useStore } from 'src/stores/store';
+import { ref } from 'vue';
+
+const store = useStore();
+
+const boardName = ref('');
+
+const createBoard = async () => {
+  await store.createBoard({ name: boardName.value });
+  boardName.value = '';
+};
+</script>
