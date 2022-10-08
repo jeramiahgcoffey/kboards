@@ -6,7 +6,6 @@ import { Store } from './store-interface';
 export const useStore = defineStore('main', {
   state: (): Store => ({
     boards: [],
-    darkMode: false,
     dialogContent: '',
     dialogOpen: false,
     selectedBoard: undefined,
@@ -24,6 +23,26 @@ export const useStore = defineStore('main', {
           data: { board },
         } = await api.post('/boards', payload);
         this.boards.push(board);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async createColumn(payload: { name: string }) {
+      try {
+        const {
+          data: { board },
+        } = await api.post(
+          `/boards/${this.selectedBoard?._id}/column`,
+          payload
+        );
+        this.boards = this.boards.map((b) => {
+          if (b._id === this.selectedBoard?._id) {
+            this.selectedBoard = board;
+            return board;
+          } else {
+            return b;
+          }
+        });
       } catch (error) {
         console.log(error);
       }

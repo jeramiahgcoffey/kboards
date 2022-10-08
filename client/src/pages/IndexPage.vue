@@ -1,5 +1,5 @@
 <template>
-  <q-page class="bg-blue-grey-1">
+  <q-page class="main-page">
     <div class="q-pa-md">
       <q-scroll-area style="height: calc(100vh - 110px); width: 100%">
         <div class="row no-wrap">
@@ -30,6 +30,17 @@
               </q-card>
             </div>
           </q-scroll-area>
+
+          <div style="width: 320px">
+            <q-btn
+              style="width: 100%; height: calc(100vh - 160px); margin-top: 35px"
+              @click="openCreateColumn"
+            >
+              <q-icon color="accent" name="mdi-plus" />
+
+              New Column
+            </q-btn>
+          </div>
         </div>
       </q-scroll-area>
     </div>
@@ -40,9 +51,17 @@
 import { useStore } from '../stores/store';
 
 const store = useStore();
+
+const openCreateColumn = () => {
+  store.dialogContent = 'createColumn';
+  store.dialogOpen = true;
+};
 </script>
 
 <style lang="sass" scoped>
 .task-card
-  width: 300px !important
+  width: 300px
+
+.body--light .main-page
+  background: $blue-grey-1
 </style>

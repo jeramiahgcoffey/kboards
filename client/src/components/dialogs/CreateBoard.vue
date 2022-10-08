@@ -5,7 +5,8 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <q-input dense v-model="boardName" autofocus />
+      <q-input label="Name" v-model="boardName" autofocus />
+      <q-input label="Description" v-model="boardDescription" />
     </q-card-section>
 
     <q-card-actions align="right" class="text-primary">
@@ -22,9 +23,13 @@ import { ref } from 'vue';
 const store = useStore();
 
 const boardName = ref('');
+const boardDescription = ref('');
 
 const createBoard = async () => {
-  await store.createBoard({ name: boardName.value });
+  const payload = { name: boardName.value };
+  if (boardDescription.value !== '')
+    payload.description = boardDescription.value;
+  await store.createBoard(payload);
   boardName.value = '';
 };
 </script>

@@ -21,7 +21,6 @@ interface Board {
 
 export interface Store {
   boards: Board[];
-  darkMode: boolean;
   dialogContent: string;
   dialogOpen: boolean;
   selectedBoard?: Board;

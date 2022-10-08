@@ -54,7 +54,7 @@
             <q-item-section avatar class="q-pl-xs">
               <q-icon color="accent" name="mdi-plus" />
             </q-item-section>
-            <q-item-section class="text-accent">
+            <q-item-section class="text-accent text-weight-bold">
               Create New Board
             </q-item-section>
           </q-item>
@@ -65,7 +65,10 @@
         <q-card-section class="">
           <div class="row justify-center items-center q-mr-md">
             <q-icon color="yellow" size="26px" name="mdi-weather-sunny" />
-            <q-toggle v-model="store.darkMode" />
+            <q-toggle
+              :model-value="$q.dark.isActive"
+              @update:model-value="$q.dark.toggle"
+            />
             <q-icon color="purple" size="24px" name="mdi-weather-night" />
           </div>
         </q-card-section>
@@ -74,6 +77,7 @@
 
     <app-dialog v-if="store.dialogContent">
       <create-board v-if="store.dialogContent === 'createBoard'" />
+      <create-column v-if="store.dialogContent === 'createColumn'" />
     </app-dialog>
 
     <q-page-container>
@@ -85,9 +89,12 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useStore } from '../stores/store';
+import { useQuasar } from 'quasar';
 import AppDialog from 'src/components/AppDialog.vue';
 import CreateBoard from 'src/components/dialogs/CreateBoard.vue';
+import CreateColumn from 'src/components/dialogs/CreateColumn.vue';
 
+const $q = useQuasar();
 const store = useStore();
 
 onMounted(async () => {
