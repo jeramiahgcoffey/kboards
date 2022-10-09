@@ -60,7 +60,6 @@ const createColumn = async (req, res) => {
 const createTask = async (req, res) => {
   const { boardId } = req.params;
   const { title, status, description, subtasks } = req.body;
-  // const { title } = req.body;
   const { userId } = req.user;
 
   const board = await Board.findOne({ createdBy: userId, _id: boardId });

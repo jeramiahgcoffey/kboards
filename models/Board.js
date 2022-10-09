@@ -8,8 +8,8 @@ const SubtaskSchema = new mongoose.Schema(
     },
     completed: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   { timestamps: true }
 );
@@ -19,6 +19,9 @@ const TaskSchema = new mongoose.Schema(
     title: {
       type: String,
       required: [true, 'Title is required'],
+    },
+    description: {
+      type: String,
     },
     subtasks: {
       type: [SubtaskSchema],
@@ -49,10 +52,12 @@ const BoardSchema = new mongoose.Schema(
       required: true,
     },
     columns: {
-      type: [{
-        name: String,
-        color: String
-      }],
+      type: [
+        {
+          name: String,
+          color: String,
+        },
+      ],
     },
     tasks: {
       type: [TaskSchema],
