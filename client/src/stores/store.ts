@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { api } from 'src/boot/axios';
 import { Notify } from 'quasar';
 
-import { Store, Board } from './models';
+import { Store, Board, Subtask } from './models';
 import { handleError } from 'src/common/handleError';
 
 export const useStore = defineStore('main', {
@@ -98,6 +98,30 @@ export const useStore = defineStore('main', {
         } = await api.get('/boards');
         this.boards = boards;
         this.selectBoard(boards[0]);
+      } catch (error) {
+        handleError(error);
+      }
+    },
+
+    async toggleSubtaskCompletion(taskId: string, subtask: Subtask) {
+      const payload = {
+        subtask: { ...subtask, completed: !subtask.completed },
+      };
+      try {
+        const {
+          data: { board },
+        } = await api.patch(
+          `/boards/task/${taskId}/subtask/${subtask._id}`,
+          payload
+        );
+        this.boards = this.boards.map((b) => {
+          if (b._id === this.selectedBoard?._id) {
+            this.selectBoard(board);
+            return board;
+          } else {
+            return b;
+          }
+        });
       } catch (error) {
         handleError(error);
       }

@@ -1,5 +1,8 @@
 <template>
-  <q-scroll-area style="height: calc(100vh - 110px); width: 320px">
+  <q-scroll-area
+    style="height: calc(100vh - 110px); width: 320px"
+    class="q-mr-md"
+  >
     <div
       style="letter-spacing: 1.8px"
       class="text-caption text-weight-bold text-grey-7 q-py-sm text-uppercase"

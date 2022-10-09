@@ -1,3 +1,11 @@
+export interface Subtask {
+  readonly _id: string;
+  title: string;
+  completed: boolean;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
 interface Task {
   readonly _id: string;
   title: string;

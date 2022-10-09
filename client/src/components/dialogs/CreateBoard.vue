@@ -5,7 +5,7 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <q-input label="Name" v-model="boardName" autofocus />
+      <q-input label="Name" v-model="boardName" autofocus class="q-pb-sm" />
       <q-input label="Description" v-model="boardDescription" />
     </q-card-section>
 
