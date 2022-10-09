@@ -6,6 +6,10 @@ const SubtaskSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Title is required'],
     },
+    completed: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );
@@ -45,7 +49,10 @@ const BoardSchema = new mongoose.Schema(
       required: true,
     },
     columns: {
-      type: [String],
+      type: [{
+        name: String,
+        color: String
+      }],
     },
     tasks: {
       type: [TaskSchema],

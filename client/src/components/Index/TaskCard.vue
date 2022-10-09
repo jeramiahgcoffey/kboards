@@ -40,7 +40,7 @@ import SubtaskListItem from './SubtaskListItem.vue';
 const props = defineProps(['task']);
 
 const hasInfo = computed(
-  () => !!(props.task.description.length || props.task.subtasks.length)
+  () => !!(props.task.description || props.task.subtasks.length)
 );
 
 const caption = computed(() =>
