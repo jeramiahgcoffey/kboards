@@ -2,20 +2,31 @@ import { defineStore } from 'pinia';
 import { api } from 'src/boot/axios';
 import { Notify } from 'quasar';
 
-import { Store } from './store-interface';
+import { Store, Board } from './models';
+import { handleError } from 'src/common/handleError';
 
 export const useStore = defineStore('main', {
   state: (): Store => ({
     boards: [],
     dialogContent: '',
     dialogOpen: false,
+    newTask: { title: '', description: '', status: '', subtasks: [] },
     selectedBoard: undefined,
   }),
 
   getters: {
     columns: (state) => state.selectedBoard?.columns,
-    tasksByColumn: (state) => (column: string) =>
-      state.selectedBoard?.tasks.filter((task) => task.status === column),
+    columnNames: (state) => state.selectedBoard?.columns.map((c) => c.name),
+    columnNamesCapitalized: (state) =>
+      state.selectedBoard?.columns.map((c) =>
+        c.name
+          .toLowerCase()
+          .split(' ')
+          .map((word) => word.replace(word[0], word[0].toUpperCase()))
+          .join(' ')
+      ),
+    tasksByColumn: (state) => (columnName: string) =>
+      state.selectedBoard?.tasks.filter((task) => task.status === columnName),
   },
 
   actions: {
@@ -25,13 +36,14 @@ export const useStore = defineStore('main', {
           data: { board },
         } = await api.post('/boards', payload);
         this.boards.push(board);
+        this.selectBoard(board);
         this.success('Board created successfully!');
       } catch (error) {
-        this.error(String(error));
+        handleError(error);
       }
     },
 
-    async createColumn(payload: { name: string }) {
+    async createColumn(payload: { name: string; color?: string }) {
       try {
         const {
           data: { board },
@@ -41,15 +53,41 @@ export const useStore = defineStore('main', {
         );
         this.boards = this.boards.map((b) => {
           if (b._id === this.selectedBoard?._id) {
-            this.selectedBoard = board;
+            this.selectBoard(board);
             return board;
           } else {
             return b;
           }
         });
-        this.success('Column created successfully!');
+        this.success('Column created successfully');
       } catch (error) {
-        this.error(String(error));
+        handleError(error);
+      }
+    },
+
+    async createTask() {
+      const subtasks = this.newTask.subtasks.filter((task) => task); // Filter out empty tasks
+      const payload = {
+        title: this.newTask.title,
+        description: this.newTask.description,
+        status: this.newTask.status,
+        subtasks,
+      };
+      try {
+        const {
+          data: { board },
+        } = await api.post(`/boards/${this.selectedBoard?._id}/task`, payload);
+        this.boards = this.boards.map((b) => {
+          if (b._id === this.selectedBoard?._id) {
+            this.selectBoard(board);
+            return board;
+          } else {
+            return b;
+          }
+        });
+        this.success('Task created successfully');
+      } catch (error) {
+        handleError(error);
       }
     },
 
@@ -59,10 +97,20 @@ export const useStore = defineStore('main', {
           data: { boards },
         } = await api.get('/boards');
         this.boards = boards;
-        this.selectedBoard = boards[0];
+        this.selectBoard(boards[0]);
       } catch (error) {
-        this.error(String(error));
+        handleError(error);
       }
+    },
+
+    selectBoard(board: Board) {
+      this.newTask = {
+        title: '',
+        description: '',
+        status: '',
+        subtasks: [],
+      };
+      this.selectedBoard = board;
     },
 
     notify(type: string, message: string) {

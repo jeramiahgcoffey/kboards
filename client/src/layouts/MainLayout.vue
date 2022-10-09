@@ -17,6 +17,7 @@
             color="accent"
             icon="mdi-plus"
             label="Add New Task"
+            @click="openCreateTask"
           />
 
           <q-btn rounded flat icon="mdi-dots-vertical" padding="sm" />
@@ -40,7 +41,7 @@
             v-for="board in store.boards"
             :key="board._id"
             :active="store.selectedBoard?._id === board._id"
-            @click="store.selectedBoard = board"
+            @click="store.selectBoard(board)"
             clickable
             v-ripple
           >
@@ -78,6 +79,7 @@
     <app-dialog v-if="store.dialogContent">
       <create-board v-if="store.dialogContent === 'createBoard'" />
       <create-column v-if="store.dialogContent === 'createColumn'" />
+      <create-task v-if="store.dialogContent === 'createTask'" />
     </app-dialog>
 
     <q-page-container>
@@ -93,6 +95,7 @@ import { useQuasar } from 'quasar';
 import AppDialog from 'src/components/AppDialog.vue';
 import CreateBoard from 'src/components/dialogs/CreateBoard.vue';
 import CreateColumn from 'src/components/dialogs/CreateColumn.vue';
+import CreateTask from 'src/components/dialogs/CreateTask.vue';
 
 const $q = useQuasar();
 const store = useStore();
@@ -103,6 +106,11 @@ onMounted(async () => {
 
 const openCreateBoard = () => {
   store.dialogContent = 'createBoard';
+  store.dialogOpen = true;
+};
+
+const openCreateTask = () => {
+  store.dialogContent = 'createTask';
   store.dialogOpen = true;
 };
 

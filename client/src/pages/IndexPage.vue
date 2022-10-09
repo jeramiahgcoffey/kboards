@@ -13,20 +13,30 @@
               class="text-caption text-weight-bold text-grey-7 q-py-sm text-uppercase"
             >
               <q-icon color="primary" name="mdi-circle"></q-icon>
-              {{ column }} ({{ store.tasksByColumn(column)?.length || 0 }})
+              {{ column.name }} ({{
+                store.tasksByColumn(column.name)?.length || 0
+              }})
             </div>
             <div>
               <q-card
-                v-for="task in store.tasksByColumn(column)"
+                v-for="task in store.tasksByColumn(column.name)"
                 :key="task._id"
-                class="task-card q-mb-sm overflow-hidden"
+                class="q-mb-sm task-card overflow-hidden"
               >
-                <q-card-section>
-                  <div class="text-h6 text-weight-regular">
-                    {{ task.title }}
-                  </div>
-                  <div class="text-caption">0 of 0 Subtasks</div>
-                </q-card-section>
+                <q-expansion-item
+                  :label="task.title"
+                  :caption="`0 of ${task.subtasks.length} subtasks`"
+                >
+                  <q-card class="task-card overflow-hidden">
+                    <q-card-section>
+                      <!-- <div class="text-h6 text-weight-regular">
+                        {{ task.title }}
+                      </div> -->
+                      <!-- <div class="text-caption">0 of 0 Subtasks</div> -->
+                      {{ task.description }}
+                    </q-card-section>
+                  </q-card>
+                </q-expansion-item>
               </q-card>
             </div>
           </q-scroll-area>
