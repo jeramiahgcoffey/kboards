@@ -37,7 +37,7 @@ const createBoard = async (req, res) => {
 
 const createColumn = async (req, res) => {
   const { boardId } = req.params;
-  const { name } = req.body;
+  const { name, color } = req.body;
   const { userId } = req.user;
 
   if (!boardId) throw new BadRequestError('Board ID is required');
@@ -45,58 +45,84 @@ const createColumn = async (req, res) => {
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
   if (!board) throw new NotFoundError(`Board ${boardId} not found`);
 
-  if (board.columns.includes(name))
+  if (
+    board.columns.map((c) => c.name.toLowerCase()).includes(name.toLowerCase())
+  )
     throw new BadRequestError(`Column ${name} already exists`);
-  board.columns.push(name);
+  board.columns.push({
+    name: name.toLowerCase(),
+    color: color ? color : 'default',
+  });
   await board.save();
   res.status(StatusCodes.CREATED).json({ board });
 };
 
 const createTask = async (req, res) => {
   const { boardId } = req.params;
-  // const { title, status } = req.body;
-  const { title } = req.body;
+  const { title, status, description, subtasks } = req.body;
   const { userId } = req.user;
 
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
 
   if (!board) throw new BadRequestError(`Board ${boardId} not found`);
-  const status = board.columns[0];
+
   if (!status) throw new BadRequestError('No column found');
 
-  if (status && !board.columns.includes(status))
+  if (
+    status &&
+    !board.columns
+      .map((c) => c.name.toLowerCase())
+      .includes(status.toLowerCase())
+  )
     throw new BadRequestError(`Column ${status} not found`);
 
-  board.tasks.push({ title, status });
+  board.tasks.push({
+    title,
+    status: status.toLowerCase(),
+    description,
+    subtasks: subtasks.map((t) => ({
+      title: t,
+    })),
+  });
 
   await board.save();
 
   res.status(StatusCodes.CREATED).json({ board });
 };
 
-const moveTask = async (req, res) => {
-  const { boardId, taskId } = req.params;
-  const { column } = req.body;
+const updateTask = async (req, res) => {
+  const { taskId } = req.params;
+  const { userId } = req.user;
 
-  if (!boardId || !taskId || !column)
-    throw new BadRequestError('BoardId, taskId, column are required');
+  const board = await Board.findOne({ createdBy: userId, 'tasks._id': taskId });
+  if (!board) throw new BadRequestError(`Task ${taskId} not found`);
 
-  const board = await Board.findOne({ createdBy: userId, _id: boardId });
-  if (!board) throw new BadRequestError(`Board ${boardId} not found`);
+  const task = await board.tasks.id(taskId);
+  task.set(req.body.task);
 
-  if (!board.columns.includes(column))
-    throw new BadRequestError(`Column ${column} not found`);
+  await board.save();
+
+  res.status(StatusCodes.OK).json({ board });
+};
+
+const updateSubtask = async (req, res) => {
+  const { taskId, subtaskId } = req.params;
+  const { userId } = req.user;
+
+  const board = await Board.findOne({
+    createdBy: userId,
+    'subtasks._id': subtaskId,
+  });
+  if (!board) throw new BadRequestError(`Subtask ${subtaskId} not found`);
 
   const task = await board.tasks.id(taskId);
   if (!task) throw new BadRequestError(`Task ${taskId} not found`);
 
-  if (task.status === column)
-    throw new BadRequestError(
-      `Task ${task.id} already has a status of ${task.status}`
-    );
-  task.status = column;
+  const subtask = await task.subtasks.id(subtaskId);
+  subtask.set(req.body.subtask);
 
   await board.save();
+
   res.status(StatusCodes.OK).json({ board });
 };
 
@@ -106,5 +132,6 @@ export {
   createBoard,
   createColumn,
   createTask,
-  moveTask,
+  updateTask,
+  updateSubtask,
 };

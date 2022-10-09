@@ -5,7 +5,8 @@ import {
   createBoard,
   createColumn,
   createTask,
-  moveTask,
+  updateTask,
+  updateSubtask,
 } from '../controllers/boards.js';
 
 const router = express.Router();
@@ -20,6 +21,8 @@ router.post('/:boardId/column', createColumn);
 
 router.post('/:boardId/task', createTask);
 
-router.patch('/:boardId/task/:taskId/move', moveTask);
+router.patch('/task/:taskId', updateTask);
+
+router.patch('/task/:taskId/subtask/:subtaskId', updateSubtask);
 
 export default router;
