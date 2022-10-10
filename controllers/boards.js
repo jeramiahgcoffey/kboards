@@ -98,7 +98,7 @@ const updateTask = async (req, res) => {
   if (!board) throw new BadRequestError(`Task ${taskId} not found`);
 
   const task = await board.tasks.id(taskId);
-  task.set(req.body.task);
+  task.set({ ...req.body.task, status: req.body.task.status.toLowerCase() });
 
   await board.save();
 

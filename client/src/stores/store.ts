@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { api } from 'src/boot/axios';
 import { Notify } from 'quasar';
 
-import { Store, Board, Subtask } from './models';
+import { Store, Board, Task, Subtask } from './models';
 import { handleError } from 'src/common/handleError';
 
 export const useStore = defineStore('main', {
@@ -10,6 +10,13 @@ export const useStore = defineStore('main', {
     boards: [],
     dialogContent: '',
     dialogOpen: false,
+    draftTask: {
+      _id: '',
+      title: '',
+      description: '',
+      status: '',
+      subtasks: [],
+    },
     newTask: { title: '', description: '', status: '', subtasks: [] },
     selectedBoard: undefined,
   }),
@@ -91,6 +98,34 @@ export const useStore = defineStore('main', {
       }
     },
 
+    async updateTask() {
+      const subtasks = this.draftTask.subtasks.filter((task) => task); // Filter out empty tasks
+      const payload = {
+        task: {
+          title: this.draftTask.title,
+          description: this.draftTask.description,
+          status: this.draftTask.status,
+          subtasks,
+        },
+      };
+      try {
+        const {
+          data: { board },
+        } = await api.patch(`/boards/task/${this.draftTask._id}`, payload);
+        this.boards = this.boards.map((b) => {
+          if (b._id === this.selectedBoard?._id) {
+            this.selectBoard(board);
+            return board;
+          } else {
+            return b;
+          }
+        });
+        this.success('Task saved successfully');
+      } catch (error) {
+        handleError(error);
+      }
+    },
+
     async fetchBoards() {
       try {
         const {
@@ -134,7 +169,24 @@ export const useStore = defineStore('main', {
         status: '',
         subtasks: [],
       };
+      this.draftTask = {
+        _id: '',
+        title: '',
+        description: '',
+        status: '',
+        subtasks: [],
+      };
       this.selectedBoard = board;
+    },
+
+    loadDraftTask(task: Task) {
+      this.draftTask = {
+        _id: task._id,
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        subtasks: task.subtasks,
+      };
     },
 
     notify(type: string, message: string) {

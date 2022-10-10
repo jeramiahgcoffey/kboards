@@ -6,7 +6,7 @@ export interface Subtask {
   readonly updatedAt: string;
 }
 
-interface Task {
+export interface Task {
   readonly _id: string;
   title: string;
   description?: string;
@@ -36,9 +36,16 @@ export interface Store {
   boards: Board[];
   dialogContent: string;
   dialogOpen: boolean;
+  draftTask: {
+    _id: string;
+    title: string;
+    description?: string;
+    status: string;
+    subtasks: string[];
+  };
   newTask: {
     title: string;
-    description: string;
+    description?: string;
     status: string;
     subtasks: string[];
   };

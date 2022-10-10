@@ -7,7 +7,7 @@
       style="letter-spacing: 1.8px"
       class="text-caption text-weight-bold text-grey-7 q-pl-lg q-py-sm"
     >
-      ALL BOARDS (?)
+      ALL BOARDS ({{ store.boards.length }})
     </div>
     <q-scroll-area style="width: 100%; height: calc(100vh - 250px)">
       <q-list separator>

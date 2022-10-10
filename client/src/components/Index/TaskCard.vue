@@ -25,7 +25,9 @@
         </q-card-section>
         <q-card-actions>
           <div class="fit row justify-end items-center">
-            <q-btn flat text-color="primary">Edit</q-btn>
+            <q-btn @click="openEditTask(task)" flat text-color="primary"
+              >Edit</q-btn
+            >
           </div>
         </q-card-actions>
       </q-card>
@@ -34,8 +36,11 @@
 </template>
 
 <script setup>
+import { useStore } from 'src/stores/store';
 import { computed } from 'vue';
 import SubtaskListItem from './SubtaskListItem.vue';
+
+const store = useStore();
 
 const props = defineProps(['task']);
 
@@ -48,4 +53,10 @@ const caption = computed(() =>
     ? `0 of ${props.task.subtasks.length} subtasks`
     : ''
 );
+
+const openEditTask = () => {
+  store.dialogContent = 'editTask';
+  if (store.draftTask._id === '') store.loadDraftTask(props.task);
+  store.dialogOpen = true;
+};
 </script>
