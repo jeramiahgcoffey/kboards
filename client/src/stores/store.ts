@@ -29,7 +29,7 @@ export const useStore = defineStore('main', {
         c.name
           .toLowerCase()
           .split(' ')
-          .map((word) => word.replace(word[0], word[0].toUpperCase()))
+          .map((word) => word.replace(word[0], word[0]?.toUpperCase()))
           .join(' ')
       ),
     tasksByColumn: (state) => (columnName: string) =>

@@ -7,7 +7,7 @@
       class="q-my-lg q-mr-md"
     />
     <q-card bordered class="form-card">
-      <q-form class="q-pa-md">
+      <q-form class="q-pa-md" @submit="handleLogin">
         <q-input
           square
           v-model="credentials.email"
@@ -22,7 +22,10 @@
           label="Password"
           class="q-mb-md"
         />
-        <div class="row justify-between">
+        <div class="row reverse justify-between">
+          <div>
+            <q-btn type="submit" flat text-color="primary">Login</q-btn>
+          </div>
           <div class="row justify-center items-center q-mr-md">
             <q-icon color="yellow" size="20px" name="mdi-weather-sunny" />
             <q-toggle
@@ -30,11 +33,8 @@
               :model-value="$q.dark.isActive"
               @update:model-value="$q.dark.toggle"
             />
-            <div>
-              <q-icon color="purple" size="18px" name="mdi-weather-night" />
-            </div>
+            <q-icon color="purple" size="18px" name="mdi-weather-night" />
           </div>
-          <q-btn flat text-color="primary" @click="handleLogin">Login</q-btn>
         </div>
       </q-form>
     </q-card>

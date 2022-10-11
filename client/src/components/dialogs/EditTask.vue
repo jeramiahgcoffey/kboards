@@ -4,8 +4,8 @@
       <div class="text-h6">Edit Task</div>
     </q-card-section>
 
-    <q-card-section class="q-pt-none">
-      <q-form>
+    <q-form @submit="saveTask">
+      <q-card-section class="q-pt-none">
         <q-input
           label="Title"
           v-model="store.draftTask.title"
@@ -39,13 +39,13 @@
           label="Status"
           options-selected-class=""
         />
-      </q-form>
-    </q-card-section>
+      </q-card-section>
 
-    <q-card-actions align="right" class="text-primary">
-      <q-btn flat label="Cancel" @click="clearDraftTask" v-close-popup />
-      <q-btn flat label="Save Task" v-close-popup @click="saveTask" />
-    </q-card-actions>
+      <q-card-actions align="right" class="text-primary">
+        <q-btn flat label="Cancel" @click="clearDraftTask" v-close-popup />
+        <q-btn type="submit" flat label="Save Task" v-close-popup />
+      </q-card-actions>
+    </q-form>
   </q-card>
 </template>
 

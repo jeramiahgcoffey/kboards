@@ -3,7 +3,9 @@
     <q-toolbar>
       <q-toolbar-title class="text-weight-medium">
         <div style="height: 70px; display: flex; align-items: center">
-          {{ store.selectedBoard?.name || '' }}
+          <span class="text-h5 q-pt-md">
+            {{ store.selectedBoard?.name || '' }}
+          </span>
         </div>
       </q-toolbar-title>
 

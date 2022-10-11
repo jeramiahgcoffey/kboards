@@ -54,7 +54,11 @@ const BoardSchema = new mongoose.Schema(
     columns: {
       type: [
         {
-          name: String,
+          name: {
+            type: String,
+            required: true,
+            minlength: [3, 'Column name must be more than 2 characters'],
+          },
           color: String,
         },
       ],
