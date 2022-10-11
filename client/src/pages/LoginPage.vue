@@ -1,17 +1,39 @@
 <template>
-  <q-page class="column items-center auth-page">
-    <h1>login</h1>
-    <q-img src="~assets/logo.png" height="70px" width="250px" />
+  <q-page class="column items-center auth-page" padding>
+    <q-img
+      src="~assets/logo2.png"
+      height="100px"
+      width="350px"
+      class="q-my-lg q-mr-md"
+    />
     <q-card bordered class="form-card">
-      <q-form>
-        <q-input filled v-model="credentials.email" type="text" label="Email" />
+      <q-form class="q-pa-md">
         <q-input
-          filled
+          square
+          v-model="credentials.email"
+          type="text"
+          label="Email"
+          class="q-mb-md"
+        />
+        <q-input
+          square
           v-model="credentials.password"
           type="password"
           label="Password"
+          class="q-mb-md"
         />
-        <div class="row justify-end">
+        <div class="row justify-between">
+          <div class="row justify-center items-center q-mr-md">
+            <q-icon color="yellow" size="20px" name="mdi-weather-sunny" />
+            <q-toggle
+              size="35px"
+              :model-value="$q.dark.isActive"
+              @update:model-value="$q.dark.toggle"
+            />
+            <div>
+              <q-icon color="purple" size="18px" name="mdi-weather-night" />
+            </div>
+          </div>
           <q-btn flat text-color="primary" @click="handleLogin">Login</q-btn>
         </div>
       </q-form>

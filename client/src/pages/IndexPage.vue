@@ -37,7 +37,7 @@ watch(isLoggedIn, () => {
 });
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 .task-card
   width: 300px
 

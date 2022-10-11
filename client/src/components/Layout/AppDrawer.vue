@@ -1,17 +1,16 @@
 <template>
   <q-drawer v-model="isDrawerOpen" behavior="desktop" show-if-above bordered>
     <q-layout view="hHh lpr lFr">
-      <q-header>
+      <q-header class="app-bar">
         <q-toolbar>
-          <q-img src="~assets/logo.png" height="70px" width="250px" />
+          <q-img src="~assets/logo2.png" height="70px" width="250px" />
         </q-toolbar>
       </q-header>
-      <q-page-container>
+      <q-page-container style="height: 100%">
         <q-page>
-          <!-- <div style="height: calc(100vh - 250px); margin-top: 80px"> -->
           <div
             style="letter-spacing: 1.8px"
-            class="text-caption text-weight-bold text-grey-7 q-pl-lg q-py-sm"
+            class="text-caption text-weight-bold text-grey-7 q-pl-lg q-pt-lg q-pb-sm"
           >
             ALL BOARDS ({{ store.boards?.length }})
           </div>
@@ -75,3 +74,11 @@ const openCreateBoard = () => {
 
 let isDrawerOpen = true;
 </script>
+
+<style lang="sass">
+.body--dark .app-bar
+  background: $dark
+
+.body--light .app-bar
+  background: white
+</style>

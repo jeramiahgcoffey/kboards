@@ -1,5 +1,5 @@
 <template>
-  <q-header elevated>
+  <q-header elevated class="app-bar">
     <q-toolbar>
       <q-toolbar-title class="text-weight-medium">
         <div style="height: 70px; display: flex; align-items: center">
@@ -42,3 +42,12 @@ const openCreateTask = () => {
   store.dialogOpen = true;
 };
 </script>
+
+<style lang="sass">
+.body--dark .app-bar
+  background: $dark
+
+.body--light .app-bar
+  background: white
+  color: $dark
+</style>
