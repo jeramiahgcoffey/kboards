@@ -18,16 +18,24 @@
           @click="openCreateTask"
         />
 
-        <q-btn rounded flat icon="mdi-dots-vertical" padding="sm" />
+        <q-btn
+          @click="auth.logout"
+          rounded
+          flat
+          icon="mdi-dots-vertical"
+          padding="sm"
+        />
       </div>
     </q-toolbar>
   </q-header>
 </template>
 
 <script setup>
+import { useAuthStore } from 'src/stores/auth/authStore';
 import { useStore } from 'src/stores/store';
 
 const store = useStore();
+const auth = useAuthStore();
 
 const openCreateTask = () => {
   store.dialogContent = 'createTask';
