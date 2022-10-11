@@ -109,16 +109,15 @@ const updateSubtask = async (req, res) => {
   const { taskId, subtaskId } = req.params;
   const { userId } = req.user;
 
-  const board = await Board.findOne({
-    createdBy: userId,
-    'subtasks._id': subtaskId,
-  });
-  if (!board) throw new BadRequestError(`Subtask ${subtaskId} not found`);
+  const board = await Board.findOne({ createdBy: userId, 'tasks._id': taskId });
+  if (!board) throw new BadRequestError(`Task ${taskId} not found`);
 
   const task = await board.tasks.id(taskId);
   if (!task) throw new BadRequestError(`Task ${taskId} not found`);
 
   const subtask = await task.subtasks.id(subtaskId);
+  if (!subtask) throw new BadRequestError(`Subtask ${subtaskId} not found`);
+
   subtask.set(req.body.subtask);
 
   await board.save();
