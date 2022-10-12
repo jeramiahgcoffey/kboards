@@ -14,7 +14,7 @@
           type="text"
           label="Email"
           :rules="emailRules"
-          class="q-mb-md"
+          class="q-mb-sm"
         />
         <q-input
           square
@@ -22,11 +22,12 @@
           type="password"
           label="Password"
           :rules="passwordRules"
-          class="q-mb-md"
+          class="q-mb-sm"
         />
         <div class="row reverse justify-between">
-          <div>
+          <div class="row reverse justify-start">
             <q-btn type="submit" flat text-color="primary">Login</q-btn>
+            <q-btn no-caps flat to="/register">Need an account?</q-btn>
           </div>
           <div class="row justify-center items-center q-mr-md">
             <q-icon color="yellow" size="20px" name="mdi-weather-sunny" />
