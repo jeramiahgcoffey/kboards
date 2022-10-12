@@ -50,7 +50,7 @@ const hasInfo = computed(
 
 const caption = computed(() =>
   props.task.subtasks.length
-    ? `0 of ${props.task.subtasks.length} subtasks`
+    ? `${props.task.subtasks.filter(t => (!!t.completed)).length} of ${props.task.subtasks.length} subtasks`
     : ''
 );
 
