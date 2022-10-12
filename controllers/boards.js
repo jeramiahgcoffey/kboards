@@ -5,7 +5,9 @@ import Board from '../models/Board.js';
 import {
   createBoard,
   createColumn,
+  createTask,
   fetchUserBoards,
+  updateTask,
 } from '../services/boards.js';
 
 const getAllBoards = async (req, res) => {
@@ -47,51 +49,36 @@ const postColumn = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ board });
 };
 
-const createTask = async (req, res) => {
+const postTask = async (req, res) => {
   const { boardId } = req.params;
   const { title, status, description, subtasks } = req.body;
   const { userId } = req.user;
 
-  const board = await Board.findOne({ createdBy: userId, _id: boardId });
-
-  if (!board) throw new BadRequestError(`Board ${boardId} not found`);
-
   if (!status) throw new BadRequestError('No column found');
 
-  if (
-    status &&
-    !board.columns
-      .map((c) => c.name.toLowerCase())
-      .includes(status.toLowerCase())
-  )
-    throw new BadRequestError(`Column ${status} not found`);
-
-  board.tasks.push({
+  const board = await createTask(
+    userId,
+    boardId,
     title,
-    status: status.toLowerCase(),
+    status,
     description,
-    subtasks: subtasks.map((t) => ({
-      title: t,
-    })),
-  });
-
-  await board.save();
-
+    subtasks
+  );
   res.status(StatusCodes.CREATED).json({ board });
 };
 
-const updateTask = async (req, res) => {
-  const { taskId } = req.params;
+const patchTask = async (req, res) => {
   const { userId } = req.user;
+  const {
+    taskId,
+    task: { title, status },
+  } = req.body;
 
-  const board = await Board.findOne({ createdBy: userId, 'tasks._id': taskId });
-  if (!board) throw new BadRequestError(`Task ${taskId} not found`);
+  if (!taskId) throw new BadRequestError('TaskId is required');
+  if (!title || !status)
+    throw new BadRequestError('Title and status are required');
 
-  const task = await board.tasks.id(taskId);
-  task.set({ ...req.body.task, status: req.body.task.status.toLowerCase() });
-
-  await board.save();
-
+  const board = await updateTask(userId, taskId, req.body.task);
   res.status(StatusCodes.OK).json({ board });
 };
 
@@ -120,7 +107,7 @@ export {
   getBoard,
   postBoard,
   postColumn,
-  createTask,
-  updateTask,
+  postTask,
+  patchTask,
   updateSubtask,
 };

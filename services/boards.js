@@ -36,3 +36,48 @@ export const createColumn = async (userId, boardId, name, color) => {
   await board.save();
   return board;
 };
+
+export const createTask = async (
+  userId,
+  boardId,
+  title,
+  status,
+  description,
+  subtasks
+) => {
+  const board = await Board.findOne({ createdBy: userId, _id: boardId });
+  if (!board) throw new BadRequestError(`Board ${boardId} not found`);
+
+  if (
+    !board.columns
+      .map((c) => c.name.toLowerCase())
+      .includes(status.toLowerCase())
+  )
+    throw new BadRequestError(`Column ${status} not found`);
+
+  board.tasks.push({
+    title,
+    status: status.toLowerCase(),
+    description,
+    subtasks: subtasks.map((t) => ({
+      title: t,
+    })),
+  });
+
+  await board.save();
+  return board;
+};
+
+export const updateTask = async (userId, taskId, data) => {
+  const board = await Board.findOne({
+    createdBy: userId,
+    'tasks._id': taskId,
+  });
+  if (!board) throw new BadRequestError(`Task ${taskId} not found`);
+
+  const task = await board.tasks.id(taskId);
+  task.set({ ...data, status: data.status.toLowerCase() });
+
+  await board.save();
+  return board;
+};

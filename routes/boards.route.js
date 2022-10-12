@@ -4,25 +4,21 @@ import {
   getBoard,
   postBoard,
   postColumn,
-  createTask,
-  updateTask,
+  postTask,
+  patchTask,
   updateSubtask,
 } from '../controllers/boards.js';
 
 const router = express.Router();
 
 router.get('/', getAllBoards);
-
-router.post('/', postBoard);
-
 router.get('/:boardId', getBoard);
 
+router.post('/', postBoard);
 router.post('/:boardId/column', postColumn);
+router.post('/:boardId/task', postTask);
 
-router.post('/:boardId/task', createTask);
-
-router.patch('/task/:taskId', updateTask);
-
+router.patch('/task', patchTask);
 router.patch('/task/:taskId/subtask/:subtaskId', updateSubtask);
 
 export default router;

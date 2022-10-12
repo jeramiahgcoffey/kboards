@@ -104,6 +104,7 @@ export const useStore = defineStore('main', {
     async updateTask() {
       const subtasks = this.draftTask.subtasks.filter((task) => task); // Filter out empty tasks
       const payload = {
+        taskId: this.draftTask._id,
         task: {
           title: this.draftTask.title,
           description: this.draftTask.description,
@@ -114,7 +115,7 @@ export const useStore = defineStore('main', {
       try {
         const {
           data: { board },
-        } = await api.patch(`/boards/task/${this.draftTask._id}`, payload);
+        } = await api.patch('/boards/task/', payload);
         this.boards = this.boards.map((b) => {
           if (b._id === this.selectedBoard?._id) {
             this.selectBoard(board);
