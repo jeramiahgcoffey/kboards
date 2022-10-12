@@ -1,7 +1,10 @@
 import BadRequestError from '../errors/bad-request.js';
 import { StatusCodes } from 'http-status-codes';
 import { loginUser, registerUser } from '../services/auth.js';
-import { createToken, resetPassword } from '../services/passwordReset.js';
+import {
+  createToken,
+  resetPassword as reset,
+} from '../services/passwordReset.js';
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -31,4 +34,14 @@ export const requestToken = async (req, res) => {
   const response = await createToken(email);
 
   res.status(StatusCodes.CREATED).json(response);
+};
+
+export const resetPassword = async (req, res) => {
+  const { userId, token, password } = req.body;
+
+  if (!userId || !token || !password)
+    throw new BadRequestError('Please provide a user, password and token');
+
+  const response = await reset(userId, token, password);
+  res.status(StatusCodes.OK).json(response);
 };

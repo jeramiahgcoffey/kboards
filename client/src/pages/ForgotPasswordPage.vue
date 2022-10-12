@@ -7,38 +7,19 @@
       class="q-my-xl q-mr-md"
     />
     <q-card bordered class="form-card">
-      <q-form class="q-pa-md" @submit.prevent.stop="handleLogin">
+      <q-form class="q-pa-md" @submit.prevent.stop="handleRequestReset">
         <q-input
           square
-          v-model="credentials.email"
+          v-model="email"
           type="text"
           label="Email"
           :rules="emailRules"
           class="q-mb-sm"
         />
-        <q-input
-          square
-          v-model="credentials.password"
-          type="password"
-          label="Password"
-          :rules="passwordRules"
-        />
-        <div class="row justify-end">
-          <q-btn
-            no-caps
-            flat
-            to="/forgot"
-            class="q-mb-lg"
-            size="12px"
-            padding="sm"
-            >Forgot Password?</q-btn
-          >
-        </div>
-
         <div class="row reverse justify-between">
           <div class="row reverse justify-start">
-            <q-btn type="submit" flat text-color="primary">Login</q-btn>
-            <q-btn no-caps flat to="/register">Need an account?</q-btn>
+            <q-btn type="submit" flat text-color="primary">Request Link</q-btn>
+            <q-btn no-caps flat to="/login">Remember it?</q-btn>
           </div>
           <div class="row justify-center items-center q-mr-md">
             <q-icon color="yellow" size="20px" name="mdi-weather-sunny" />
@@ -56,28 +37,22 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth/authStore';
+
+const auth = useAuthStore();
+const router = useRouter();
+const email = ref('');
 
 const emailRules = [
   (val) => (val !== null && val !== '') || 'Email is required',
   'email',
 ];
 
-const passwordRules = [
-  (val) => (val !== null && val !== '') || 'Password is required',
-  (val) => val.length >= 8 || 'Password must be at least 8 characters',
-];
-
-const auth = useAuthStore();
-
-const credentials = reactive({
-  email: '',
-  password: '',
-});
-
-const handleLogin = async () => {
-  await auth.login(credentials);
+const handleRequestReset = async () => {
+  await auth.requestReset(email.value);
+  router.push({ path: '/login' });
 };
 </script>
 

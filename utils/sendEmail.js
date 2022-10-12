@@ -12,7 +12,7 @@ dotenv.config();
 
 export default async (email, subject, text) => {
   // const accessToken = await oAuth2Client.getAccessToken();
-  // console.log(accessToken);
+
   const transporter = nodemailer.createTransport({
     service: process.env.SERVICE,
     // auth: {

@@ -7,38 +7,29 @@
       class="q-my-xl q-mr-md"
     />
     <q-card bordered class="form-card">
-      <q-form class="q-pa-md" @submit.prevent.stop="handleLogin">
+      <q-form class="q-pa-md" @submit.prevent.stop="handleResetPassword">
         <q-input
           square
-          v-model="credentials.email"
-          type="text"
-          label="Email"
-          :rules="emailRules"
+          v-model="password"
+          type="password"
+          label="Password"
+          :rules="passwordRules"
           class="q-mb-sm"
         />
         <q-input
           square
-          v-model="credentials.password"
+          v-model="confirmPassword"
           type="password"
-          label="Password"
-          :rules="passwordRules"
+          label="Confirm Password"
+          :rules="confirmRules"
+          class="q-mb-lg"
         />
-        <div class="row justify-end">
-          <q-btn
-            no-caps
-            flat
-            to="/forgot"
-            class="q-mb-lg"
-            size="12px"
-            padding="sm"
-            >Forgot Password?</q-btn
-          >
-        </div>
-
         <div class="row reverse justify-between">
           <div class="row reverse justify-start">
-            <q-btn type="submit" flat text-color="primary">Login</q-btn>
-            <q-btn no-caps flat to="/register">Need an account?</q-btn>
+            <q-btn type="submit" flat text-color="primary"
+              >Reset Password</q-btn
+            >
+            <q-btn no-caps flat to="/login">Remember it?</q-btn>
           </div>
           <div class="row justify-center items-center q-mr-md">
             <q-icon color="yellow" size="20px" name="mdi-weather-sunny" />
@@ -56,28 +47,35 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth/authStore';
 
-const emailRules = [
-  (val) => (val !== null && val !== '') || 'Email is required',
-  'email',
-];
+const auth = useAuthStore();
+const route = useRoute();
+const router = useRouter();
+const password = ref('');
+const confirmPassword = ref('');
 
 const passwordRules = [
   (val) => (val !== null && val !== '') || 'Password is required',
   (val) => val.length >= 8 || 'Password must be at least 8 characters',
 ];
 
-const auth = useAuthStore();
+const confirmRules = [
+  (val) => (val !== null && val !== '') || 'Please confirm password',
+  (val) => val === password.value || 'Confirmation must match password',
+];
 
-const credentials = reactive({
-  email: '',
-  password: '',
-});
+const handleResetPassword = async () => {
+  const { userId, token } = route.params;
 
-const handleLogin = async () => {
-  await auth.login(credentials);
+  try {
+    await auth.resetPassword({ userId, token, password: password.value });
+    router.push({ path: '/login' });
+  } catch (error) {
+    console.error(error);
+  }
 };
 </script>
 

@@ -76,7 +76,6 @@ const auth = useAuthStore();
 const credentials = reactive({
   email: '',
   password: '',
-  confirmPassword: '',
 });
 
 const handleRegister = async () => {

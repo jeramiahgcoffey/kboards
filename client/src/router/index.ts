@@ -36,15 +36,12 @@ export default route(function (/* { store, ssrContext } */) {
   });
 
   Router.beforeEach((to) => {
-    console.log(to);
-
-    const publicPages = [
-      '/login',
-      '/register',
-      '/password-reset',
-      '/password-reset**',
-    ];
-    const authRequired = !publicPages.includes(to.path);
+    const publicPages = ['/login', '/register', '/forgot', '/password-reset'];
+    // const authRequired = !publicPages.includes(to.path);
+    let authRequired = true;
+    publicPages.forEach((p) => {
+      if (to.path.startsWith(p)) authRequired = false;
+    });
     const auth = useAuthStore();
     if (authRequired && !auth.user.token) {
       return '/login';

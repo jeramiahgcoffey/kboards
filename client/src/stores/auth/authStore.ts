@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/axios';
+import { useStore } from '../store';
 
 import { AuthStore } from './models';
 import { handleError } from 'src/common/handleError';
@@ -33,6 +34,31 @@ export const useAuthStore = defineStore('auth', {
         this.user.token = data.token;
 
         localStorage.setItem('user', JSON.stringify(this.user));
+      } catch (error) {
+        handleError(error);
+      }
+    },
+
+    async requestReset(email: string) {
+      try {
+        const { data } = await api.post('/auth/forgot', { email });
+        const store = useStore();
+        store.success(data.message);
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
+
+    async resetPassword(payload: {
+      userId: string;
+      token: string;
+      password: string;
+    }) {
+      try {
+        const { data } = await api.post('/auth/reset', payload);
+        const store = useStore();
+        store.success(data.message);
       } catch (error) {
         handleError(error);
       }
