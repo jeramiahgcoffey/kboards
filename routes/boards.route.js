@@ -2,8 +2,8 @@ import express from 'express';
 import {
   getAllBoards,
   getBoard,
-  createBoard,
-  createColumn,
+  postBoard,
+  postColumn,
   createTask,
   updateTask,
   updateSubtask,
@@ -13,11 +13,11 @@ const router = express.Router();
 
 router.get('/', getAllBoards);
 
-router.post('/', createBoard);
+router.post('/', postBoard);
 
 router.get('/:boardId', getBoard);
 
-router.post('/:boardId/column', createColumn);
+router.post('/:boardId/column', postColumn);
 
 router.post('/:boardId/task', createTask);
 

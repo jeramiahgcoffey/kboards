@@ -2,12 +2,16 @@ import { StatusCodes } from 'http-status-codes';
 import BadRequestError from '../errors/bad-request.js';
 import NotFoundError from '../errors/not-found.js';
 import Board from '../models/Board.js';
+import {
+  createBoard,
+  createColumn,
+  fetchUserBoards,
+} from '../services/boards.js';
 
 const getAllBoards = async (req, res) => {
   const { userId } = req.user;
 
-  const boards = await Board.find({ createdBy: userId });
-
+  const boards = await fetchUserBoards(userId);
   res.status(StatusCodes.OK).json({ boards });
 };
 
@@ -17,43 +21,29 @@ const getBoard = async (req, res) => {
 
   if (!boardId) throw new BadRequestError('Board ID is required');
 
-  const board = await Board.findOne({ createdBy: userId, _id: boardId });
-
-  if (!board) throw new BadRequestError(`Board ${boardId} not found`);
-
+  const board = await fetchBoardById(userId, boardId);
   res.status(StatusCodes.OK).json({ board });
 };
 
-const createBoard = async (req, res) => {
-  const { user, body } = req;
+const postBoard = async (req, res) => {
+  const {
+    user: { userId },
+    body: { name, description },
+  } = req;
 
-  const board = await Board.create({
-    createdBy: user.userId,
-    name: body.name,
-    description: body.description ?? null,
-  });
+  const board = await createBoard(userId, name, description);
   res.status(StatusCodes.CREATED).json({ board });
 };
 
-const createColumn = async (req, res) => {
+const postColumn = async (req, res) => {
   const { boardId } = req.params;
   const { name, color } = req.body;
   const { userId } = req.user;
 
   if (!boardId) throw new BadRequestError('Board ID is required');
+  if (!name) throw new BadRequestError('Name is required');
 
-  const board = await Board.findOne({ createdBy: userId, _id: boardId });
-  if (!board) throw new NotFoundError(`Board ${boardId} not found`);
-
-  if (
-    board.columns.map((c) => c.name.toLowerCase()).includes(name.toLowerCase())
-  )
-    throw new BadRequestError(`Column ${name} already exists`);
-  board.columns.push({
-    name: name.toLowerCase(),
-    color: color ? color : 'default',
-  });
-  await board.save();
+  const board = await createColumn(userId, boardId, name, color);
   res.status(StatusCodes.CREATED).json({ board });
 };
 
@@ -128,8 +118,8 @@ const updateSubtask = async (req, res) => {
 export {
   getAllBoards,
   getBoard,
-  createBoard,
-  createColumn,
+  postBoard,
+  postColumn,
   createTask,
   updateTask,
   updateSubtask,
