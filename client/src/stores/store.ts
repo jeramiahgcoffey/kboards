@@ -45,6 +45,7 @@ export const useStore = defineStore('main', {
         this.boards.push(board);
         this.selectBoard(board);
         this.success('Board created successfully!');
+        this.dialogOpen = false;
       } catch (error) {
         handleError(error);
       }
@@ -67,6 +68,7 @@ export const useStore = defineStore('main', {
           }
         });
         this.success('Column created successfully');
+        this.dialogOpen = false;
       } catch (error) {
         handleError(error);
       }
@@ -93,6 +95,7 @@ export const useStore = defineStore('main', {
           }
         });
         this.success('Task created successfully');
+        this.dialogOpen = false;
       } catch (error) {
         handleError(error);
       }
@@ -121,6 +124,7 @@ export const useStore = defineStore('main', {
           }
         });
         this.success('Task saved successfully');
+        this.dialogOpen = false;
       } catch (error) {
         handleError(error);
       }

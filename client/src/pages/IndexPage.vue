@@ -8,7 +8,7 @@
             :key="i"
             :column="column"
           />
-          <new-column />
+          <new-column v-if="store.selectedBoard" />
         </div>
       </q-scroll-area>
     </div>

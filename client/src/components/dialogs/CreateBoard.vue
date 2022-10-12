@@ -4,9 +4,17 @@
       <div class="text-h6">Create Board</div>
     </q-card-section>
 
-    <q-form @submit="createBoard">
+    <q-form @keydown.enter.stop.prevent="createBoard">
       <q-card-section class="q-pt-none">
-        <q-input label="Name" v-model="boardName" autofocus class="q-pb-sm" />
+        <q-input
+          :rules="[
+            (val) => (val !== null && val !== '') || 'Board name is required',
+          ]"
+          label="Name"
+          v-model="boardName"
+          autofocus
+          class="q-pb-sm"
+        />
         <q-input label="Description" v-model="boardDescription" />
       </q-card-section>
 
@@ -32,7 +40,5 @@ const createBoard = async () => {
   if (boardDescription.value !== '')
     payload.description = boardDescription.value;
   await store.createBoard(payload);
-  boardName.value = '';
-  store.dialogOpen = false;
 };
 </script>

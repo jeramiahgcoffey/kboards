@@ -4,7 +4,7 @@
       <div class="text-h6">Edit Task</div>
     </q-card-section>
 
-    <q-form @submit="saveTask">
+    <q-form @submit.prevent.stop="saveTask">
       <q-card-section class="q-pt-none">
         <q-input
           label="Title"
@@ -37,7 +37,6 @@
           v-model="store.draftTask.status"
           :options="store.columnNamesCapitalized"
           label="Status"
-          options-selected-class=""
         />
       </q-card-section>
 

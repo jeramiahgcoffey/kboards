@@ -18,6 +18,7 @@
           icon="mdi-plus"
           label="Add New Task"
           @click="openCreateTask"
+          :disable="!store.columnNames"
         />
 
         <q-btn

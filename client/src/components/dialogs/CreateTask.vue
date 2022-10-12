@@ -4,10 +4,13 @@
       <div class="text-h6">New Task</div>
     </q-card-section>
 
-    <q-form @submit="createTask">
+    <q-form @submit.prevent.stop="createTask">
       <q-card-section class="q-pt-none">
         <q-input
           label="Title"
+          :rules="[
+            (val) => (val !== null && val !== '') || 'Task title is required',
+          ]"
           v-model="store.newTask.title"
           autofocus
           class="q-pb-md"

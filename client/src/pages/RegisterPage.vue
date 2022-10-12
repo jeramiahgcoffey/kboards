@@ -13,7 +13,6 @@
           v-model="credentials.email"
           type="text"
           label="Email"
-          :rules="emailRules"
           class="q-mb-md"
         />
         <q-input
@@ -21,12 +20,11 @@
           v-model="credentials.password"
           type="password"
           label="Password"
-          :rules="passwordRules"
           class="q-mb-md"
         />
         <div class="row reverse justify-between">
           <div>
-            <q-btn type="submit" flat text-color="primary">Login</q-btn>
+            <q-btn type="submit" flat text-color="primary">Register</q-btn>
           </div>
           <div class="row justify-center items-center q-mr-md">
             <q-icon color="yellow" size="20px" name="mdi-weather-sunny" />
@@ -47,16 +45,6 @@
 import { reactive } from 'vue';
 import { useAuthStore } from '../stores/auth/authStore';
 
-const emailRules = [
-  (val) => (val !== null && val !== '') || 'Email is required',
-  'email',
-];
-
-const passwordRules = [
-  (val) => (val !== null && val !== '') || 'Password is required',
-  (val) => !val.length < 8 || 'Invalid password',
-];
-
 const auth = useAuthStore();
 
 const credentials = reactive({
@@ -65,7 +53,7 @@ const credentials = reactive({
 });
 
 const handleLogin = async () => {
-  await auth.login(credentials);
+  await auth.register(credentials);
 };
 </script>
 

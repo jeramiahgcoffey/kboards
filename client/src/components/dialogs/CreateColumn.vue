@@ -4,9 +4,16 @@
       <div class="text-h6">Create Column</div>
     </q-card-section>
 
-    <q-form @submit="createColumn">
+    <q-form @submit.prevent.stop="createColumn">
       <q-card-section class="q-pt-none">
-        <q-input label="Name" v-model="columnName" autofocus />
+        <q-input
+          :rules="[
+            (val) => (val !== null && val !== '') || 'Column name is required',
+          ]"
+          label="Name"
+          v-model="columnName"
+          autofocus
+        />
       </q-card-section>
 
       <q-card-actions align="right" class="text-primary">
@@ -29,6 +36,5 @@ const createColumn = async () => {
   const payload = { name: columnName.value };
 
   await store.createColumn(payload);
-  columnName.value = '';
 };
 </script>
