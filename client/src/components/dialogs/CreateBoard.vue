@@ -4,7 +4,7 @@
       <div class="text-h6">Create Board</div>
     </q-card-section>
 
-    <q-form @keydown.enter.stop.prevent="createBoard">
+    <q-form @submit.stop.prevent="createBoard">
       <q-card-section class="q-pt-none">
         <q-input
           :rules="[
