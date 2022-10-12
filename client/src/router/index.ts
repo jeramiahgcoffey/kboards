@@ -36,10 +36,16 @@ export default route(function (/* { store, ssrContext } */) {
   });
 
   Router.beforeEach((to) => {
-    const publicPages = ['/login', '/register'];
+    console.log(to);
+
+    const publicPages = [
+      '/login',
+      '/register',
+      '/password-reset',
+      '/password-reset**',
+    ];
     const authRequired = !publicPages.includes(to.path);
     const auth = useAuthStore();
-
     if (authRequired && !auth.user.token) {
       return '/login';
     }

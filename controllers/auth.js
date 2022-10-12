@@ -1,7 +1,7 @@
-import User from '../models/User.js';
 import BadRequestError from '../errors/bad-request.js';
-import NotFoundError from '../errors/not-found.js';
 import { StatusCodes } from 'http-status-codes';
+import { loginUser, registerUser } from '../services/auth.js';
+import { createToken, resetPassword } from '../services/passwordReset.js';
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -9,26 +9,26 @@ export const login = async (req, res) => {
   if (!email || !password) {
     throw new BadRequestError('Please provide email and password');
   }
-
-  const user = await User.findOne({ email: email });
-
-  if (!user) {
-    throw new NotFoundError('Invalid credentials');
-  }
-
-  const isMatch = await user.comparePassword(password);
-  if (!isMatch) {
-    throw new NotFoundError('Invalid credentials');
-  }
-
-  const token = user.createJWT();
-  res.status(StatusCodes.OK).json({ user: { email: user.email }, token });
+  const user = await loginUser(email, password);
+  res.status(StatusCodes.OK).json(user);
 };
 
 export const register = async (req, res) => {
-  const user = await User.create({ ...req.body });
+  const { email, password } = req.body;
 
-  const token = user.createJWT();
+  if (!email || !password)
+    throw new BadRequestError('Please provide email and password');
 
-  res.status(StatusCodes.CREATED).json({ user: { email: user.email }, token });
+  const user = await registerUser(email, password);
+  res.status(StatusCodes.CREATED).json(user);
+};
+
+export const requestToken = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) throw new BadRequestError('Please provide email');
+
+  const response = await createToken(email);
+
+  res.status(StatusCodes.CREATED).json(response);
 };

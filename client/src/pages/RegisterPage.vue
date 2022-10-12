@@ -24,6 +24,14 @@
           :rules="passwordRules"
           class="q-mb-sm"
         />
+        <q-input
+          square
+          v-model="credentials.confirmPassword"
+          type="password"
+          label="Confirm Password"
+          :rules="confirmRules"
+          class="q-mb-lg"
+        />
         <div class="row reverse justify-between">
           <div class="row reverse justify-start">
             <q-btn type="submit" flat text-color="primary">Register</q-btn>
@@ -55,7 +63,12 @@ const emailRules = [
 
 const passwordRules = [
   (val) => (val !== null && val !== '') || 'Password is required',
-  (val) => !val.length < 8 || 'Invalid password',
+  (val) => val.length >= 8 || 'Password must be at least 8 characters',
+];
+
+const confirmRules = [
+  (val) => (val !== null && val !== '') || 'Please confirm password',
+  (val) => val === credentials.password || 'Confirmation must match password',
 ];
 
 const auth = useAuthStore();
@@ -63,10 +76,14 @@ const auth = useAuthStore();
 const credentials = reactive({
   email: '',
   password: '',
+  confirmPassword: '',
 });
 
 const handleRegister = async () => {
-  await auth.register(credentials);
+  await auth.register({
+    email: credentials.email,
+    password: credentials.password,
+  });
 };
 </script>
 

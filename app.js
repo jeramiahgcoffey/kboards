@@ -5,8 +5,8 @@ dotenv.config();
 
 import connectDB from './db/connect.js';
 
-import authRouter from './routes/authRouter.js';
-import boardsRouter from './routes/boardsRouter.js';
+import authRouter from './routes/auth.route.js';
+import boardsRouter from './routes/boards.route.js';
 
 import errorHandlerMiddleware from './middleware/error-handler.js';
 import authMiddleware from './middleware/authentication.js';
