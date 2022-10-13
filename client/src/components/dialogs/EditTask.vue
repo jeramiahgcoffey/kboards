@@ -14,6 +14,7 @@
         />
         <q-input
           label="Description"
+          type="textarea"
           v-model="store.draftTask.description"
           autofocus
           class="q-pb-lg"
