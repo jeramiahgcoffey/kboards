@@ -7,6 +7,9 @@
       class="q-my-xl q-mr-md"
     />
     <q-card bordered class="form-card">
+      <div class="row items-center justify-center">
+        <h5 class="q-mb-sm">Login</h5>
+      </div>
       <q-form class="q-pa-md" @submit.prevent.stop="handleLogin">
         <q-input
           square
