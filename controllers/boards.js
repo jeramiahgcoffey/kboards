@@ -11,7 +11,7 @@ import {
   updateTask,
 } from '../services/boards.js';
 
-const getAllBoards = async (req, res) => {
+const getBoards = async (req, res) => {
   const { userId } = req.user;
 
   const boards = await fetchUserBoards(userId);
@@ -70,8 +70,8 @@ const postTask = async (req, res) => {
 
 const patchTask = async (req, res) => {
   const { userId } = req.user;
+  const { taskId } = req.params;
   const {
-    taskId,
     task: { title, status },
   } = req.body;
 
@@ -91,8 +91,8 @@ const patchSubtask = async (req, res) => {
   res.status(StatusCodes.OK).json({ board });
 };
 
-export {
-  getAllBoards,
+export default {
+  getBoards,
   getBoard,
   postBoard,
   postColumn,

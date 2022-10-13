@@ -1,12 +1,10 @@
-import BadRequestError from '../errors/bad-request.js';
 import { StatusCodes } from 'http-status-codes';
-import { loginUser, registerUser } from '../services/auth.js';
-import {
-  createToken,
-  resetPassword as reset,
-} from '../services/passwordReset.js';
 
-export const login = async (req, res) => {
+import BadRequestError from '../errors/bad-request.js';
+import { loginUser, registerUser } from '../services/auth.js';
+import { createToken, resetPassword } from '../services/passwordReset.js';
+
+const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -16,7 +14,7 @@ export const login = async (req, res) => {
   res.status(StatusCodes.OK).json(user);
 };
 
-export const register = async (req, res) => {
+const register = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password)
@@ -26,7 +24,7 @@ export const register = async (req, res) => {
   res.status(StatusCodes.CREATED).json(user);
 };
 
-export const requestToken = async (req, res) => {
+const forgot = async (req, res) => {
   const { email } = req.body;
 
   if (!email) throw new BadRequestError('Please provide email');
@@ -36,12 +34,19 @@ export const requestToken = async (req, res) => {
   res.status(StatusCodes.CREATED).json(response);
 };
 
-export const resetPassword = async (req, res) => {
+const reset = async (req, res) => {
   const { userId, token, password } = req.body;
 
   if (!userId || !token || !password)
     throw new BadRequestError('Please provide a user, password and token');
 
-  const response = await reset(userId, token, password);
+  const response = await resetPassword(userId, token, password);
   res.status(StatusCodes.OK).json(response);
+};
+
+export default {
+  login,
+  register,
+  forgot,
+  reset,
 };

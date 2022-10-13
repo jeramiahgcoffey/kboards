@@ -18,6 +18,7 @@
         <q-input
           label="Description"
           v-model="store.newTask.description"
+          type="textarea"
           autofocus
           class="q-pb-lg"
         />
