@@ -1,11 +1,11 @@
 import express from 'express';
-import boardsController from '../controllers/boards.js';
+import tasks from '../controllers/tasks.js';
 
 const router = express.Router({ mergeParams: true });
 
-router.post('/', boardsController.postTask);
+router.post('/', tasks.postTask);
 
-router.patch('/:taskId', boardsController.patchTask);
-router.patch('/:taskId/subtask/:subtaskId', boardsController.patchSubtask);
+router.patch('/:taskId', tasks.patchTask);
+router.patch('/:taskId/subtask/:subtaskId', tasks.patchSubtask);
 
 export default router;

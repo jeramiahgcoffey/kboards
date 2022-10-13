@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
+
 import { api } from 'src/boot/axios';
 import { useStore } from '../store';
-
 import { AuthStore } from './models';
 import { handleError } from 'src/common/handleError';
 
@@ -65,6 +65,8 @@ export const useAuthStore = defineStore('auth', {
     },
 
     logout() {
+      const store = useStore();
+      store.$reset();
       localStorage.removeItem('user');
       this.user.email = null;
       this.user.token = null;
