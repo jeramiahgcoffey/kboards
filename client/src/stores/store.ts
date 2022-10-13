@@ -56,7 +56,7 @@ export const useStore = defineStore('main', {
         const {
           data: { board },
         } = await api.post(
-          `/boards/${this.selectedBoard?._id}/column`,
+          `/boards/${this.selectedBoard?._id}/columns`,
           payload
         );
         this.boards = this.boards.map((b) => {
@@ -150,7 +150,7 @@ export const useStore = defineStore('main', {
         const {
           data: { board },
         } = await api.patch(
-          `/boards/task/${taskId}/subtask/${subtask._id}`,
+          `/boards/tasks/${taskId}/subtasks/${subtask._id}`,
           payload
         );
         this.boards = this.boards.map((b) => {

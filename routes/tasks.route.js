@@ -6,6 +6,6 @@ const router = express.Router({ mergeParams: true });
 router.post('/', tasks.postTask);
 
 router.patch('/:taskId', tasks.patchTask);
-router.patch('/:taskId/subtask/:subtaskId', tasks.patchSubtask);
+router.patch('/:taskId/subtasks/:subtaskId', tasks.patchSubtask);
 
 export default router;

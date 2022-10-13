@@ -6,7 +6,7 @@ const auth = (req, res, next) => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     throw new UnauthenticatedError('Invalid authentication');
   }
-
+  console.log('\nat auth\n');
   const token = authHeader.split(' ')[1];
 
   try {

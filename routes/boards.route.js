@@ -11,6 +11,6 @@ router.get('/', boards.getBoards);
 router.get('/:boardId', boards.getBoard);
 
 router.post('/', boards.postBoard);
-router.post('/:boardId/column', boards.postColumn);
+router.post('/:boardId/columns', boards.postColumn);
 
 export default router;
