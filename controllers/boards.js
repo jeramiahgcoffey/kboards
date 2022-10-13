@@ -7,6 +7,7 @@ import {
   createColumn,
   createTask,
   fetchUserBoards,
+  updateSubtask,
   updateTask,
 } from '../services/boards.js';
 
@@ -82,23 +83,11 @@ const patchTask = async (req, res) => {
   res.status(StatusCodes.OK).json({ board });
 };
 
-const updateSubtask = async (req, res) => {
-  const { taskId, subtaskId } = req.params;
+const patchSubtask = async (req, res) => {
+  const { taskId } = req.params;
   const { userId } = req.user;
 
-  const board = await Board.findOne({ createdBy: userId, 'tasks._id': taskId });
-  if (!board) throw new BadRequestError(`Task ${taskId} not found`);
-
-  const task = await board.tasks.id(taskId);
-  if (!task) throw new BadRequestError(`Task ${taskId} not found`);
-
-  const subtask = await task.subtasks.id(subtaskId);
-  if (!subtask) throw new BadRequestError(`Subtask ${subtaskId} not found`);
-
-  subtask.set(req.body.subtask);
-
-  await board.save();
-
+  const board = await updateSubtask(userId, taskId, req.body.subtask);
   res.status(StatusCodes.OK).json({ board });
 };
 
@@ -109,5 +98,5 @@ export {
   postColumn,
   postTask,
   patchTask,
-  updateSubtask,
+  patchSubtask,
 };

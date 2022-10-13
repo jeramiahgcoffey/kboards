@@ -6,7 +6,7 @@ import {
   postColumn,
   postTask,
   patchTask,
-  updateSubtask,
+  patchSubtask,
 } from '../controllers/boards.js';
 
 const router = express.Router();
@@ -19,6 +19,6 @@ router.post('/:boardId/column', postColumn);
 router.post('/:boardId/task', postTask);
 
 router.patch('/task', patchTask);
-router.patch('/task/:taskId/subtask/:subtaskId', updateSubtask);
+router.patch('/task/:taskId/subtask/:subtaskId', patchSubtask);
 
 export default router;

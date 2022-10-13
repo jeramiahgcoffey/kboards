@@ -68,7 +68,7 @@ export const createTask = async (
   return board;
 };
 
-export const updateTask = async (userId, taskId, data) => {
+export const updateTask = async (userId, taskId, taskData) => {
   const board = await Board.findOne({
     createdBy: userId,
     'tasks._id': taskId,
@@ -76,8 +76,24 @@ export const updateTask = async (userId, taskId, data) => {
   if (!board) throw new BadRequestError(`Task ${taskId} not found`);
 
   const task = await board.tasks.id(taskId);
-  task.set({ ...data, status: data.status.toLowerCase() });
+  task.set({ ...taskData, status: taskData.status.toLowerCase() });
 
+  await board.save();
+  return board;
+};
+
+export const updateSubtask = async (userId, taskId, subtaskData) => {
+  const board = await Board.findOne({ createdBy: userId, 'tasks._id': taskId });
+  if (!board) throw new BadRequestError(`Task ${taskId} not found`);
+
+  const task = await board.tasks.id(taskId);
+  if (!task) throw new BadRequestError(`Task ${taskId} not found`);
+
+  const subtask = await task.subtasks.id(subtaskData._id);
+  if (!subtask)
+    throw new BadRequestError(`Subtask ${subtaskData._id} not found`);
+
+  subtask.set(subtaskData);
   await board.save();
   return board;
 };
