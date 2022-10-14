@@ -3,6 +3,7 @@
     <template v-slot:after>
       <div class="fit row wrap justify-center items-center">
         <q-btn
+          :disable="store.awaitingResponse"
           @click="$emit('removeField', props.id)"
           icon="mdi-close"
           flat

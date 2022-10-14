@@ -1,6 +1,7 @@
 <template>
   <div style="width: 320px">
     <q-btn
+      :disable="store.awaitingResponse"
       style="width: 100%; height: calc(100vh - 160px); margin-top: 35px"
       @click="openCreateColumn"
     >

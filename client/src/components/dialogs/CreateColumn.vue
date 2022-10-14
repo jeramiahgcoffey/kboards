@@ -17,8 +17,18 @@
       </q-card-section>
 
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat label="Cancel" v-close-popup />
-        <q-btn type="submit" flat label="Create Column" />
+        <q-btn
+          :disable="store.awaitingResponse"
+          flat
+          label="Cancel"
+          v-close-popup
+        />
+        <q-btn
+          :disable="store.awaitingResponse"
+          type="submit"
+          flat
+          label="Create Column"
+        />
       </q-card-actions>
     </q-form>
   </q-card>

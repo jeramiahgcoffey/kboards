@@ -28,6 +28,7 @@
         />
         <div class="row justify-end">
           <q-btn
+            :disable="auth.awaitingResponse"
             no-caps
             flat
             to="/forgot"
@@ -40,8 +41,16 @@
 
         <div class="row reverse justify-between">
           <div class="row reverse justify-start">
-            <q-btn type="submit" flat text-color="primary">Login</q-btn>
-            <q-btn no-caps flat to="/register">Need an account?</q-btn>
+            <q-btn
+              :disable="auth.awaitingResponse"
+              type="submit"
+              flat
+              text-color="primary"
+              >Login</q-btn
+            >
+            <q-btn :disable="auth.awaitingResponse" no-caps flat to="/register"
+              >Need an account?</q-btn
+            >
           </div>
           <div class="row justify-center items-center q-mr-md">
             <q-icon color="yellow" size="20px" name="mdi-weather-sunny" />

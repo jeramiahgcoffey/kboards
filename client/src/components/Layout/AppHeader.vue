@@ -11,6 +11,7 @@
 
       <div>
         <q-btn
+          :disable="store.awaitingResponse || !store.columnNames"
           rounded
           padding="sm md"
           class="text-capitalize q-mr-sm"
@@ -18,10 +19,10 @@
           icon="mdi-plus"
           label="Add New Task"
           @click="openCreateTask"
-          :disable="!store.columnNames"
         />
 
         <q-btn
+          :disable="store.awaitingResponse"
           @click="auth.logout"
           rounded
           flat

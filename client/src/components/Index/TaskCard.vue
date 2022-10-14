@@ -25,7 +25,11 @@
         </q-card-section>
         <q-card-actions>
           <div class="fit row justify-end items-center">
-            <q-btn @click="openEditTask(task)" flat text-color="primary"
+            <q-btn
+              :disable="store.awaitingResponse"
+              @click="openEditTask(task)"
+              flat
+              text-color="primary"
               >Edit</q-btn
             >
           </div>
@@ -50,7 +54,9 @@ const hasInfo = computed(
 
 const caption = computed(() =>
   props.task.subtasks.length
-    ? `${props.task.subtasks.filter(t => (!!t.completed)).length} of ${props.task.subtasks.length} subtasks`
+    ? `${props.task.subtasks.filter((t) => !!t.completed).length} of ${
+        props.task.subtasks.length
+      } subtasks`
     : ''
 );
 

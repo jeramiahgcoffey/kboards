@@ -30,7 +30,12 @@
             :id="subtask._id"
             @remove-field="handleRemoveSubtask"
           />
-          <q-btn @click="subtasksCount++" flat dense text-color="accent"
+          <q-btn
+            :disable="store.awaitingResponse"
+            @click="subtasksCount++"
+            flat
+            dense
+            text-color="accent"
             >Add subtask</q-btn
           >
         </div>
@@ -44,6 +49,7 @@
       <q-card-actions class="text-primary">
         <div class="row fit justify-between items-center">
           <q-btn
+            :disable="store.awaitingResponse"
             flat
             label="Delete"
             color="negative"
@@ -51,8 +57,20 @@
             v-close-popup
           />
           <div>
-            <q-btn flat label="Cancel" @click="clearDraftTask" v-close-popup />
-            <q-btn type="submit" flat label="Save Task" v-close-popup />
+            <q-btn
+              :disable="store.awaitingResponse"
+              flat
+              label="Cancel"
+              @click="clearDraftTask"
+              v-close-popup
+            />
+            <q-btn
+              :disable="store.awaitingResponse"
+              type="submit"
+              flat
+              label="Save Task"
+              v-close-popup
+            />
           </div>
         </div>
       </q-card-actions>
