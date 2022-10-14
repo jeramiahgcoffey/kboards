@@ -8,4 +8,6 @@ router.post('/', tasks.postTask);
 router.patch('/:taskId', tasks.patchTask);
 router.patch('/:taskId/subtasks/:subtaskId', tasks.patchSubtask);
 
+router.delete('/:taskId', tasks.deleteTask);
+
 export default router;

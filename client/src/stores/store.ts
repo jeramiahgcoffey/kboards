@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/axios';
-import { Notify } from 'quasar';
+import { Notify, Loading } from 'quasar';
 
 import { Store, Board, Task, Subtask } from './models';
 import { handleError } from 'src/common/handleError';
 
 export const useStore = defineStore('main', {
   state: (): Store => ({
+    awaitingResponse: false,
     boards: [],
     dialogContent: '',
     dialogOpen: false,
@@ -39,6 +40,7 @@ export const useStore = defineStore('main', {
   actions: {
     async createBoard(payload: { name: string; description?: string }) {
       try {
+        this.awaitingResponse = true;
         const {
           data: { board },
         } = await api.post('/boards', payload);
@@ -48,11 +50,14 @@ export const useStore = defineStore('main', {
         this.dialogOpen = false;
       } catch (error) {
         handleError(error);
+      } finally {
+        this.awaitingResponse = false;
       }
     },
 
     async createColumn(payload: { name: string; color?: string }) {
       try {
+        this.awaitingResponse = true;
         const {
           data: { board },
         } = await api.post(
@@ -71,6 +76,8 @@ export const useStore = defineStore('main', {
         this.dialogOpen = false;
       } catch (error) {
         handleError(error);
+      } finally {
+        this.awaitingResponse = false;
       }
     },
 
@@ -83,6 +90,7 @@ export const useStore = defineStore('main', {
         subtasks,
       };
       try {
+        this.awaitingResponse = true;
         const {
           data: { board },
         } = await api.post(`/boards/${this.selectedBoard?._id}/tasks`, payload);
@@ -98,6 +106,8 @@ export const useStore = defineStore('main', {
         this.dialogOpen = false;
       } catch (error) {
         handleError(error);
+      } finally {
+        this.awaitingResponse = false;
       }
     },
 
@@ -112,6 +122,7 @@ export const useStore = defineStore('main', {
         },
       };
       try {
+        this.awaitingResponse = true;
         const {
           data: { board },
         } = await api.patch(`/boards/tasks/${this.draftTask._id}`, payload);
@@ -127,11 +138,14 @@ export const useStore = defineStore('main', {
         this.dialogOpen = false;
       } catch (error) {
         handleError(error);
+      } finally {
+        this.awaitingResponse = false;
       }
     },
 
     async fetchBoards() {
       try {
+        Loading.show();
         const {
           data: { boards },
         } = await api.get('/boards');
@@ -139,6 +153,8 @@ export const useStore = defineStore('main', {
         this.selectBoard(boards[0]);
       } catch (error) {
         handleError(error);
+      } finally {
+        Loading.hide();
       }
     },
 
@@ -147,6 +163,8 @@ export const useStore = defineStore('main', {
         subtask: { ...subtask, completed: !subtask.completed },
       };
       try {
+        Loading.show();
+        this.awaitingResponse = true;
         const {
           data: { board },
         } = await api.patch(
@@ -163,6 +181,30 @@ export const useStore = defineStore('main', {
         });
       } catch (error) {
         handleError(error);
+      } finally {
+        Loading.hide();
+        this.awaitingResponse = false;
+      }
+    },
+
+    async deleteTask(taskId: string) {
+      try {
+        this.awaitingResponse = true;
+        const {
+          data: { board },
+        } = await api.delete(`/boards/tasks/${taskId}`);
+        this.boards = this.boards.map((b) => {
+          if (b._id === this.selectedBoard?._id) {
+            this.selectBoard(board);
+            return board;
+          } else {
+            return b;
+          }
+        });
+      } catch (error) {
+        handleError(error);
+      } finally {
+        this.awaitingResponse = false;
       }
     },
 

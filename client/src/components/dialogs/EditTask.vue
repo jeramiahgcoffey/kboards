@@ -41,9 +41,20 @@
         />
       </q-card-section>
 
-      <q-card-actions align="right" class="text-primary">
-        <q-btn flat label="Cancel" @click="clearDraftTask" v-close-popup />
-        <q-btn type="submit" flat label="Save Task" v-close-popup />
+      <q-card-actions class="text-primary">
+        <div class="row fit justify-between items-center">
+          <q-btn
+            flat
+            label="Delete"
+            color="negative"
+            @click="store.deleteTask(store.draftTask._id)"
+            v-close-popup
+          />
+          <div>
+            <q-btn flat label="Cancel" @click="clearDraftTask" v-close-popup />
+            <q-btn type="submit" flat label="Save Task" v-close-popup />
+          </div>
+        </div>
       </q-card-actions>
     </q-form>
   </q-card>

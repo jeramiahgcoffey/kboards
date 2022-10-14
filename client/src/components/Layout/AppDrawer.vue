@@ -25,7 +25,13 @@
                 v-ripple
               >
                 <q-item-section avatar class="q-pl-xs">
-                  <q-icon name="mdi-math-norm-box" />
+                  <q-icon
+                    :name="
+                      store.selectedBoard?._id === board._id
+                        ? 'mdi-folder-open-outline'
+                        : 'mdi-folder-outline'
+                    "
+                  />
                 </q-item-section>
                 <q-item-section class="">{{ board.name }}</q-item-section>
               </q-item>

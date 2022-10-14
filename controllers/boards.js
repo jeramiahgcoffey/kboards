@@ -13,8 +13,6 @@ const getBoard = async (req, res) => {
   const { boardId } = req.params;
   const { userId } = req.user;
 
-  if (!boardId) throw new BadRequestError('Board ID is required');
-
   const board = await boards.fetchBoardById(userId, boardId);
   res.status(StatusCodes.OK).json({ board });
 };
@@ -25,6 +23,8 @@ const postBoard = async (req, res) => {
     body: { name, description },
   } = req;
 
+  if (!name) throw new BadRequestError('Board name is required');
+
   const board = await boards.createBoard(userId, name, description);
   res.status(StatusCodes.CREATED).json({ board });
 };
@@ -34,7 +34,6 @@ const postColumn = async (req, res) => {
   const { name, color } = req.body;
   const { userId } = req.user;
 
-  if (!boardId) throw new BadRequestError('Board ID is required');
   if (!name) throw new BadRequestError('Name is required');
 
   const board = await boards.createColumn(userId, boardId, name, color);

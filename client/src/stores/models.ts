@@ -33,6 +33,7 @@ export interface Board {
 }
 
 export interface Store {
+  awaitingResponse: boolean;
   boards: Board[];
   dialogContent: string;
   dialogOpen: boolean;

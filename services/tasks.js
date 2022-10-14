@@ -1,3 +1,4 @@
+import { tasks } from 'googleapis/build/src/apis/tasks/index.js';
 import BadRequestError from '../errors/bad-request.js';
 import Board from '../models/Board.js';
 
@@ -39,7 +40,7 @@ const updateTask = async (userId, taskId, taskData) => {
   });
   if (!board) throw new BadRequestError(`Task ${taskId} not found`);
 
-  const task = await board.tasks.id(taskId);
+  const task = board.tasks.id(taskId);
   task.set({ ...taskData, status: taskData.status.toLowerCase() });
 
   await board.save();
@@ -50,10 +51,8 @@ const updateSubtask = async (userId, taskId, subtaskData) => {
   const board = await Board.findOne({ createdBy: userId, 'tasks._id': taskId });
   if (!board) throw new BadRequestError(`Task ${taskId} not found`);
 
-  const task = await board.tasks.id(taskId);
-  if (!task) throw new BadRequestError(`Task ${taskId} not found`);
-
-  const subtask = await task.subtasks.id(subtaskData._id);
+  const task = board.tasks.id(taskId);
+  const subtask = task.subtasks.id(subtaskData._id);
   if (!subtask)
     throw new BadRequestError(`Subtask ${subtaskData._id} not found`);
 
@@ -62,8 +61,24 @@ const updateSubtask = async (userId, taskId, subtaskData) => {
   return board;
 };
 
+const destroyTask = async (userId, taskId) => {
+  const board = await Board.findOne({
+    createdBy: userId,
+    'tasks._id': taskId,
+  });
+
+  if (!board) {
+    throw new BadRequestError(`Task ${taskId} not found`);
+  }
+
+  board.tasks.id(taskId).remove();
+  await board.save();
+  return board;
+};
+
 export default {
   createTask,
   updateTask,
   updateSubtask,
+  destroyTask,
 };

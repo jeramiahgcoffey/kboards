@@ -27,7 +27,6 @@ const patchTask = async (req, res) => {
     task: { title, status },
   } = req.body;
 
-  if (!taskId) throw new BadRequestError('TaskId is required');
   if (!title || !status)
     throw new BadRequestError('Title and status are required');
 
@@ -43,8 +42,17 @@ const patchSubtask = async (req, res) => {
   res.status(StatusCodes.OK).json({ board });
 };
 
+const deleteTask = async (req, res) => {
+  const { taskId } = req.params;
+  const { userId } = req.user;
+
+  const board = await tasks.destroyTask(userId, taskId);
+  res.status(StatusCodes.OK).json({ board });
+};
+
 export default {
   postTask,
   patchTask,
   patchSubtask,
+  deleteTask,
 };
