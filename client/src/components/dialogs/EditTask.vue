@@ -16,7 +16,6 @@
           label="Description"
           type="textarea"
           v-model="store.draftTask.description"
-          autofocus
           class="q-pb-lg"
         />
 
@@ -32,7 +31,7 @@
           />
           <q-btn
             :disable="store.awaitingResponse"
-            @click="subtasksCount++"
+            @click="handleAddSubtask"
             flat
             dense
             text-color="accent"
@@ -83,6 +82,10 @@ import { useStore } from 'src/stores/store';
 import SubtaskEditField from '../fields/SubtaskEditField.vue';
 
 const store = useStore();
+
+const handleAddSubtask = () => {
+  store.addSubtask();
+};
 
 const handleRemoveSubtask = (id) => {
   const arr = store.draftTask.subtasks;

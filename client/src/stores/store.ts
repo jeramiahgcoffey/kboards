@@ -186,6 +186,39 @@ export const useStore = defineStore('main', {
         this.awaitingResponse = false;
       }
     },
+    async addSubtask() {
+      const subtasks = this.draftTask.subtasks
+        .filter((task) => task)
+        .concat('New Subtask');
+      const payload = {
+        task: {
+          title: this.draftTask.title,
+          description: this.draftTask.description,
+          status: this.draftTask.status,
+          subtasks,
+        },
+      };
+      try {
+        this.awaitingResponse = true;
+        const taskId = this.draftTask._id;
+        const {
+          data: { board },
+        } = await api.patch(`/boards/tasks/${taskId}`, payload);
+        this.boards = this.boards.map((b) => {
+          if (b._id === this.selectedBoard?._id) {
+            this.selectBoard(board);
+            this.loadDraftTask(board.tasks.find((t: Task) => t._id === taskId));
+            return board;
+          } else {
+            return b;
+          }
+        });
+      } catch (error) {
+        handleError(error);
+      } finally {
+        this.awaitingResponse = false;
+      }
+    },
 
     async deleteTask(taskId: string) {
       try {

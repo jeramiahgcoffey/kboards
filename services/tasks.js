@@ -41,7 +41,11 @@ const updateTask = async (userId, taskId, taskData) => {
   if (!board) throw new BadRequestError(`Task ${taskId} not found`);
 
   const task = board.tasks.id(taskId);
-  task.set({ ...taskData, status: taskData.status.toLowerCase() });
+  task.set({
+    ...taskData,
+    subtasks: taskData.subtasks.map((t) => (t?.title ? t : { title: t })),
+    status: taskData.status.toLowerCase(),
+  });
 
   await board.save();
   return board;
