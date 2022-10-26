@@ -17,10 +17,10 @@
         {{ column.name }} ({{ store.tasksByColumn(column.name)?.length || 0 }})
       </div>
       <div class="q-mr-lg">
-        <!-- <q-icon size="xs" name="mdi-pencil-outline"></q-icon> -->
         <q-btn
           size="sm"
           round
+          flat
           icon="mdi-pencil-outline"
           class="q-mb-none"
           @click="openEditColumn"
