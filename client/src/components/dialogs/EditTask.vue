@@ -29,14 +29,16 @@
             :id="subtask._id"
             @remove-field="handleRemoveSubtask"
           />
-          <q-btn
-            :disable="store.awaitingResponse"
-            @click="handleAddSubtask"
-            flat
-            dense
-            text-color="accent"
-            >Add subtask</q-btn
-          >
+          <div>
+            <q-btn
+              :disable="store.awaitingResponse"
+              @click="handleAddSubtask"
+              flat
+              dense
+              text-color="accent"
+              >Add subtask</q-btn
+            >
+          </div>
         </div>
         <q-select
           v-model="store.draftTask.status"

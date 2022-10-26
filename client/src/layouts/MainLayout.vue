@@ -9,6 +9,7 @@
       <create-column v-if="store.dialogContent === 'createColumn'" />
       <create-task v-if="store.dialogContent === 'createTask'" />
       <edit-task v-if="store.dialogContent === 'editTask'" />
+      <edit-column v-if="store.dialogContent === 'editColumn'" />
     </app-dialog>
 
     <q-page-container>
@@ -28,6 +29,7 @@ import CreateTask from 'src/components/dialogs/CreateTask.vue';
 import AppHeader from 'src/components/Layout/AppHeader.vue';
 import AppDrawer from 'src/components/Layout/AppDrawer.vue';
 import EditTask from 'src/components/dialogs/EditTask.vue';
+import EditColumn from 'src/components/dialogs/EditColumn.vue';
 
 const store = useStore();
 

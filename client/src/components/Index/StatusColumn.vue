@@ -5,10 +5,27 @@
   >
     <div
       style="letter-spacing: 1.8px"
-      class="text-caption text-weight-bold text-grey-7 q-py-sm text-uppercase"
+      class="text-caption text-weight-bold text-grey-7 q-py-sm text-uppercase row fit justify-between items-end"
     >
-      <q-icon color="primary" name="mdi-circle"></q-icon>
-      {{ column.name }} ({{ store.tasksByColumn(column.name)?.length || 0 }})
+      <div>
+        <q-icon
+          :style="{
+            color: column.color === 'default' ? '#637CAA' : column.color,
+          }"
+          name="mdi-circle"
+        ></q-icon>
+        {{ column.name }} ({{ store.tasksByColumn(column.name)?.length || 0 }})
+      </div>
+      <div class="q-mr-lg">
+        <!-- <q-icon size="xs" name="mdi-pencil-outline"></q-icon> -->
+        <q-btn
+          size="sm"
+          round
+          icon="mdi-pencil-outline"
+          class="q-mb-none"
+          @click="openEditColumn"
+        ></q-btn>
+      </div>
     </div>
     <div>
       <task-card
@@ -24,7 +41,13 @@
 import TaskCard from 'src/components/Index/TaskCard.vue';
 import { useStore } from 'src/stores/store';
 
-defineProps(['column']);
+const props = defineProps(['column']);
 
 const store = useStore();
+
+const openEditColumn = () => {
+  store.dialogContent = 'editColumn';
+  store.loadDraftColumn(props.column);
+  store.dialogOpen = true;
+};
 </script>

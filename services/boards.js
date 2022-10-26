@@ -35,9 +35,35 @@ const createColumn = async (userId, boardId, name, color) => {
   return board;
 };
 
+const updateColumn = async (userId, boardId, columnId, name, color) => {
+  const board = await Board.findOne({ createdBy: userId, _id: boardId });
+  if (!board) throw new NotFoundError(`Board ${boardId} not found`);
+
+  const column = board.columns.id(columnId);
+  if (!column) throw new NotFoundError(`Column ${columnId} not found`);
+
+  column.set({ name, color });
+  await board.save();
+  return board;
+};
+
+const destroyColumn = async (userId, boardId, columnId, name, color) => {
+  const board = await Board.findOne({ createdBy: userId, _id: boardId });
+  if (!board) throw new NotFoundError(`Board ${boardId} not found`);
+
+  const column = board.columns.id(columnId);
+  if (!column) throw new NotFoundError(`Column ${columnId} not found`);
+
+  column.remove();
+  await board.save();
+  return board;
+};
+
 export default {
   fetchBoards,
   fetchBoardById,
   createBoard,
   createColumn,
+  updateColumn,
+  destroyColumn,
 };

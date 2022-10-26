@@ -16,6 +16,12 @@ export interface Task {
   readonly updatedAt: string;
 }
 
+export interface Column {
+  readonly _id: string;
+  name: string;
+  color: string;
+}
+
 export interface Board {
   readonly _id: string;
   name: string;
@@ -43,6 +49,11 @@ export interface Store {
     description?: string;
     status: string;
     subtasks: string[];
+  };
+  draftColumn: {
+    _id: string;
+    name: string;
+    color: string;
   };
   newTask: {
     title: string;

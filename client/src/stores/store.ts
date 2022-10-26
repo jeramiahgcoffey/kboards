@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { api } from 'src/boot/axios';
 import { Notify, Loading } from 'quasar';
 
-import { Store, Board, Task, Subtask } from './models';
+import { Store, Board, Column, Task, Subtask } from './models';
 import { handleError } from 'src/common/handleError';
 
 export const useStore = defineStore('main', {
@@ -17,6 +17,11 @@ export const useStore = defineStore('main', {
       description: '',
       status: '',
       subtasks: [],
+    },
+    draftColumn: {
+      _id: '',
+      name: '',
+      color: '',
     },
     newTask: { title: '', description: '', status: '', subtasks: [] },
     selectedBoard: undefined,
@@ -143,6 +148,36 @@ export const useStore = defineStore('main', {
       }
     },
 
+    async updateColumn() {
+      const payload = {
+        name: this.draftColumn.name,
+        color: this.draftColumn.color,
+      };
+      try {
+        this.awaitingResponse = true;
+        const {
+          data: { board },
+        } = await api.patch(
+          `/boards/${this.selectedBoard?._id}/columns/${this.draftColumn._id}`,
+          payload
+        );
+        this.boards = this.boards.map((b) => {
+          if (b._id === this.selectedBoard?._id) {
+            this.selectBoard(board);
+            return board;
+          } else {
+            return b;
+          }
+        });
+        this.success('Column saved successfully');
+        this.dialogOpen = false;
+      } catch (error) {
+        handleError(error);
+      } finally {
+        this.awaitingResponse = false;
+      }
+    },
+
     async fetchBoards() {
       try {
         Loading.show();
@@ -241,6 +276,29 @@ export const useStore = defineStore('main', {
       }
     },
 
+    async deleteColumn(columnId: string) {
+      try {
+        this.awaitingResponse = true;
+        const {
+          data: { board },
+        } = await api.delete(
+          `/boards/${this.selectedBoard?._id}/columns/${columnId}`
+        );
+        this.boards = this.boards.map((b) => {
+          if (b._id === this.selectedBoard?._id) {
+            this.selectBoard(board);
+            return board;
+          } else {
+            return b;
+          }
+        });
+      } catch (error) {
+        handleError(error);
+      } finally {
+        this.awaitingResponse = false;
+      }
+    },
+
     selectBoard(board: Board) {
       this.newTask = {
         title: '',
@@ -265,6 +323,14 @@ export const useStore = defineStore('main', {
         description: task.description,
         status: task.status,
         subtasks: task.subtasks,
+      };
+    },
+
+    loadDraftColumn(column: Column) {
+      this.draftColumn = {
+        _id: column._id,
+        name: column.name,
+        color: column.color,
       };
     },
 

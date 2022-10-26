@@ -13,4 +13,8 @@ router.get('/:boardId', boards.getBoard);
 router.post('/', boards.postBoard);
 router.post('/:boardId/columns', boards.postColumn);
 
+router.patch('/:boardId/columns/:columnId', boards.patchColumn);
+
+router.delete('/:boardId/columns/:columnId', boards.deleteColumn);
+
 export default router;

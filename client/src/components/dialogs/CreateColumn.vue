@@ -11,9 +11,36 @@
             (val) => (val !== null && val !== '') || 'Column name is required',
           ]"
           label="Name"
-          v-model="columnName"
+          v-model="column.name"
           autofocus
         />
+
+        <q-input
+          v-model="column.color"
+          label="Color"
+          :input-style="{ color: column.color }"
+          :rules="[
+            (val) => (val !== null && val !== '') || 'Column name is required',
+            'anyColor',
+          ]"
+          class="my-input"
+        >
+          <template v-slot:append>
+            <q-icon
+              :style="{ color: column.color }"
+              name="mdi-eyedropper-variant"
+              class="cursor-pointer"
+            >
+              <q-popup-proxy
+                cover
+                transition-show="scale"
+                transition-hide="scale"
+              >
+                <q-color v-model="column.color" />
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
       </q-card-section>
 
       <q-card-actions align="right" class="text-primary">
@@ -36,14 +63,20 @@
 
 <script setup>
 import { useStore } from 'src/stores/store';
-import { ref } from 'vue';
+import { reactive } from 'vue';
 
 const store = useStore();
 
-const columnName = ref('');
+const column = reactive({
+  name: '',
+  color: '#637CAA',
+});
 
 const createColumn = async () => {
-  const payload = { name: columnName.value };
+  const payload = {
+    name: column.name,
+    color: column.color ? column.color : 'default',
+  };
 
   await store.createColumn(payload);
 };
