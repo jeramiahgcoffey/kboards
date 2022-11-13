@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(morgan('combined'));
 app.use(cors());
 
-app.use(express.static('client/dist/spa'))
+app.use(express.static('deploy/spa'))
 
 // Routes
 app.use('/api/v1/auth', authRouter);
