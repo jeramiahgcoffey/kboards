@@ -42,7 +42,8 @@
         </div>
         <q-select
           v-model="store.draftTask.status"
-          :options="store.columnNamesCapitalized"
+          :options="store.columns"
+          option-label="name"
           label="Status"
         />
       </q-card-section>

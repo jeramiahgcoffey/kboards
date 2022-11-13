@@ -1,3 +1,9 @@
+export interface Status {
+  name: string,
+  color: string,
+  _id: string,
+}
+
 export interface Subtask {
   readonly _id: string;
   title: string;
@@ -10,7 +16,7 @@ export interface Task {
   readonly _id: string;
   title: string;
   description?: string;
-  status: string;
+  status: Status;
   subtasks: [];
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -47,7 +53,7 @@ export interface Store {
     _id: string;
     title: string;
     description?: string;
-    status: string;
+    status: Status;
     subtasks: string[];
   };
   draftColumn: {

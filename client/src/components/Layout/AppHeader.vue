@@ -11,7 +11,7 @@
 
       <div>
         <q-btn
-          :disable="store.awaitingResponse || !store.columnNames"
+          :disable="store.awaitingResponse || !store.columns"
           rounded
           padding="sm md"
           class="text-capitalize q-mr-sm"

@@ -1,5 +1,18 @@
 import mongoose from 'mongoose';
 
+const StatusSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true
+    },
+    color: {
+      type: String,
+      default: ''
+    }
+  }
+);
+
 const SubtaskSchema = new mongoose.Schema(
   {
     title: {
@@ -27,8 +40,8 @@ const TaskSchema = new mongoose.Schema(
       type: [SubtaskSchema],
     },
     status: {
-      type: String,
-      default: '',
+      type: StatusSchema,
+      required: true
     },
   },
   { timestamps: true }

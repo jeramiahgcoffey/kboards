@@ -1,6 +1,7 @@
 import { tasks } from 'googleapis/build/src/apis/tasks/index.js';
 import BadRequestError from '../errors/bad-request.js';
 import Board from '../models/Board.js';
+import mongoose from "mongoose";
 
 const createTask = async (
   userId,
@@ -13,21 +14,23 @@ const createTask = async (
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
   if (!board) throw new BadRequestError(`Board ${boardId} not found`);
 
-  if (
-    !board.columns
-      .map((c) => c.name.toLowerCase())
-      .includes(status.toLowerCase())
-  )
-    throw new BadRequestError(`Column ${status} not found`);
+  console.log(board.columns.map(c => c._id))
+  // if (
+  //   !board.columns
+  //     .map(c => c._id)
+  //     .includes(status._id)
+  // )
+  //   throw new BadRequestError(`Column ${status._id} not found`);
 
   board.tasks.push({
     title,
-    status: status.toLowerCase(),
+    status,
     description,
     subtasks: subtasks.map((t) => ({
       title: t,
     })),
   });
+  console.log(board.columns)
 
   await board.save();
   return board;
@@ -44,7 +47,6 @@ const updateTask = async (userId, taskId, taskData) => {
   task.set({
     ...taskData,
     subtasks: taskData.subtasks.map((t) => (t?.title ? t : { title: t })),
-    status: taskData.status.toLowerCase(),
   });
 
   await board.save();

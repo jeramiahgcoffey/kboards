@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { watch } from 'vue';
-import { useStore } from '../stores/store';
+import { useStore } from 'stores/store';
 import { useAuthStore } from 'src/stores/auth/authStore';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';

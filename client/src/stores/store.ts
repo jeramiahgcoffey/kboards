@@ -15,7 +15,11 @@ export const useStore = defineStore('main', {
       _id: '',
       title: '',
       description: '',
-      status: '',
+      status: {
+        name: '',
+        color: '',
+        _id: ''
+      },
       subtasks: [],
     },
     draftColumn: {
@@ -28,18 +32,14 @@ export const useStore = defineStore('main', {
   }),
 
   getters: {
-    columns: (state) => state.selectedBoard?.columns,
-    columnNames: (state) => state.selectedBoard?.columns.map((c) => c.name),
-    columnNamesCapitalized: (state) =>
-      state.selectedBoard?.columns.map((c) =>
-        c.name
-          .toLowerCase()
-          .split(' ')
-          .map((word) => word.replace(word[0], word[0]?.toUpperCase()))
-          .join(' ')
-      ),
-    tasksByColumn: (state) => (columnName: string) =>
-      state.selectedBoard?.tasks.filter((task) => task.status === columnName),
+    columns: (state) => state.selectedBoard?.columns.map(c => {
+      return {
+        ...c,
+        name: c.name[0].toUpperCase().concat(c.name.slice(1))
+      }
+    }),
+    tasksByColumn: (state) => (column: string) =>
+      state.selectedBoard?.tasks.filter((task) => task.status._id === column),
   },
 
   actions: {
@@ -310,7 +310,11 @@ export const useStore = defineStore('main', {
         _id: '',
         title: '',
         description: '',
-        status: '',
+        status: {
+          name: '',
+          color: '',
+          _id: ''
+        },
         subtasks: [],
       };
       this.selectedBoard = board;

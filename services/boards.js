@@ -11,12 +11,11 @@ const fetchBoardById = async (userId, boardId) => {
 };
 
 const createBoard = async (userId, name, description) => {
-  const board = await Board.create({
+  return await Board.create({
     createdBy: userId,
     name,
     description,
   });
-  return board;
 };
 
 const createColumn = async (userId, boardId, name, color) => {

@@ -42,7 +42,8 @@
         </div>
         <q-select
           v-model="store.newTask.status"
-          :options="store.columnNamesCapitalized"
+          :options="store.columns"
+          option-label="name"
           label="Status"
           options-selected-class=""
         />
@@ -76,7 +77,7 @@ const store = useStore();
 const subtasksCount = ref(3);
 
 onMounted(() => {
-  store.newTask.status = store.columnNamesCapitalized[0];
+  store.newTask.status = store.columns[0];
 });
 
 const handleRemoveSubtask = (id) => {

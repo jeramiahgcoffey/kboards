@@ -14,7 +14,7 @@
           }"
           name="mdi-circle"
         ></q-icon>
-        {{ column.name }} ({{ store.tasksByColumn(column.name)?.length || 0 }})
+        {{ column.name }} ({{ store.tasksByColumn(column._id)?.length || 0 }})
       </div>
       <div class="q-mr-lg">
         <q-btn
@@ -29,7 +29,7 @@
     </div>
     <div>
       <task-card
-        v-for="task in store.tasksByColumn(column.name)"
+        v-for="task in store.tasksByColumn(column._id)"
         :key="task._id"
         :task="task"
       />
