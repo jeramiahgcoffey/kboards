@@ -12,14 +12,6 @@ const createTask = async (
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
   if (!board) throw new BadRequestError(`Board ${boardId} not found`);
 
-  // TODO: FIX
-  // if (
-  //   !board.columns
-  //     .map(c => c._id)
-  //     .includes(status._id)
-  // )
-  //   throw new BadRequestError(`Column ${status._id} not found`);
-
   board.tasks.push({
     title,
     status,

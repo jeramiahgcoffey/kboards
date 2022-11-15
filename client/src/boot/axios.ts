@@ -15,7 +15,7 @@ declare module '@vue/runtime-core' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: 'https://kboards.onrender.com/api/v1',
+  baseURL: process.env.API + '/v1',
 });
 
 api.interceptors.request.use((config) => {
@@ -27,7 +27,7 @@ api.interceptors.request.use((config) => {
 });
 
 const auth = axios.create({
-  baseURL: 'http://localhost:5001/api/v1/auth',
+  baseURL: process.env.API + '/v1/auth',
 });
 
 export default boot(({ app }) => {
