@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import BadRequestError from '../errors/bad-request.js';
 import Board from '../models/Board.js';
 
