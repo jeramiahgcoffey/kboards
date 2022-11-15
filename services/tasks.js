@@ -1,7 +1,5 @@
-import { tasks } from 'googleapis/build/src/apis/tasks/index.js';
 import BadRequestError from '../errors/bad-request.js';
 import Board from '../models/Board.js';
-import mongoose from "mongoose";
 
 const createTask = async (
   userId,
@@ -14,7 +12,7 @@ const createTask = async (
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
   if (!board) throw new BadRequestError(`Board ${boardId} not found`);
 
-  console.log(board.columns.map(c => c._id))
+  // TODO: FIX
   // if (
   //   !board.columns
   //     .map(c => c._id)
@@ -30,7 +28,6 @@ const createTask = async (
       title: t,
     })),
   });
-  console.log(board.columns)
 
   await board.save();
   return board;
