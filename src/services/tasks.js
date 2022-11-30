@@ -10,7 +10,9 @@ const createTask = async (
   subtasks
 ) => {
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
-  if (!board) throw new BadRequestError(`Board ${boardId} not found`);
+  if (!board) throw new BadRequestError(`Board ${ boardId } not found`);
+  if (!board.columns.map(c => c.name.toLowerCase()).includes(status.name.toLowerCase()))
+    throw new BadRequestError(`Status ${ status._id } not found`);
 
   board.tasks.push({
     title,
