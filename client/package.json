@@ -1,8 +1,8 @@
 {
-  "name": "client",
+  "name": "kboards-ui",
   "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "Kboards",
+  "description": "Kanban Board Productivity Tracking",
+  "productName": "K Boards",
   "author": "Jeramiah Coffey",
   "private": true,
   "scripts": {

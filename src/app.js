@@ -3,13 +3,13 @@ import 'express-async-errors';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import connectDB from './built/db/connect.js';
+import connectDB from '../built/db/connect.js';
 
-import authRouter from './built/routes/auth.route.js';
-import boardsRouter from './built/routes/boards.route.js';
+import authRouter from '../built/routes/auth.route.js';
+import boardsRouter from '../built/routes/boards.route.js';
 
-import errorHandlerMiddleware from './built/middleware/error-handler.js';
-import authMiddleware from './built/middleware/authentication.js';
+import errorHandlerMiddleware from '../built/middleware/error-handler.js';
+import authMiddleware from '../built/middleware/authentication.js';
 import morgan from 'morgan';
 import cors from 'cors';
 

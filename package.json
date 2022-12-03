@@ -2,9 +2,9 @@
   "name": "kanban",
   "version": "1.0.0",
   "description": "A Kanban Board app for managing boards and tasks",
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon src/app.js"
   },
   "author": "Jeramiah Coffey",
   "license": "ISC",
