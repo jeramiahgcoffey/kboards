@@ -43,7 +43,6 @@
 <script setup>
 import TaskCard from 'src/components/Index/TaskCard.vue';
 import { useStore } from 'src/stores/store';
-import { computed } from '@vue/reactivity';
 import draggable from 'vuedraggable';
 
 const props = defineProps(['column']);
@@ -55,16 +54,6 @@ const openEditColumn = () => {
   store.loadDraftColumn(props.column);
   store.dialogOpen = true;
 };
-
-const tasksByColumn = computed({
-  get() {
-    return store.tasksByColumn(props.column._id);
-  },
-  set(newValue) {
-    console.log(newValue);
-    return;
-  },
-});
 
 const handleDrag = (e) => {
   if (e?.added?.element) {
