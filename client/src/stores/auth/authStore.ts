@@ -4,7 +4,6 @@ import { api } from 'src/boot/axios';
 import { useStore } from '../store';
 import { AuthStore } from './models';
 import { handleError } from 'src/common/handleError';
-import stores from '..';
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthStore => ({

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { api } from 'src/boot/axios';
 import { Notify, Loading } from 'quasar';
 
-import { Store, Board, Column, Task, Subtask } from './models';
+import { Store, Board, Column, Task, Subtask, Status } from './models';
 import { handleError } from 'src/common/handleError';
 
 export const useStore = defineStore('main', {
@@ -18,7 +18,7 @@ export const useStore = defineStore('main', {
       status: {
         name: '',
         color: '',
-        _id: ''
+        _id: '',
       },
       subtasks: [],
     },
@@ -32,17 +32,44 @@ export const useStore = defineStore('main', {
   }),
 
   getters: {
-    columns: (state) => state.selectedBoard?.columns.map(c => {
-      return {
-        ...c,
-        name: c.name[0].toUpperCase().concat(c.name.slice(1))
-      }
-    }),
+    columns: (state) =>
+      state.selectedBoard?.columns.map((c) => {
+        return {
+          ...c,
+          name: c.name[0].toUpperCase().concat(c.name.slice(1)),
+        };
+      }),
     tasksByColumn: (state) => (column: string) =>
       state.selectedBoard?.tasks.filter((task) => task.status._id === column),
   },
 
   actions: {
+    async changeStatus(task: Task, status: Status) {
+      const prevStatus = task.status;
+      task.status = status;
+      try {
+        this.awaitingResponse = true;
+        const {
+          data: { board },
+        } = await api.patch(`/boards/tasks/${task._id}`, { task });
+        this.boards = this.boards.map((b) => {
+          if (b._id === this.selectedBoard?._id) {
+            this.selectBoard(board);
+            return board;
+          } else {
+            return b;
+          }
+        });
+        this.success('Task saved successfully');
+        this.dialogOpen = false;
+      } catch (error) {
+        handleError(error);
+        task.status = prevStatus;
+      } finally {
+        this.awaitingResponse = false;
+      }
+    },
+
     async createBoard(payload: { name: string; description?: string }) {
       try {
         this.awaitingResponse = true;
@@ -313,7 +340,7 @@ export const useStore = defineStore('main', {
         status: {
           name: '',
           color: '',
-          _id: ''
+          _id: '',
         },
         subtasks: [],
       };

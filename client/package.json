@@ -17,7 +17,8 @@
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0",
-    "vue-toast-notification": "^3.0.4"
+    "vue-toast-notification": "^3.0.4",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@quasar/app-vite": "^1.0.0",
