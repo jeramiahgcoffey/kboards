@@ -25,7 +25,7 @@
 ### Links
 
 - Solution URL: [GitHub](https://github.com/jeramiahgcoffey/kboards)
-- Live Site URL: [Render App](https://kboards.onrender.com/)
+- Live Site URL(Please be patient, it's a free server): [Render App](https://kboards.onrender.com/)
 
 ## My process
 
