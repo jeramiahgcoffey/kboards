@@ -45,7 +45,7 @@ I also learned about Pinia, the new recommened state management solution for Vue
 
 
 ### Continued development
-In the future, I would love to implement a drag and drop feature for the tasks. I think this would make the application feel really nice to work with. I would also like to beef up the typescript usage, and testing coverage.
+In the future, I would love to extend the drag and drop functionality to include reordering task within their columns. I think this would make the application feel really nice to work with. I would also like to beef up the typescript usage, and testing coverage.
 Another feature that this application needs is user setting configurations.
 
 
