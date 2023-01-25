@@ -29,7 +29,7 @@
     </div>
     <draggable
       :model-value="store.tasksByColumn(props.column._id)"
-      @change="test"
+      @change="handleDrag"
       group="tasks"
       item-key="_id"
     >
@@ -66,7 +66,7 @@ const tasksByColumn = computed({
   },
 });
 
-const test = (e) => {
+const handleDrag = (e) => {
   if (e?.added?.element) {
     store.loadDraftTask(e?.added.element);
     store.draftTask.status = store.columns.find(
