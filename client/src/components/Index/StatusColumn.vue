@@ -68,11 +68,9 @@ const tasksByColumn = computed({
 
 const handleDrag = (e) => {
   if (e?.added?.element) {
-    store.loadDraftTask(e?.added.element);
-    store.draftTask.status = store.columns.find(
-      (c) => c._id === props.column._id
-    );
-    store.updateTask();
+    const task = e?.added.element;
+    const newStatus = store.columns.find((c) => c._id === props.column._id);
+    store.changeStatus(task, newStatus);
   }
 };
 </script>
