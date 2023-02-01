@@ -1,9 +1,8 @@
 <template>
-  <q-page class="column items-center auth-page" padding>
+  <div class="column items-center auth-page" padding>
     <q-img
       src="~assets/logo2.png"
-      height="100px"
-      width="350px"
+      style="max-width: 350px; max-height: 100px"
       class="q-my-xl q-mr-md"
     />
     <q-card bordered class="form-card">
@@ -60,7 +59,7 @@
         </div>
       </q-form>
     </q-card>
-  </q-page>
+  </div>
 </template>
 
 <script setup>
@@ -99,7 +98,8 @@ const handleRegister = async () => {
 
 <style lang="sass" scoped>
 .form-card
-  width: 450px
+  max-width: 500px
+  width: 100%
 
 .body--light .auth-page
   background: $blue-grey-1

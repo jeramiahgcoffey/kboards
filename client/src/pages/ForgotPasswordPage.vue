@@ -2,8 +2,7 @@
   <q-page class="column items-center auth-page" padding>
     <q-img
       src="~assets/logo2.png"
-      height="100px"
-      width="350px"
+      style="max-width: 350px; max-height: 100px"
       class="q-my-xl q-mr-md"
     />
     <q-card bordered class="form-card">
@@ -69,7 +68,8 @@ const handleRequestReset = async () => {
 
 <style lang="sass" scoped>
 .form-card
-  width: 450px
+  max-width: 500px
+  width: 100%
 
 .body--light .auth-page
   background: $blue-grey-1

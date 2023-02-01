@@ -1,5 +1,8 @@
 <template>
-  <q-card class="q-mb-sm task-card overflow-hidden">
+  <q-card
+    class="task-card overflow-hidden"
+    :class="$q.screen.gt.sm && 'q-mb-sm '"
+  >
     <q-expansion-item :label="task.title" :caption="caption">
       <q-card class="task-card overflow-hidden">
         <q-card-section v-if="hasInfo">

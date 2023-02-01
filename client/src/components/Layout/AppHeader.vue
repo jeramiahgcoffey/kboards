@@ -11,7 +11,7 @@
       </q-btn>
       <q-toolbar-title class="text-weight-medium">
         <div style="height: 70px; display: flex; align-items: center">
-          <span class="text-h5 q-pt-md">
+          <span class="text-h5 q-pt-md ellipsis">
             {{ store.selectedBoard?.name || '' }}
           </span>
         </div>
@@ -19,6 +19,7 @@
 
       <div>
         <q-btn
+          v-if="$q.screen.gt.sm"
           :disable="store.awaitingResponse || !store.columns"
           rounded
           padding="sm md"
@@ -26,6 +27,18 @@
           color="accent"
           icon="mdi-plus"
           label="Add New Task"
+          @click="openCreateTask"
+        />
+
+        <q-btn
+          v-else
+          :disable="store.awaitingResponse || !store.columns"
+          rounded
+          style="width: 40px; height: 40px"
+          padding="sm md"
+          class="text-capitalize q-mr-sm"
+          color="accent"
+          icon="mdi-plus"
           @click="openCreateTask"
         />
 

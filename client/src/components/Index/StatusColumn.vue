@@ -1,5 +1,6 @@
 <template>
   <q-scroll-area
+    v-if="$q.screen.gt.sm"
     style="height: calc(100vh - 110px); width: 320px"
     class="q-mr-md"
   >
@@ -43,6 +44,47 @@
       </template>
     </draggable>
   </q-scroll-area>
+
+  <q-list v-else bordered>
+    <q-item dense>
+      <q-item-label
+        class="row justify-between items-center q-py-sm"
+        style="width: 100%"
+      >
+        <div class="row flex-center">
+          <q-icon
+            :style="{
+              color: column.color === 'default' ? '#637CAA' : column.color,
+            }"
+            class="q-mr-sm"
+            size="medium"
+            name="mdi-circle"
+          />
+          <span class="text-no-wrap ellipsis overflow-x-hidden">
+            {{ column.name }} ({{
+              store.tasksByColumn(column._id)?.length || 0
+            }})
+          </span>
+        </div>
+        <div>
+          <q-btn
+            size="sm"
+            round
+            flat
+            icon="mdi-pencil-outline"
+            class="q-mb-none"
+            @click="openEditColumn"
+          ></q-btn>
+        </div>
+      </q-item-label>
+    </q-item>
+    <q-separator />
+    <task-card
+      v-for="task in store.tasksByColumn(props.column._id)"
+      :key="task._id"
+      :task="task"
+    />
+  </q-list>
 </template>
 
 <script setup>

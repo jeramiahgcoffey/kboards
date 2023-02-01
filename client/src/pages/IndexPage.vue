@@ -2,7 +2,7 @@
   <q-page class="main-page">
     <div class="q-pa-md">
       <q-scroll-area style="height: calc(100vh - 110px); width: 100%">
-        <div class="row no-wrap">
+        <div class="no-wrap" :class="$q.screen.gt.sm ? 'row' : 'col'">
           <status-column
             v-for="(column, i) in store.columns"
             :key="i"
@@ -38,9 +38,6 @@ watch(isLoggedIn, () => {
 </script>
 
 <style lang="sass">
-.task-card
-  width: 300px
-
 .body--light .main-page
   background: $blue-grey-1
 </style>
