@@ -4,7 +4,9 @@
   "description": "A Kanban Board app for managing boards and tasks",
   "main": "built/app.js",
   "scripts": {
-    "start": "nodemon built/app.js"
+    "dev": "nodemon built/app.js",
+    "build": "npm install --production && tsc",
+    "start": "node built/app.js"
   },
   "author": "Jeramiah Coffey",
   "license": "ISC",

@@ -19,7 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use(express.static('deploy_client/spa'))
+app.use(express.static('client/dist/spa'));
 
 // Routes
 app.use('/api/v1/auth', authRouter);
