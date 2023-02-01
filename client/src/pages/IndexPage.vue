@@ -1,7 +1,10 @@
 <template>
   <q-page class="main-page">
     <div class="q-pa-md">
-      <q-scroll-area style="height: calc(100vh - 110px); width: 100%">
+      <q-scroll-area
+        v-if="$q.screen.gt.sm"
+        style="height: calc(100vh - 110px); width: 100%"
+      >
         <div class="no-wrap" :class="$q.screen.gt.sm ? 'row' : 'col'">
           <status-column
             v-for="(column, i) in store.columns"
@@ -11,6 +14,14 @@
           <new-column v-if="store.selectedBoard" />
         </div>
       </q-scroll-area>
+      <div v-else class="no-wrap" :class="$q.screen.gt.sm ? 'row' : 'col'">
+        <status-column
+          v-for="(column, i) in store.columns"
+          :key="i"
+          :column="column"
+        />
+        <new-column v-if="store.selectedBoard" />
+      </div>
     </div>
   </q-page>
 </template>
