@@ -4,19 +4,23 @@
     class="q-mr-md"
   >
     <div
-      style="letter-spacing: 1.8px"
-      class="text-caption text-weight-bold text-grey-7 q-py-sm text-uppercase row fit justify-between items-end"
+      style="letter-spacing: 1.8px; width: 320px"
+      class="text-caption text-weight-bold text-grey-7 q-py-sm text-uppercase row justify-between items-end"
     >
-      <div>
+      <div class="col">
         <q-icon
           :style="{
             color: column.color === 'default' ? '#637CAA' : column.color,
           }"
+          class="q-mr-sm"
           name="mdi-circle"
         ></q-icon>
-        {{ column.name }} ({{ store.tasksByColumn(column._id)?.length || 0 }})
       </div>
-      <div class="q-mr-lg">
+
+      <span class="col-9 text-no-wrap ellipsis overflow-x-hidden">
+        {{ column.name }} ({{ store.tasksByColumn(column._id)?.length || 0 }})
+      </span>
+      <div class="q-mr-lg col">
         <q-btn
           size="sm"
           round
