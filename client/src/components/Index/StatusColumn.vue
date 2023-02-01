@@ -13,6 +13,7 @@
             color: column.color === 'default' ? '#637CAA' : column.color,
           }"
           class="q-mr-sm"
+          size="medium"
           name="mdi-circle"
         ></q-icon>
       </div>
