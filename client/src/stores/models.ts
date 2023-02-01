@@ -1,7 +1,7 @@
 export interface Status {
-  name: string,
-  color: string,
-  _id: string,
+  name: string;
+  color: string;
+  _id: string;
 }
 
 export interface Subtask {
@@ -61,6 +61,7 @@ export interface Store {
     name: string;
     color: string;
   };
+  drawerOpen: boolean;
   newTask: {
     title: string;
     description?: string;

@@ -27,6 +27,7 @@ export const useStore = defineStore('main', {
       name: '',
       color: '',
     },
+    drawerOpen: false,
     newTask: { title: '', description: '', status: '', subtasks: [] },
     selectedBoard: undefined,
   }),

@@ -1,9 +1,12 @@
 <template>
-  <q-drawer v-model="isDrawerOpen" behavior="desktop" show-if-above bordered>
+  <q-drawer v-model="store.drawerOpen" show-if-above bordered>
     <q-layout view="hHh lpr lFr">
       <q-header class="app-bar">
         <q-toolbar>
           <q-img src="~assets/logo2.png" height="70px" width="250px" />
+          <q-btn rounded flat @click="store.drawerOpen = false">
+            <q-icon name="mdi-arrow-left"></q-icon>
+          </q-btn>
         </q-toolbar>
       </q-header>
       <q-page-container>
@@ -20,7 +23,7 @@
                 v-for="board in store.boards"
                 :key="board._id"
                 :active="store.selectedBoard?._id === board._id"
-                @click="store.selectBoard(board)"
+                @click="handleSelectBoard(board)"
                 clickable
                 v-ripple
               >
@@ -68,15 +71,19 @@ import { useQuasar } from 'quasar';
 import { useStore } from 'src/stores/store';
 
 const store = useStore();
-
 const $q = useQuasar();
+
+const handleSelectBoard = (board) => {
+  store.selectBoard(board);
+  if ($q.screen.lt.md) {
+    store.drawerOpen = false;
+  }
+};
 
 const openCreateBoard = () => {
   store.dialogContent = 'createBoard';
   store.dialogOpen = true;
 };
-
-let isDrawerOpen = true;
 </script>
 
 <style lang="sass">

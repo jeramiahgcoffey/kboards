@@ -1,6 +1,14 @@
 <template>
   <q-header elevated class="app-bar">
     <q-toolbar>
+      <q-btn
+        flat
+        rounded
+        v-if="!store.drawerOpen"
+        @click="store.drawerOpen = true"
+      >
+        <q-icon name="mdi-menu"></q-icon>
+      </q-btn>
       <q-toolbar-title class="text-weight-medium">
         <div style="height: 70px; display: flex; align-items: center">
           <span class="text-h5 q-pt-md">
