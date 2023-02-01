@@ -5,7 +5,7 @@
   "main": "built/app.js",
   "scripts": {
     "dev": "nodemon built/app.js",
-    "build": "npm install --omit=dev && tsc && cd client && npm install --omit=dev && quasar build",
+    "build": "npm install --omit=dev && tsc && cd client && npm install && quasar build",
     "start": "node built/app.js"
   },
   "author": "Jeramiah Coffey",
