@@ -10,7 +10,6 @@ import boardsRouter from './routes/boards.route.js';
 
 import errorHandlerMiddleware from './middleware/error-handler.js';
 import authMiddleware from './middleware/authentication.js';
-import morgan from 'morgan';
 import cors from 'cors';
 
 const app = express();
