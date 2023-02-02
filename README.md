@@ -22,7 +22,13 @@
 
 ### Screenshot
 
+**Desktop Layout**
+
 ![](./screenshot.png)
+
+**Mobile Layout**
+
+![](./screenshot_mobile.png)
 
 
 ### Links
