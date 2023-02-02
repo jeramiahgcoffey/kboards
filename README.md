@@ -3,8 +3,6 @@
  
  K Boards can be used to track project completion for software applications or otherwise! 
  Featuring a responsive layout, drag-n-drop functionality, and password reset capability.
- 
- *This application currently exists on a free cluster, please be patient on inital page load (1-2 minutes) when visting the site. I plan to upgrade the server soon.
 
 ## Table of contents
 
@@ -30,7 +28,7 @@
 ### Links
 
 - Solution URL: [GitHub](https://github.com/jeramiahgcoffey/kboards)
-- Live Site URL(Please be patient, it's a free server): [Render App](https://kboards.onrender.com/)
+- Live Site URL: [K Boards](https://kboards.onrender.com/)
 
 ## My process
 
