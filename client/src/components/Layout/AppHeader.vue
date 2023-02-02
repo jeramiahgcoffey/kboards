@@ -20,7 +20,7 @@
       <div>
         <q-btn
           v-if="$q.screen.gt.sm"
-          :disable="store.awaitingResponse || !store.columns"
+          :disable="store.awaitingResponse || !store.columns.length"
           rounded
           padding="sm md"
           class="text-capitalize q-mr-sm"
@@ -32,7 +32,7 @@
 
         <q-btn
           v-else
-          :disable="store.awaitingResponse || !store.columns"
+          :disable="store.awaitingResponse || !store.columns.length"
           rounded
           style="width: 40px; height: 40px"
           padding="sm md"
