@@ -38,6 +38,11 @@
       @change="handleDrag"
       group="tasks"
       item-key="_id"
+      :style="
+        !store.tasksByColumn(props.column._id).length
+          ? 'padding-bottom: 350px'
+          : 'padding-bottom: 100px'
+      "
     >
       <template #item="{ element: task }">
         <task-card :task="task" />
