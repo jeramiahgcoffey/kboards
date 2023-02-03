@@ -1,19 +1,19 @@
 import mongoose, { Document } from 'mongoose';
 
-interface IStatus {
+export interface IStatus extends Document {
   name: string;
   color: string;
 }
 
 interface ISubtask {
   title: string;
-  completed: boolean;
+  completed?: boolean;
 }
 
 interface ITask {
   title: string;
   description: string;
-  subtasks: ISubtask[];
+  subtasks: mongoose.Types.DocumentArray<ISubtask>;
   status: IStatus;
 }
 
@@ -22,7 +22,7 @@ interface IBoard {
   description: string;
   createdBy: mongoose.Types.ObjectId;
   columns: mongoose.Types.DocumentArray<IStatus>;
-  tasks: ITask[];
+  tasks: mongoose.Types.DocumentArray<ITask>;
 }
 
 const StatusSchema = new mongoose.Schema<IStatus>({
