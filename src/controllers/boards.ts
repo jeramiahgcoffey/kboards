@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { IUserRequest, IBoardRequest, IColumnRequest } from './requests.js';
+import { IUserRequest, IBoardRequest, IColumnRequest } from '../contracts/requests.js';
 import { StatusCodes } from 'http-status-codes';
 import BadRequestError from '../errors/bad-request.js';
 import boards from '../services/boards.js';

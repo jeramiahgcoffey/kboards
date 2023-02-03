@@ -3,6 +3,7 @@ import { Request } from 'express';
 export interface IUserRequest extends Request {
   user: {
     userId: string;
+    email: string;
   };
 }
 
@@ -19,5 +20,3 @@ export interface IColumnRequest extends IUserRequest {
     color?: string;
   };
 }
-
-export interface ITaskRequest extends IUserRequest {}

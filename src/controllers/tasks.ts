@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { IUserRequest } from './requests.js';
+import { IUserRequest } from '../contracts/requests.js';
 import { StatusCodes } from 'http-status-codes';
 import BadRequestError from '../errors/bad-request.js';
 import tasks from '../services/tasks.js';
