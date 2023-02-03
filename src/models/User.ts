@@ -5,7 +5,13 @@ dotenv.config();
 
 import mongoose from 'mongoose';
 
-const UserSchema = new mongoose.Schema(
+interface IUser {
+  email: string;
+  password: string;
+  name: string;
+}
+
+const UserSchema = new mongoose.Schema<IUser>(
   {
     email: {
       type: String,
@@ -53,6 +59,6 @@ UserSchema.methods.createJWT = function () {
   );
 };
 
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model<IUser>('User', UserSchema);
 
 export default User;
