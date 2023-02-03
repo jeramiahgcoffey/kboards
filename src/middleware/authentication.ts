@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { IUserRequest } from '../contracts/requests.js';
+import { IUserRequest } from '../controllers/requests.js';
 import UnauthenticatedError from '../errors/unauthenticated.js';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
