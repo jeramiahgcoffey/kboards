@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "NodeNext",
-    "outDir": "./built",
+    "outDir": "./build",
     "allowJs": true,
     "target": "ES5"
   },

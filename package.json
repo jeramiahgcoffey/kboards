@@ -2,11 +2,11 @@
   "name": "kanban",
   "version": "1.0.0",
   "description": "A Kanban Board app for managing boards and tasks",
-  "main": "built/app.js",
+  "main": "build/app.js",
   "scripts": {
-    "dev": "nodemon built/app.js",
-    "build": "rm -rf built/ && tsc",
-    "start": "node built/app.js"
+    "dev": "nodemon build/app.js",
+    "build": "rm -rf build/ && tsc",
+    "start": "node build/app.js"
   },
   "resolutions": {
     "node": "node16"
