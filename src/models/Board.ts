@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 interface IStatus {
   name: string;
@@ -21,10 +21,7 @@ interface IBoard {
   name: string;
   description: string;
   createdBy: mongoose.Types.ObjectId;
-  columns: {
-    name: string;
-    color: string;
-  }[];
+  columns: mongoose.Types.DocumentArray<IStatus>;
   tasks: ITask[];
 }
 
