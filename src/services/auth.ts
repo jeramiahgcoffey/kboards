@@ -1,7 +1,7 @@
 import User from '../models/User.js';
 import NotFoundError from '../errors/not-found.js';
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (email: string, password: string) => {
   const user = await User.findOne({ email: email });
 
   if (!user) {
@@ -17,7 +17,7 @@ export const loginUser = async (email, password) => {
   return { user: { email: user.email }, token };
 };
 
-export const registerUser = async (email, password) => {
+export const registerUser = async (email: string, password: string) => {
   const user = await User.create({ email, password });
   const token = user.createJWT();
 

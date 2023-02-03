@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 interface IUser {
   email: string;
@@ -11,7 +11,14 @@ interface IUser {
   name: string;
 }
 
-const UserSchema = new mongoose.Schema<IUser>(
+interface IUserDocument extends IUser, Document {
+  createdAt: Date;
+  updatedAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
+  createJWT(): string;
+}
+
+const UserSchema = new mongoose.Schema(
   {
     email: {
       type: String,
@@ -42,7 +49,9 @@ UserSchema.pre('save', async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-UserSchema.methods.comparePassword = async function (candidatePassword) {
+UserSchema.methods.comparePassword = async function (
+  candidatePassword: string
+) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
@@ -59,6 +68,6 @@ UserSchema.methods.createJWT = function () {
   );
 };
 
-const User = mongoose.model<IUser>('User', UserSchema);
+const User = mongoose.model<IUserDocument>('User', UserSchema);
 
 export default User;

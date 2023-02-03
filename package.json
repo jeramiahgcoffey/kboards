@@ -5,8 +5,11 @@
   "main": "built/app.js",
   "scripts": {
     "dev": "nodemon built/app.js",
-    "build": "tsc",
+    "build": "rm -rf built/ && tsc",
     "start": "node built/app.js"
+  },
+  "resolutions": {
+    "node": "node16"
   },
   "author": "Jeramiah Coffey",
   "license": "ISC",
