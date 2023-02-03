@@ -1,18 +1,22 @@
 import BadRequestError from '../errors/bad-request.js';
-import Board from '../models/Board.js';
+import Board, { IStatus } from '../models/Board.js';
 
 const createTask = async (
-  userId,
-  boardId,
-  title,
-  status,
-  description,
-  subtasks
+  userId: string,
+  boardId: string,
+  title: string,
+  status: IStatus,
+  description: string,
+  subtasks: string[]
 ) => {
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
-  if (!board) throw new BadRequestError(`Board ${ boardId } not found`);
-  if (!board.columns.map(c => c.name.toLowerCase()).includes(status.name.toLowerCase()))
-    throw new BadRequestError(`Status ${ status._id } not found`);
+  if (!board) throw new BadRequestError(`Board ${boardId} not found`);
+  if (
+    !board.columns
+      .map((c) => c.name.toLowerCase())
+      .includes(status.name.toLowerCase())
+  )
+    throw new BadRequestError(`Status ${status._id} not found`);
 
   board.tasks.push({
     title,
@@ -27,7 +31,16 @@ const createTask = async (
   return board;
 };
 
-const updateTask = async (userId, taskId, taskData) => {
+const updateTask = async (
+  userId: string,
+  taskId: string,
+  taskData: {
+    title: string;
+    description: string;
+    status: IStatus;
+    subtasks: { title: string }[] | string[];
+  }
+) => {
   const board = await Board.findOne({
     createdBy: userId,
     'tasks._id': taskId,
@@ -44,7 +57,11 @@ const updateTask = async (userId, taskId, taskData) => {
   return board;
 };
 
-const updateSubtask = async (userId, taskId, subtaskData) => {
+const updateSubtask = async (
+  userId: string,
+  taskId: string,
+  subtaskData: { _id: string; title: string; completed: boolean }
+) => {
   const board = await Board.findOne({ createdBy: userId, 'tasks._id': taskId });
   if (!board) throw new BadRequestError(`Task ${taskId} not found`);
 
@@ -58,7 +75,7 @@ const updateSubtask = async (userId, taskId, subtaskData) => {
   return board;
 };
 
-const destroyTask = async (userId, taskId) => {
+const destroyTask = async (userId: string, taskId: string) => {
   const board = await Board.findOne({
     createdBy: userId,
     'tasks._id': taskId,

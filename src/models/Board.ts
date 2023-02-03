@@ -1,19 +1,42 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
-const StatusSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true
-    },
-    color: {
-      type: String,
-      default: ''
-    }
-  }
-);
+export interface IStatus extends Document {
+  name: string;
+  color: string;
+}
 
-const SubtaskSchema = new mongoose.Schema(
+interface ISubtask {
+  title: string;
+  completed?: boolean;
+}
+
+interface ITask {
+  title: string;
+  description: string;
+  subtasks: mongoose.Types.DocumentArray<ISubtask>;
+  status: IStatus;
+}
+
+interface IBoard {
+  name: string;
+  description: string;
+  createdBy: mongoose.Types.ObjectId;
+  columns: mongoose.Types.DocumentArray<IStatus>;
+  tasks: mongoose.Types.DocumentArray<ITask>;
+}
+
+const StatusSchema = new mongoose.Schema<IStatus>({
+  name: {
+    type: String,
+    required: true,
+  },
+  color: {
+    type: String,
+    default: '',
+  },
+});
+
+const SubtaskSchema = new mongoose.Schema<ISubtask>(
   {
     title: {
       type: String,
@@ -27,7 +50,7 @@ const SubtaskSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const TaskSchema = new mongoose.Schema(
+const TaskSchema = new mongoose.Schema<ITask>(
   {
     title: {
       type: String,
@@ -41,13 +64,13 @@ const TaskSchema = new mongoose.Schema(
     },
     status: {
       type: StatusSchema,
-      required: true
+      required: true,
     },
   },
   { timestamps: true }
 );
 
-const BoardSchema = new mongoose.Schema(
+const BoardSchema = new mongoose.Schema<IBoard>(
   {
     name: {
       type: String,

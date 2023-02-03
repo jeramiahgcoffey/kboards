@@ -1,8 +1,10 @@
+import { Response } from 'express';
+import { IUserRequest } from './requests.js';
 import { StatusCodes } from 'http-status-codes';
 import BadRequestError from '../errors/bad-request.js';
 import tasks from '../services/tasks.js';
 
-const postTask = async (req, res) => {
+const postTask = async (req: IUserRequest, res: Response) => {
   const { boardId } = req.params;
   const { title, status, description, subtasks } = req.body;
   const { userId } = req.user;
@@ -20,7 +22,7 @@ const postTask = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ board });
 };
 
-const patchTask = async (req, res) => {
+const patchTask = async (req: IUserRequest, res: Response) => {
   const { userId } = req.user;
   const { taskId } = req.params;
   const {
@@ -34,7 +36,7 @@ const patchTask = async (req, res) => {
   res.status(StatusCodes.OK).json({ board });
 };
 
-const patchSubtask = async (req, res) => {
+const patchSubtask = async (req: IUserRequest, res: Response) => {
   const { taskId } = req.params;
   const { userId } = req.user;
 
@@ -42,7 +44,7 @@ const patchSubtask = async (req, res) => {
   res.status(StatusCodes.OK).json({ board });
 };
 
-const deleteTask = async (req, res) => {
+const deleteTask = async (req: IUserRequest, res: Response) => {
   const { taskId } = req.params;
   const { userId } = req.user;
 

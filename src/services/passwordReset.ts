@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const createToken = async (email) => {
+export const createToken = async (email: string) => {
   const user = await User.findOne({ email });
   if (!user) throw new NotFoundError(`User ${email} not found`);
 
@@ -24,7 +24,11 @@ export const createToken = async (email) => {
   return { success: true, message: 'Password reset sent successfully' };
 };
 
-export const resetPassword = async (userId, reset_token, password) => {
+export const resetPassword = async (
+  userId: string,
+  reset_token: string,
+  password: string
+) => {
   const user = await User.findById(userId);
   if (!user) throw new NotFoundError(`Invalid link`);
 

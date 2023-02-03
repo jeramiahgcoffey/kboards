@@ -2,15 +2,20 @@ import BadRequestError from '../errors/bad-request.js';
 import NotFoundError from '../errors/not-found.js';
 import Board from '../models/Board.js';
 
-const fetchBoards = async (userId) => await Board.find({ createdBy: userId });
+const fetchBoards = async (userId: string) =>
+  await Board.find({ createdBy: userId });
 
-const fetchBoardById = async (userId, boardId) => {
+const fetchBoardById = async (userId: string, boardId: string) => {
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
   if (!board) throw new BadRequestError(`Board ${boardId} not found`);
   return board;
 };
 
-const createBoard = async (userId, name, description) => {
+const createBoard = async (
+  userId: string,
+  name: string,
+  description: string
+) => {
   return await Board.create({
     createdBy: userId,
     name,
@@ -18,7 +23,12 @@ const createBoard = async (userId, name, description) => {
   });
 };
 
-const createColumn = async (userId, boardId, name, color) => {
+const createColumn = async (
+  userId: string,
+  boardId: string,
+  name: string,
+  color: string
+) => {
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
   if (!board) throw new NotFoundError(`Board ${boardId} not found`);
 
@@ -34,7 +44,13 @@ const createColumn = async (userId, boardId, name, color) => {
   return board;
 };
 
-const updateColumn = async (userId, boardId, columnId, name, color) => {
+const updateColumn = async (
+  userId: string,
+  boardId: string,
+  columnId: string,
+  name: string,
+  color: string
+) => {
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
   if (!board) throw new NotFoundError(`Board ${boardId} not found`);
 
@@ -46,7 +62,11 @@ const updateColumn = async (userId, boardId, columnId, name, color) => {
   return board;
 };
 
-const destroyColumn = async (userId, boardId, columnId, name, color) => {
+const destroyColumn = async (
+  userId: string,
+  boardId: string,
+  columnId: string
+) => {
   const board = await Board.findOne({ createdBy: userId, _id: boardId });
   if (!board) throw new NotFoundError(`Board ${boardId} not found`);
 

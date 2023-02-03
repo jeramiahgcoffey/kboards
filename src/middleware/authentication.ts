@@ -1,7 +1,14 @@
+import { Request, Response, NextFunction } from 'express';
+import { IUserRequest } from '../controllers/requests.js';
 import UnauthenticatedError from '../errors/unauthenticated.js';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
-const auth = (req, res, next) => {
+interface Payload extends JwtPayload {
+  userId: string;
+  email: string;
+}
+
+const auth = (req: IUserRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     throw new UnauthenticatedError('Invalid authentication');
@@ -9,7 +16,7 @@ const auth = (req, res, next) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = jwt.verify(token, process.env.JWT_SECRET) as Payload;
     req.user = { userId: payload.userId, email: payload.email };
     next();
   } catch (error) {
