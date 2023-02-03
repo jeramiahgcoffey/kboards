@@ -11,7 +11,7 @@
     >
       <q-icon color="accent" name="mdi-plus" />
 
-      New Column
+      {{ $q.screen.gt.sm ? 'New Column' : 'New Status' }}
     </q-btn>
   </div>
 </template>
