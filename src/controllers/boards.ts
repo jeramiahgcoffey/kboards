@@ -1,15 +1,17 @@
+import { Response } from 'express';
+import { IUserRequest, IBoardRequest, IColumnRequest } from './requests.js';
 import { StatusCodes } from 'http-status-codes';
 import BadRequestError from '../errors/bad-request.js';
 import boards from '../services/boards.js';
 
-const getBoards = async (req, res) => {
+const getBoards = async (req: IUserRequest, res: Response) => {
   const { userId } = req.user;
 
   const allBoards = await boards.fetchBoards(userId);
   res.status(StatusCodes.OK).json({ boards: allBoards });
 };
 
-const getBoard = async (req, res) => {
+const getBoard = async (req: IUserRequest, res: Response) => {
   const { boardId } = req.params;
   const { userId } = req.user;
 
@@ -17,7 +19,7 @@ const getBoard = async (req, res) => {
   res.status(StatusCodes.OK).json({ board });
 };
 
-const postBoard = async (req, res) => {
+const postBoard = async (req: IBoardRequest, res: Response) => {
   const {
     user: { userId },
     body: { name, description },
@@ -29,7 +31,7 @@ const postBoard = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ board });
 };
 
-const postColumn = async (req, res) => {
+const postColumn = async (req: IColumnRequest, res: Response) => {
   const { boardId } = req.params;
   const { name, color } = req.body;
   const { userId } = req.user;
@@ -40,7 +42,7 @@ const postColumn = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ board });
 };
 
-const patchColumn = async (req, res) => {
+const patchColumn = async (req: IColumnRequest, res: Response) => {
   const { boardId, columnId } = req.params;
   const { name, color } = req.body;
   const { userId } = req.user;
@@ -57,7 +59,7 @@ const patchColumn = async (req, res) => {
   res.status(StatusCodes.OK).json({ board });
 };
 
-const deleteColumn = async (req, res) => {
+const deleteColumn = async (req: IUserRequest, res: Response) => {
   const { boardId, columnId } = req.params;
   const { userId } = req.user;
 

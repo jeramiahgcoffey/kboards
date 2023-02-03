@@ -1,9 +1,10 @@
+import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import BadRequestError from '../errors/bad-request.js';
 import { loginUser, registerUser } from '../services/auth.js';
 import { createToken, resetPassword } from '../services/passwordReset.js';
 
-const login = async (req, res) => {
+const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -13,7 +14,7 @@ const login = async (req, res) => {
   res.status(StatusCodes.OK).json(user);
 };
 
-const register = async (req, res) => {
+const register = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password)
@@ -23,7 +24,7 @@ const register = async (req, res) => {
   res.status(StatusCodes.CREATED).json(user);
 };
 
-const forgot = async (req, res) => {
+const forgot = async (req: Request, res: Response) => {
   const { email } = req.body;
 
   if (!email) throw new BadRequestError('Please provide email');
@@ -33,7 +34,7 @@ const forgot = async (req, res) => {
   res.status(StatusCodes.CREATED).json(response);
 };
 
-const reset = async (req, res) => {
+const reset = async (req: Request, res: Response) => {
   const { userId, token, password } = req.body;
 
   if (!userId || !token || !password)
