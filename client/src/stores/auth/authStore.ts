@@ -78,9 +78,9 @@ export const useAuthStore = defineStore('auth', {
     },
 
     logout() {
+      localStorage.removeItem('user');
       const store = useStore();
       store.$reset();
-      localStorage.removeItem('user');
       this.user.email = null;
       this.user.token = null;
       this.router.push({ path: '/' });
