@@ -77,7 +77,6 @@ const emailRules = [
 
 const passwordRules = [
   (val) => (val !== null && val !== '') || 'Password is required',
-  (val) => val.length >= 8 || 'Password must be at least 8 characters',
 ];
 
 const auth = useAuthStore();

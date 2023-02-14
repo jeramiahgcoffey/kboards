@@ -83,7 +83,7 @@ export const useAuthStore = defineStore('auth', {
       store.$reset();
       this.user.email = null;
       this.user.token = null;
-      this.router.push({ path: '/' });
+      this.router.push({ path: '/login' });
     },
   },
 });
