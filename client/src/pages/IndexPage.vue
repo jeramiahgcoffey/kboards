@@ -43,7 +43,7 @@ const { isLoggedIn } = storeToRefs(auth);
 
 watch(isLoggedIn, () => {
   if (!isLoggedIn.value) {
-    router.push({ path: '/login' });
+    auth.logout();
   }
 });
 </script>

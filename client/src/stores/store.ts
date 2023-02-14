@@ -39,7 +39,7 @@ export const useStore = defineStore('main', {
           ...c,
           name: c.name[0].toUpperCase().concat(c.name.slice(1)),
         };
-      }),
+      }) || [],
     tasksByColumn: (state) => (column: string) =>
       state.selectedBoard?.tasks.filter((task) => task.status._id === column),
   },
