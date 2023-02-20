@@ -44,12 +44,23 @@
 
         <q-btn
           :disable="store.awaitingResponse"
-          @click="auth.logout"
           rounded
           flat
           icon="mdi-dots-vertical"
           padding="sm"
-        />
+        >
+          <q-menu auto-close :offset="[0, 18]">
+            <q-list>
+              <q-item clickable @click="auth.logout">
+                <q-item-section avatar>
+                  <q-icon name="mdi-logout"></q-icon>
+                </q-item-section>
+
+                <q-item-section>Logout</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </div>
     </q-toolbar>
   </q-header>
