@@ -10,9 +10,15 @@ export default defineConfig({
     alias: { "@": root },
   },
   test: {
+    // Lets @testing-library/react register its automatic DOM cleanup between
+    // tests (it hooks the global afterEach).
+    globals: true,
+    // Node by default (service/integration tests); component tests opt into
+    // jsdom with a `// @vitest-environment jsdom` docblock.
     environment: "node",
-    include: ["**/*.test.ts"],
+    include: ["**/*.test.ts", "**/*.test.tsx"],
     exclude: ["legacy/**", "node_modules/**", ".next/**"],
+    setupFiles: ["./vitest.setup.ts"],
     // Integration tests share one MongoDB database and reset it between cases.
     // Run test files one at a time so their setup/teardown cannot race.
     fileParallelism: false,
