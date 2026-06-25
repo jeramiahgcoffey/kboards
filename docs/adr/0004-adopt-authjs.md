@@ -14,8 +14,10 @@ were to port the custom JWT logic into Route Handlers, or adopt Auth.js v5.
 Adopt **Auth.js v5 (NextAuth)** with:
 
 - a **Credentials provider** (email + password, bcrypt verification),
-- the **MongoDB adapter**,
-- the **JWT session strategy** with httpOnly, secure cookies.
+- the **JWT session strategy** with httpOnly, secure cookies,
+- the **MongoDB adapter deferred** until OAuth providers are added. Credentials with JWT
+  sessions does not persist users through the adapter, so wiring it now would be dead
+  code; users are created and read directly through Mongoose.
 
 Auth.js does not provide password reset. Keep a **custom token-based email reset flow**
 (retain the `Token` model and add reset Route Handlers) layered alongside Auth.js, at
