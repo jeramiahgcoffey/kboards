@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, "rebuild/**"]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+        env:
+          MONGODB_URI: mongodb://localhost:27017/kboards-ci
+          AUTH_SECRET: ci-placeholder-secret-not-used-at-build

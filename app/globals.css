@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* kboards design tokens (dark-first; refined during the UI migration) */
+@theme {
+  --color-bg: #0f1115;
+  --color-surface: #171a21;
+  --color-surface-2: #1f2430;
+  --color-line: #2a313d;
+  --color-fg: #e7eaf0;
+  --color-dim: #9aa3b2;
+  --color-accent: #635fc7;
+  --color-accent-hover: #a8a4ff;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  -webkit-font-smoothing: antialiased;
+}
