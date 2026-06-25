@@ -1,0 +1,7 @@
+# <type>(<scope>): <subject>   (<=50 chars, imperative: "add", not "added")
+#   types: feat fix refactor perf test docs chore build ci
+#
+# Why this change / what it does (wrap ~72):
+#
+#
+# Assisted-by: Claude (Opus 4.8) <noreply@anthropic.com>
