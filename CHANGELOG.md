@@ -7,6 +7,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Authentication layer (see `docs/adr/0004`): Auth.js v5 with a Credentials provider and
+  JWT sessions, a registration Route Handler, and a custom email password-reset flow whose
+  tokens are stored only as SHA-256 hashes and are single use. Route protection moved to a
+  Next.js 16 `proxy` (the renamed Middleware). Covered by Vitest integration tests.
+
 ### Changed
 
 - Began the v2 rebuild: migrating from a Vue/Quasar client plus a standalone Express API
