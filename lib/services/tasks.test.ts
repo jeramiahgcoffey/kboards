@@ -71,6 +71,19 @@ describe("createTask", () => {
     expect(task.subtasks.every((s) => s.completed === false)).toBe(true);
   });
 
+  it("stores the column's canonical name regardless of input casing", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+
+    const board = await createTask(userId, boardId, {
+      title: "Cased",
+      status: { name: "TODO" },
+      subtasks: [],
+    });
+
+    expect(lastTask(board).status.name).toBe("todo");
+  });
+
   it("rejects a status that is not one of the board's columns", async () => {
     const userId = newId();
     const { boardId } = await boardWithColumns(userId);

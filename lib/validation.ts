@@ -38,10 +38,17 @@ export const columnSchema = z.object({
   color: z.string().optional(),
 });
 
-export const columnUpdateSchema = z.object({
-  name: z.string().min(3, "Column name must be more than 2 characters"),
-  color: z.string().min(1, "A color is required"),
-});
+export const columnUpdateSchema = z
+  .object({
+    name: z
+      .string()
+      .min(3, "Column name must be more than 2 characters")
+      .optional(),
+    color: z.string().min(1, "A color is required").optional(),
+  })
+  .refine((data) => data.name !== undefined || data.color !== undefined, {
+    message: "Provide a name or color to update",
+  });
 
 const statusSchema = z.object({
   name: z.string().min(1),

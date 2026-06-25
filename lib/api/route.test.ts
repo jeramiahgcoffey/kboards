@@ -55,7 +55,7 @@ describe("authed", () => {
     expect(await res.json()).toEqual({ error: "Board not found" });
   });
 
-  it("maps a ZodError to 400", async () => {
+  it("maps a ZodError to 400 with per-field details", async () => {
     mockUser.mockResolvedValue("user-1");
     const schema = z.object({ name: z.string() });
     const handler = authed(async () => {
@@ -66,6 +66,53 @@ describe("authed", () => {
     const res = await handler(postRequest(), context({}));
 
     expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toBe("Validation failed");
+    expect(json.details.name).toBeInstanceOf(Array);
+    expect(json.details.formErrors).toBeInstanceOf(Array);
+  });
+
+  it("reports object-level refine failures via formErrors", async () => {
+    mockUser.mockResolvedValue("user-1");
+    const schema = z
+      .object({ a: z.string().optional() })
+      .refine((data) => data.a !== undefined, { message: "provide a" });
+    const handler = authed(async () => {
+      schema.parse({});
+      return NextResponse.json({ ok: true });
+    });
+
+    const res = await handler(postRequest(), context({}));
+
+    expect(res.status).toBe(400);
+    expect((await res.json()).details.formErrors).toContain("provide a");
+  });
+
+  it("maps a Mongoose ValidationError to 400", async () => {
+    mockUser.mockResolvedValue("user-1");
+    const handler = authed(async () => {
+      const error = new Error("Path `name` is required.");
+      error.name = "ValidationError";
+      throw error;
+    });
+
+    const res = await handler(postRequest(), context({}));
+
+    expect(res.status).toBe(400);
+  });
+
+  it("maps an unexpected error to 500 and logs it", async () => {
+    mockUser.mockResolvedValue("user-1");
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const handler = authed(async () => {
+      throw new Error("boom");
+    });
+
+    const res = await handler(postRequest(), context({}));
+
+    expect(res.status).toBe(500);
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
   });
 
   it("treats a malformed JSON body as 400 via readJson", async () => {

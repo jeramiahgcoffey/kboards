@@ -20,11 +20,13 @@ export function authed<P = Record<string, never>>(
     request: Request,
     context: { params: Promise<P> },
   ): Promise<Response> => {
-    const userId = await getCurrentUserId();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     try {
+      // Inside the try so a session/db failure here is mapped and logged like
+      // any other error rather than escaping the wrapper.
+      const userId = await getCurrentUserId();
+      if (!userId) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
       const params = await context.params;
       return await handler({ request, userId, params });
     } catch (error) {
@@ -50,10 +52,13 @@ function toErrorResponse(error: unknown): NextResponse {
     );
   }
   if (error instanceof ZodError) {
+    // Include formErrors so object-level .refine failures (e.g. "provide at
+    // least one field") are reported, not just per-field errors.
+    const flattened = z.flattenError(error);
     return NextResponse.json(
       {
         error: "Validation failed",
-        details: z.flattenError(error).fieldErrors,
+        details: { ...flattened.fieldErrors, formErrors: flattened.formErrors },
       },
       { status: 400 },
     );

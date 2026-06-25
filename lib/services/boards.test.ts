@@ -13,6 +13,7 @@ import {
   updateColumn,
   deleteColumn,
 } from "@/lib/services/boards";
+import { createTask } from "@/lib/services/tasks";
 
 const newId = () => new mongoose.Types.ObjectId().toString();
 
@@ -174,5 +175,68 @@ describe("column CRUD", () => {
         deleteColumn(userId, String(board._id), newId()),
       ),
     ).toBe(404);
+  });
+
+  it("updates only the color when no name is provided", async () => {
+    const userId = newId();
+    let board = await createBoard(userId, { name: "Board" });
+    board = await addColumn(userId, String(board._id), {
+      name: "todo",
+      color: "#111",
+    });
+    const columnId = String(board.columns[0]._id);
+
+    const updated = await updateColumn(userId, String(board._id), columnId, {
+      color: "#999",
+    });
+
+    expect(updated.columns[0].name).toBe("todo");
+    expect(updated.columns[0].color).toBe("#999");
+  });
+});
+
+describe("column changes cascade to tasks", () => {
+  it("renaming a column moves its tasks to the new name", async () => {
+    const userId = newId();
+    let board = await createBoard(userId, { name: "Board" });
+    board = await addColumn(userId, String(board._id), { name: "todo" });
+    const boardId = String(board._id);
+    board = await createTask(userId, boardId, {
+      title: "Task",
+      status: { name: "todo" },
+      subtasks: [],
+    });
+    const columnId = String(board.columns[0]._id);
+
+    const updated = await updateColumn(userId, boardId, columnId, {
+      name: "backlog",
+    });
+
+    expect(updated.columns[0].name).toBe("backlog");
+    expect(updated.tasks[0].status.name).toBe("backlog");
+  });
+
+  it("deleting a column deletes the tasks that live in it", async () => {
+    const userId = newId();
+    let board = await createBoard(userId, { name: "Board" });
+    board = await addColumn(userId, String(board._id), { name: "todo" });
+    board = await addColumn(userId, String(board._id), { name: "doing" });
+    const boardId = String(board._id);
+    board = await createTask(userId, boardId, {
+      title: "Keep",
+      status: { name: "doing" },
+      subtasks: [],
+    });
+    board = await createTask(userId, boardId, {
+      title: "Drop",
+      status: { name: "todo" },
+      subtasks: [],
+    });
+    const todoId = String(board.columns.find((c) => c.name === "todo")?._id);
+
+    const updated = await deleteColumn(userId, boardId, todoId);
+
+    expect(updated.columns.map((c) => c.name)).toEqual(["doing"]);
+    expect(updated.tasks.map((t) => t.title)).toEqual(["Keep"]);
   });
 });

@@ -5,11 +5,15 @@ import { badRequest, notFound } from "./errors";
 import { findOwnedBoard, type BoardDocument } from "./access";
 
 // A task's status must name one of the board's columns (case-insensitive).
-function assertStatusIsAColumn(board: BoardDocument, status: IStatus): void {
-  const exists = board.columns.some(
-    (column) => column.name.toLowerCase() === status.name.toLowerCase(),
+// Returns the column's canonical (stored) name so the snapshot on the task
+// always matches its column exactly, which keeps column rename/delete and any
+// status comparisons consistent.
+function resolveStatusName(board: BoardDocument, status: IStatus): string {
+  const column = board.columns.find(
+    (col) => col.name.toLowerCase() === status.name.toLowerCase(),
   );
-  if (!exists) throw badRequest(`Column "${status.name}" does not exist`);
+  if (!column) throw badRequest(`Column "${status.name}" does not exist`);
+  return column.name;
 }
 
 export async function createTask(
@@ -24,11 +28,11 @@ export async function createTask(
 ): Promise<BoardDocument> {
   await dbConnect();
   const board = await findOwnedBoard(userId, boardId);
-  assertStatusIsAColumn(board, input.status);
+  const statusName = resolveStatusName(board, input.status);
 
   const task = board.tasks.create({
     title: input.title,
-    status: input.status,
+    status: { name: statusName, color: input.status.color },
     description: input.description,
     subtasks: input.subtasks.map((title) => ({ title, completed: false })),
   });
@@ -56,11 +60,15 @@ export async function updateTask(
   const task = board.tasks.id(taskId);
   if (!task) throw notFound("Task not found");
 
-  if (input.status) assertStatusIsAColumn(board, input.status);
+  // Resolve up front so an invalid status rejects before any mutation.
+  const statusName =
+    input.status !== undefined ? resolveStatusName(board, input.status) : null;
 
   if (input.title !== undefined) task.title = input.title;
   if (input.description !== undefined) task.description = input.description;
-  if (input.status !== undefined) task.status = input.status;
+  if (input.status !== undefined && statusName !== null) {
+    task.status = { name: statusName, color: input.status.color };
+  }
 
   // Replacing the subtask list resets completion state, matching the task-edit
   // modal where subtasks are entered as plain titles.
