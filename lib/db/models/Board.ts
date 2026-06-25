@@ -1,36 +1,40 @@
-import mongoose, { Schema, type Model } from "mongoose";
+import mongoose, { Schema, type Model, type Types } from "mongoose";
 
+// `_id` is optional on the interfaces so plain objects can be pushed onto the
+// document arrays (Mongoose generates the id); it is always present when read.
+// The arrays are typed as DocumentArray so services can use `.id()` / `.pull()`.
 export interface IColumn {
-  _id: mongoose.Types.ObjectId;
+  _id?: Types.ObjectId;
   name: string;
   color: string;
 }
 
 export interface IStatus {
   name: string;
-  color: string;
+  // Defaults to "" in the schema, so it is optional on input.
+  color?: string;
 }
 
 export interface ISubtask {
-  _id: mongoose.Types.ObjectId;
+  _id?: Types.ObjectId;
   title: string;
   completed: boolean;
 }
 
 export interface ITask {
-  _id: mongoose.Types.ObjectId;
+  _id?: Types.ObjectId;
   title: string;
   description?: string;
   status: IStatus;
-  subtasks: ISubtask[];
+  subtasks: Types.DocumentArray<ISubtask>;
 }
 
 export interface IBoard {
   name: string;
   description?: string;
-  createdBy: mongoose.Types.ObjectId;
-  columns: IColumn[];
-  tasks: ITask[];
+  createdBy: Types.ObjectId;
+  columns: Types.DocumentArray<IColumn>;
+  tasks: Types.DocumentArray<ITask>;
   createdAt: Date;
   updatedAt: Date;
 }
