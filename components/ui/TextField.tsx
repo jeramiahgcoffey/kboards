@@ -11,6 +11,13 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const inputId = id ?? generatedId;
     const errorId = `${inputId}-error`;
 
+    // Merge so the error wiring always applies, without dropping any
+    // aria-describedby the consumer passed for another purpose.
+    const describedBy =
+      [props["aria-describedby"], error ? errorId : null]
+        .filter(Boolean)
+        .join(" ") || undefined;
+
     return (
       <div className="flex flex-col gap-1.5">
         <label
@@ -20,14 +27,14 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           {label}
         </label>
         <input
+          {...props}
           ref={ref}
           id={inputId}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errorId : undefined}
+          aria-invalid={error ? true : props["aria-invalid"]}
+          aria-describedby={describedBy}
           className={`min-h-11 rounded-md border bg-transparent px-3 text-sm text-[var(--color-fg)] transition-colors placeholder:text-[var(--color-dim)]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] ${
             error ? "border-[var(--color-danger)]" : "border-[var(--color-line)]"
           } ${className}`}
-          {...props}
         />
         {error ? (
           <p id={errorId} className="text-xs text-[var(--color-danger)]">

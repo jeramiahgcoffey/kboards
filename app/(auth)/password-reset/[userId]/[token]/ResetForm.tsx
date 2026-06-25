@@ -36,20 +36,25 @@ export function ResetForm({
     }
 
     setPending(true);
-    const response = await fetch("/api/auth/password-reset/confirm", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ userId, token, password }),
-    });
-    setPending(false);
+    try {
+      const response = await fetch("/api/auth/password-reset/confirm", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ userId, token, password }),
+      });
 
-    if (!response.ok) {
-      setError("This reset link is invalid or has expired.");
-      return;
+      if (!response.ok) {
+        setError("This reset link is invalid or has expired.");
+        return;
+      }
+
+      toast.success("Password updated. Please sign in.");
+      router.push("/login");
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setPending(false);
     }
-
-    toast.success("Password updated. Please sign in.");
-    router.push("/login");
   }
 
   return (

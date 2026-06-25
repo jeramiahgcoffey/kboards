@@ -19,12 +19,18 @@ export function RequestResetForm() {
 
     setPending(true);
     try {
-      await fetch("/api/auth/password-reset", {
+      const response = await fetch("/api/auth/password-reset", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      // The endpoint always responds the same way, so the UI does too.
+
+      // For a valid email the endpoint always responds the same way (so the UI
+      // reveals nothing); a non-OK response means the input itself was rejected.
+      if (!response.ok) {
+        setError("Please enter a valid email address.");
+        return;
+      }
       setSent(true);
     } catch {
       setError("Something went wrong. Please try again.");

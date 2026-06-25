@@ -59,4 +59,20 @@ describe("LoginForm", () => {
     );
     expect(push).not.toHaveBeenCalled();
   });
+
+  it("recovers from a thrown sign-in without staying stuck", async () => {
+    signInMock.mockRejectedValue(new Error("network"));
+    render(<LoginForm />);
+
+    await userEvent.type(screen.getByLabelText("Email"), "user@example.com");
+    await userEvent.type(screen.getByLabelText("Password"), "supersecret");
+    const button = screen.getByRole("button", { name: /sign in/i });
+    await userEvent.click(button);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      /something went wrong/i,
+    );
+    expect(push).not.toHaveBeenCalled();
+    expect(button).toBeEnabled();
+  });
 });

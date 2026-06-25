@@ -22,21 +22,26 @@ export function LoginForm() {
     const password = String(data.get("password") ?? "");
 
     setPending(true);
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-    setPending(false);
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    // Generic message: never reveal whether the email or the password was wrong.
-    if (result?.error) {
-      setError("Invalid email or password.");
-      return;
+      // Generic message: never reveal whether the email or password was wrong.
+      if (result?.error) {
+        setError("Invalid email or password.");
+        return;
+      }
+
+      router.push("/boards");
+      router.refresh();
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setPending(false);
     }
-
-    router.push("/boards");
-    router.refresh();
   }
 
   return (
