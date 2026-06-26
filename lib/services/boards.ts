@@ -11,6 +11,18 @@ export async function listBoards(userId: string): Promise<BoardDocument[]> {
   return Board.find({ createdBy: userId }).sort({ createdAt: 1 });
 }
 
+// The landing redirect only needs the oldest board's id, so project to `_id`
+// and return a lean document rather than hydrating every board's columns,
+// tasks, and subtasks just to compute a target.
+export async function findFirstBoardId(userId: string): Promise<string | null> {
+  await dbConnect();
+  const board = await Board.findOne({ createdBy: userId })
+    .sort({ createdAt: 1 })
+    .select("_id")
+    .lean();
+  return board ? String(board._id) : null;
+}
+
 export async function getBoard(
   userId: string,
   boardId: string,

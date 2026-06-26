@@ -9,6 +9,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Board view: a responsive boards workspace with a board-list sidebar (a slide-over drawer
+  on small screens), columns rendered from each board's schema, task cards showing subtask
+  progress, and a read-only task modal. The sidebar and task modal share one accessible
+  dialog primitive (focus trap, `Escape` to close, scroll lock, focus restore) built on a
+  portal rather than the native `<dialog>` element, which the test runner's jsdom does not
+  yet implement. Server Components fetch through the service layer and serialize boards to
+  plain DTOs before crossing into Client Components. Covered by Vitest component tests.
 - Authentication UI: sign-in, registration, and a two-step password-reset flow, plus a
   landing page and an authenticated boards placeholder, built mobile-first and accessible
   (labelled fields, `aria-invalid` / `aria-describedby`, `role="alert"` errors, visible
