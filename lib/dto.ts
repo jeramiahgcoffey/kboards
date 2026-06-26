@@ -47,7 +47,9 @@ export function toBoard(board: BoardDocument): BoardDTO {
   return {
     id: String(board._id),
     name: board.name,
-    description: board.description ?? undefined,
+    // Omit the key entirely when absent so the DTO honors its optional contract
+    // instead of materializing `description: undefined`.
+    ...(board.description != null ? { description: board.description } : {}),
     columns: board.columns.map((column) => ({
       id: String(column._id),
       name: column.name,
@@ -56,7 +58,7 @@ export function toBoard(board: BoardDocument): BoardDTO {
     tasks: board.tasks.map((task) => ({
       id: String(task._id),
       title: task.title,
-      description: task.description ?? undefined,
+      ...(task.description != null ? { description: task.description } : {}),
       status: { name: task.status.name, color: task.status.color ?? "" },
       subtasks: task.subtasks.map((subtask) => ({
         id: String(subtask._id),

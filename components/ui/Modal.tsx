@@ -1,20 +1,35 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import { createPortal } from "react-dom";
 
-interface ModalProps {
+// A store that never changes: the snapshots alone distinguish server from client.
+const emptySubscribe = () => () => {};
+const getClientSnapshot = () => false;
+const getServerSnapshot = () => true;
+
+interface BaseModalProps {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
-  // Provide one of these so the dialog has an accessible name.
-  labelledBy?: string;
-  label?: string;
   // Positioning hooks so the same a11y machinery backs both a centered modal
   // and a left nav drawer.
   containerClassName?: string;
   panelClassName?: string;
 }
+
+// Every dialog must have an accessible name, so require exactly one of
+// `labelledBy` (an id) or `label` (literal text) at the type level.
+type ModalProps = BaseModalProps &
+  (
+    | { labelledBy: string; label?: never }
+    | { label: string; labelledBy?: never }
+  );
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -29,6 +44,14 @@ export function Modal({
   panelClassName = "w-full max-w-md rounded-xl bg-[var(--color-surface)] p-6 shadow-2xl",
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  // A "use client" component can still render on the server before hydration;
+  // detect that without setState-in-effect so `document` is only touched on the
+  // client (useSyncExternalStore returns the server snapshot through hydration).
+  const isServer = useSyncExternalStore(
+    emptySubscribe,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -73,7 +96,7 @@ export function Modal({
     };
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (isServer || !open) return null;
 
   return createPortal(
     <div

@@ -23,6 +23,9 @@ export function AppShell({
   children,
 }: AppShellProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // With no boards there is nothing to navigate to, so the drawer and its
+  // trigger would only open an empty dead-end panel on small screens.
+  const hasBoards = boards.length > 0;
 
   return (
     <div className="flex min-h-dvh flex-col lg:flex-row">
@@ -32,33 +35,37 @@ export function AppShell({
       </aside>
 
       {/* Slide-over board list on small screens, reusing the modal a11y machinery. */}
-      <Modal
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        label="Boards"
-        containerClassName="items-stretch justify-start"
-        panelClassName="h-full w-72 max-w-[80vw] border-r border-[var(--color-line)] bg-[var(--color-surface)]"
-      >
-        <Sidebar
-          boards={boards}
-          activeBoardId={activeBoardId}
-          onNavigate={() => setDrawerOpen(false)}
-        />
-      </Modal>
+      {hasBoards ? (
+        <Modal
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          label="Boards"
+          containerClassName="items-stretch justify-start"
+          panelClassName="h-full w-72 max-w-[80vw] border-r border-[var(--color-line)] bg-[var(--color-surface)]"
+        >
+          <Sidebar
+            boards={boards}
+            activeBoardId={activeBoardId}
+            onNavigate={() => setDrawerOpen(false)}
+          />
+        </Modal>
+      ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between gap-4 border-b border-[var(--color-line)] px-4 py-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setDrawerOpen(true)}
-              aria-label="Open board list"
-              className="-ml-1 inline-flex h-10 w-10 items-center justify-center rounded-md text-[var(--color-dim)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] lg:hidden"
-            >
-              <svg viewBox="0 0 20 20" className="h-5 w-5" fill="currentColor" aria-hidden>
-                <path d="M3 5.5A.75.75 0 0 1 3.75 4.75h12.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 5.5Zm0 4.5a.75.75 0 0 1 .75-.75h12.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 10Zm.75 3.75a.75.75 0 0 0 0 1.5h12.5a.75.75 0 0 0 0-1.5H3.75Z" />
-              </svg>
-            </button>
+            {hasBoards ? (
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(true)}
+                aria-label="Open board list"
+                className="-ml-1 inline-flex h-10 w-10 items-center justify-center rounded-md text-[var(--color-dim)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] lg:hidden"
+              >
+                <svg viewBox="0 0 20 20" className="h-5 w-5" fill="currentColor" aria-hidden>
+                  <path d="M3 5.5A.75.75 0 0 1 3.75 4.75h12.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 5.5Zm0 4.5a.75.75 0 0 1 .75-.75h12.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 10Zm.75 3.75a.75.75 0 0 0 0 1.5h12.5a.75.75 0 0 0 0-1.5H3.75Z" />
+                </svg>
+              </button>
+            ) : null}
             <h1 className="truncate text-lg font-bold tracking-tight sm:text-xl">
               {title}
             </h1>

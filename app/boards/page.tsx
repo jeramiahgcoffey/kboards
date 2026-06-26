@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { listBoards } from "@/lib/services/boards";
+import { findFirstBoardId } from "@/lib/services/boards";
 import { AppShell } from "@/components/board/AppShell";
 import { EmptyBoards } from "@/components/board/EmptyBoards";
 
@@ -13,9 +13,9 @@ export default async function BoardsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const boards = await listBoards(session.user.id);
   // Land the user on a concrete board rather than an index with no content.
-  if (boards.length > 0) redirect(`/boards/${boards[0]._id}`);
+  const firstBoardId = await findFirstBoardId(session.user.id);
+  if (firstBoardId) redirect(`/boards/${firstBoardId}`);
 
   return (
     <AppShell boards={[]} userEmail={session.user.email ?? ""} title="Your boards">

@@ -62,6 +62,6 @@ describe("toBoard", () => {
       columns: [],
       tasks: [],
     });
-    expect(toBoard(board).description).toBeUndefined();
+    expect(toBoard(board)).not.toHaveProperty("description");
   });
 });
