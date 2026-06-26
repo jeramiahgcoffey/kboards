@@ -9,6 +9,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Authentication UI: sign-in, registration, and a two-step password-reset flow, plus a
+  landing page and an authenticated boards placeholder, built mobile-first and accessible
+  (labelled fields, `aria-invalid` / `aria-describedby`, `role="alert"` errors, visible
+  focus rings). Introduces a small design-system layer (Button, TextField) and a component
+  testing harness (Vitest + Testing Library + jsdom).
 - Board and task API: CRUD Route Handlers for boards, columns, tasks, and subtasks,
   backed by an ownership-scoped service layer and a shared authenticated-route wrapper
   (one auth gate and one error-mapping policy). Improves on v1 by adding board rename and

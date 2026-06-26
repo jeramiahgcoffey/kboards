@@ -10,6 +10,8 @@
   --color-dim: #9aa3b2;
   --color-accent: #635fc7;
   --color-accent-hover: #a8a4ff;
+  --color-danger: #ea5555;
+  --color-danger-hover: #ff9898;
 }
 
 html {
@@ -20,4 +22,8 @@ body {
   background: var(--color-bg);
   color: var(--color-fg);
   -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 40%, transparent);
 }
