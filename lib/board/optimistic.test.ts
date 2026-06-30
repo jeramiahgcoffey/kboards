@@ -31,13 +31,15 @@ function makeBoard(): BoardDTO {
 }
 
 describe("withMovedTask", () => {
-  it("re-snapshots the task's status name to the target column", () => {
+  it("re-snapshots the task's status name and color to the target column", () => {
     const board = makeBoard();
+    board.columns[1].color = "#67e2ae";
     const next = withMovedTask(board, "t1", "doing");
 
-    expect(next.tasks.find((task) => task.id === "t1")?.status.name).toBe(
-      "doing",
-    );
+    const moved = next.tasks.find((task) => task.id === "t1");
+    expect(moved?.status.name).toBe("doing");
+    // The status color follows the target column, not the old one.
+    expect(moved?.status.color).toBe("#67e2ae");
     // Other tasks are untouched.
     expect(next.tasks.find((task) => task.id === "t2")?.status.name).toBe(
       "doing",

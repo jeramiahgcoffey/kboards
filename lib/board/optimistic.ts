@@ -13,11 +13,22 @@ export function withMovedTask(
   taskId: string,
   toColumnName: string,
 ): BoardDTO {
+  // Carry the target column's color too, so the optimistic status never shows
+  // the previous column's color while the PATCH is in flight.
+  const targetColumn = board.columns.find(
+    (column) => column.name === toColumnName,
+  );
   return {
     ...board,
     tasks: board.tasks.map((task) =>
       task.id === taskId
-        ? { ...task, status: { ...task.status, name: toColumnName } }
+        ? {
+            ...task,
+            status: {
+              name: toColumnName,
+              color: targetColumn?.color ?? task.status.color,
+            },
+          }
         : task,
     ),
   };

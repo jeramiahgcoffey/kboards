@@ -26,10 +26,10 @@ export function ColumnFormModal({
 }: ColumnFormModalProps) {
   const titleId = useId();
   const [name, setName] = useState(initial?.name ?? "");
-  // Honor an existing hex color, otherwise start from the first palette swatch.
-  const [color, setColor] = useState(
-    initial?.color && PALETTE.includes(initial.color) ? initial.color : PALETTE[0],
-  );
+  // Preserve whatever color the column already has (it may be outside the
+  // palette), so renaming a column never silently overwrites its color; only
+  // fall back to the first swatch when there is no color yet.
+  const [color, setColor] = useState(initial?.color ?? PALETTE[0]);
   const [error, setError] = useState<string>();
   const [pending, setPending] = useState(false);
 

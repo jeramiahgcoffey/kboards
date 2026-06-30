@@ -14,7 +14,7 @@ import {
 } from "@dnd-kit/core";
 import { toast } from "sonner";
 import type { BoardDTO, ColumnDTO, TaskDTO } from "@/lib/dto";
-import { apiFetch, ApiError } from "@/lib/api/client";
+import { apiFetch, errorMessage } from "@/lib/api/client";
 import { withMovedTask, withToggledSubtask } from "@/lib/board/optimistic";
 import { Button } from "@/components/ui/Button";
 import { Menu, MenuItem } from "@/components/ui/Menu";
@@ -38,10 +38,6 @@ type Dialog =
   | { type: "add-task" }
   | { type: "edit-task"; taskId: string }
   | { type: "delete-task"; taskId: string };
-
-function errorMessage(error: unknown, fallback: string): string {
-  return error instanceof ApiError ? error.message : fallback;
-}
 
 export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
   const router = useRouter();
@@ -204,8 +200,11 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
     const task = board.tasks.find((item) => item.id === taskId);
     if (!task || task.status.name === toColumnName) return;
 
-    const previous = board;
-    setBoard(withMovedTask(board, taskId, toColumnName));
+    // Roll back by moving just this task back to its origin column, applied to
+    // the *current* board, so a concurrent change that already succeeded is not
+    // clobbered by restoring a whole stale snapshot.
+    const fromColumnName = task.status.name;
+    setBoard((current) => withMovedTask(current, taskId, toColumnName));
     try {
       const { board: next } = await apiFetch<{ board: BoardDTO }>(
         `/api/boards/${boardId}/tasks/${taskId}`,
@@ -213,7 +212,7 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
       );
       setBoard(next);
     } catch (error) {
-      setBoard(previous);
+      setBoard((current) => withMovedTask(current, taskId, fromColumnName));
       toast.error(errorMessage(error, "Could not move the task."));
     }
   }
@@ -223,9 +222,8 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
     const subtask = task?.subtasks.find((item) => item.id === subtaskId);
     if (!task || !subtask) return;
 
-    const previous = board;
     const completed = !subtask.completed;
-    setBoard(withToggledSubtask(board, taskId, subtaskId));
+    setBoard((current) => withToggledSubtask(current, taskId, subtaskId));
     try {
       const { board: next } = await apiFetch<{ board: BoardDTO }>(
         `/api/boards/${boardId}/tasks/${taskId}/subtasks/${subtaskId}`,
@@ -233,7 +231,9 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
       );
       setBoard(next);
     } catch (error) {
-      setBoard(previous);
+      // Toggling the same subtask again on the current board is a self-inverse
+      // undo that leaves any other concurrent change intact.
+      setBoard((current) => withToggledSubtask(current, taskId, subtaskId));
       toast.error(errorMessage(error, "Could not update the subtask."));
     }
   }

@@ -7,12 +7,14 @@ import {
   useId,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from "react";
 
 // A small dropdown menu for the "..." action triggers (board, column, task).
 // Closes on outside click, on Escape (restoring focus to the trigger), and
-// after an item is chosen.
+// after an item is chosen. Honors the ARIA menu pattern: focus moves into the
+// menu on open and the arrow/Home/End keys navigate between items.
 
 const MenuContext = createContext<{ close: () => void } | null>(null);
 
@@ -28,12 +30,21 @@ export function Menu({ label, children, triggerClassName = "" }: MenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
 
   const close = () => setOpen(false);
 
+  const items = () =>
+    Array.from(
+      menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [],
+    );
+
   useEffect(() => {
     if (!open) return;
+
+    // Move focus into the menu so the arrow keys have somewhere to start.
+    items()[0]?.focus();
 
     function onPointerDown(event: MouseEvent) {
       if (!containerRef.current?.contains(event.target as Node)) close();
@@ -52,6 +63,22 @@ export function Menu({ label, children, triggerClassName = "" }: MenuProps) {
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
+
+  function onMenuKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
+    const all = items();
+    if (all.length === 0) return;
+    const current = all.indexOf(document.activeElement as HTMLElement);
+
+    let next: number | null = null;
+    if (event.key === "ArrowDown") next = current < 0 ? 0 : (current + 1) % all.length;
+    else if (event.key === "ArrowUp") next = current <= 0 ? all.length - 1 : current - 1;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = all.length - 1;
+
+    if (next === null) return;
+    event.preventDefault();
+    all[next].focus();
+  }
 
   return (
     <div ref={containerRef} className="relative">
@@ -75,9 +102,11 @@ export function Menu({ label, children, triggerClassName = "" }: MenuProps) {
 
       {open ? (
         <div
+          ref={menuRef}
           id={menuId}
           role="menu"
           aria-label={label}
+          onKeyDown={onMenuKeyDown}
           className="absolute right-0 z-10 mt-2 flex w-44 flex-col gap-1 rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] p-2 shadow-xl"
         >
           <MenuContext.Provider value={{ close }}>

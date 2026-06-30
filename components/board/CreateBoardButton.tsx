@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { BoardDTO } from "@/lib/dto";
-import { apiFetch, ApiError } from "@/lib/api/client";
+import { apiFetch, errorMessage } from "@/lib/api/client";
 import { Button } from "@/components/ui/Button";
 import { BoardFormModal, type BoardFormValues } from "./BoardFormModal";
 
@@ -35,9 +35,7 @@ export function CreateBoardButton({
       router.refresh();
       return true;
     } catch (error) {
-      toast.error(
-        error instanceof ApiError ? error.message : "Could not create the board.",
-      );
+      toast.error(errorMessage(error, "Could not create the board."));
       return false;
     }
   }
