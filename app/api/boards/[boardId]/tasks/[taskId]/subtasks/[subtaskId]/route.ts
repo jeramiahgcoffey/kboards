@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { authed, readJson } from "@/lib/api/route";
 import { subtaskUpdateSchema } from "@/lib/validation";
 import { updateSubtask } from "@/lib/services/tasks";
+import { toBoard } from "@/lib/dto";
 
 type Params = { boardId: string; taskId: string; subtaskId: string };
 
@@ -14,5 +15,5 @@ export const PATCH = authed<Params>(async ({ request, userId, params }) => {
     params.subtaskId,
     input,
   );
-  return NextResponse.json({ board });
+  return NextResponse.json({ board: toBoard(board) });
 });

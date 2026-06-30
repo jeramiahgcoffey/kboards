@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { authed, readJson } from "@/lib/api/route";
 import { columnUpdateSchema } from "@/lib/validation";
 import { updateColumn, deleteColumn } from "@/lib/services/boards";
+import { toBoard } from "@/lib/dto";
 
 type Params = { boardId: string; columnId: string };
 
@@ -13,10 +14,10 @@ export const PATCH = authed<Params>(async ({ request, userId, params }) => {
     params.columnId,
     input,
   );
-  return NextResponse.json({ board });
+  return NextResponse.json({ board: toBoard(board) });
 });
 
 export const DELETE = authed<Params>(async ({ userId, params }) => {
   const board = await deleteColumn(userId, params.boardId, params.columnId);
-  return NextResponse.json({ board });
+  return NextResponse.json({ board: toBoard(board) });
 });

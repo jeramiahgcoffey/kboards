@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { BoardSummaryDTO } from "@/lib/dto";
+import { CreateBoardButton } from "./CreateBoardButton";
 
 interface SidebarProps {
   boards: BoardSummaryDTO[];
@@ -39,6 +42,7 @@ export function Sidebar({ boards, activeBoardId, onNavigate }: SidebarProps) {
             </Link>
           );
         })}
+        <CreateBoardButton onCreated={onNavigate} />
       </nav>
     </div>
   );
