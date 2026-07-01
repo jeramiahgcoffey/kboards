@@ -42,6 +42,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Accessibility and mobile pass over the board. Tasks can now be moved by keyboard and screen
+  reader through each card's actions menu ("Move to `<column>`"), not only by pointer drag, and
+  drag gains screen-reader live-region announcements. Stacked overlays (a menu inside a modal)
+  now share one topmost-overlay registry, so `Escape` dismisses only the frontmost layer instead
+  of relying on an ad-hoc capture-phase listener. Touch drag is press-and-hold, so a tap still
+  opens a task and a swipe still scrolls the board; the columns row is a labelled, keyboard-
+  focusable region; and a `prefers-reduced-motion` preference quiets transitions, the sonner
+  toasts, and the drag animation. Adds an automated accessibility gate (vitest-axe) over the task
+  card, menu, and task modal.
 - Began the v2 rebuild: migrating from a Vue/Quasar client plus a standalone Express API
   to a single Next.js 16 full-stack application (see `docs/adr/0002`). Established
   architecture decision records and contribution conventions.

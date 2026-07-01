@@ -10,7 +10,12 @@ interface ColumnProps {
   column: ColumnDTO;
   index: number;
   tasks: TaskDTO[];
+  // All board columns, so each card's "Move to" menu can list the others.
+  columns: ColumnDTO[];
   onOpenTask: (task: TaskDTO) => void;
+  onMoveTask: (task: TaskDTO, toColumnName: string) => void;
+  onEditTask: (task: TaskDTO) => void;
+  onDeleteTask: (task: TaskDTO) => void;
   onEditColumn: (column: ColumnDTO) => void;
   onDeleteColumn: (column: ColumnDTO) => void;
 }
@@ -19,7 +24,11 @@ export function Column({
   column,
   index,
   tasks,
+  columns,
   onOpenTask,
+  onMoveTask,
+  onEditTask,
+  onDeleteTask,
   onEditColumn,
   onDeleteColumn,
 }: ColumnProps) {
@@ -66,7 +75,15 @@ export function Column({
           </p>
         ) : (
           tasks.map((task) => (
-            <DraggableTaskCard key={task.id} task={task} onOpen={onOpenTask} />
+            <DraggableTaskCard
+              key={task.id}
+              task={task}
+              columns={columns}
+              onOpen={onOpenTask}
+              onMove={onMoveTask}
+              onEdit={onEditTask}
+              onDelete={onDeleteTask}
+            />
           ))
         )}
       </div>

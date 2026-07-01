@@ -27,3 +27,17 @@ body {
 ::selection {
   background: color-mix(in srgb, var(--color-accent) 40%, transparent);
 }
+
+/* Honor the OS "reduce motion" setting everywhere: neutralize transitions and
+   animations (Tailwind transitions, the sonner toasts, the drag drop tween)
+   rather than chasing each call site. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

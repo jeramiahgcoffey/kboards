@@ -10,6 +10,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from "react";
+import { useOverlayEscape } from "./overlayStack";
 
 // A small dropdown menu for the "..." action triggers (board, column, task).
 // Closes on outside click, on Escape (restoring focus to the trigger), and
@@ -40,6 +41,13 @@ export function Menu({ label, children, triggerClassName = "" }: MenuProps) {
       menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [],
     );
 
+  // Escape closes only this menu (restoring focus to the trigger) via the shared
+  // overlay stack, so it never leaks to a parent Modal when the menu is nested.
+  useOverlayEscape(open, () => {
+    close();
+    triggerRef.current?.focus();
+  });
+
   useEffect(() => {
     if (!open) return;
 
@@ -49,22 +57,10 @@ export function Menu({ label, children, triggerClassName = "" }: MenuProps) {
     function onPointerDown(event: MouseEvent) {
       if (!containerRef.current?.contains(event.target as Node)) close();
     }
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        // Handled in the capture phase and stopped here so Escape dismisses
-        // only this menu, not a parent Modal whose own document-level Escape
-        // listener (registered earlier, on mount) would otherwise fire first.
-        event.stopPropagation();
-        close();
-        triggerRef.current?.focus();
-      }
-    }
 
     document.addEventListener("mousedown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown, true);
     return () => {
       document.removeEventListener("mousedown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown, true);
     };
   }, [open]);
 

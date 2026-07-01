@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import { useOverlayEscape } from "./overlayStack";
 
 // A store that never changes: the snapshots alone distinguish server from client.
 const emptySubscribe = () => () => {};
@@ -53,6 +54,11 @@ export function Modal({
     getServerSnapshot,
   );
 
+  // Escape is handled through the shared overlay stack so a nested overlay (a
+  // menu inside this modal) closes only itself, and this modal closes only when
+  // it is the topmost overlay.
+  useOverlayEscape(open, onClose);
+
   useEffect(() => {
     if (!open) return;
 
@@ -61,12 +67,9 @@ export function Modal({
     const first = panel?.querySelector<HTMLElement>(FOCUSABLE);
     (first ?? panel)?.focus();
 
+    // Only the Tab focus-trap lives here now; Escape is owned by the overlay
+    // stack above.
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onClose();
-        return;
-      }
       if (event.key !== "Tab" || !panel) return;
 
       const items = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE));

@@ -5,17 +5,21 @@ import { useRouter } from "next/navigation";
 import {
   DndContext,
   DragOverlay,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   pointerWithin,
   useSensor,
   useSensors,
+  type Announcements,
   type DragEndEvent,
   type DragStartEvent,
+  type ScreenReaderInstructions,
 } from "@dnd-kit/core";
 import { toast } from "sonner";
 import type { BoardDTO, ColumnDTO, TaskDTO } from "@/lib/dto";
 import { apiFetch, errorMessage } from "@/lib/api/client";
 import { withMovedTask, withToggledSubtask } from "@/lib/board/optimistic";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { Button } from "@/components/ui/Button";
 import { Menu, MenuItem } from "@/components/ui/Menu";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -248,10 +252,50 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
 
   // --- Drag and drop ----------------------------------------------------
 
+  const reducedMotion = usePrefersReducedMotion();
+
   const sensors = useSensors(
-    // A small activation distance lets a plain click still open the task.
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    // Mouse: a small activation distance lets a plain click still open the task.
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    // Touch: press-and-hold to drag, so a tap still opens the task and a swipe
+    // still scrolls the horizontal board instead of picking up a card.
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 8 },
+    }),
   );
+
+  const taskTitle = (id: string) =>
+    board.tasks.find((item) => item.id === id)?.title ?? "task";
+  const columnFromOverId = (overId: string) => overId.replace(/^col:/, "");
+
+  // Live-region messages so assistive tech follows a pointer drag; the discrete
+  // keyboard/screen-reader move path is each card's "Move to" menu.
+  const announcements: Announcements = {
+    onDragStart({ active }) {
+      return `Picked up task ${taskTitle(String(active.id))}.`;
+    },
+    onDragOver({ active, over }) {
+      const name = taskTitle(String(active.id));
+      return over
+        ? `Task ${name} is over the ${columnFromOverId(String(over.id))} column.`
+        : `Task ${name} is not over a column.`;
+    },
+    onDragEnd({ active, over }) {
+      const name = taskTitle(String(active.id));
+      return over
+        ? `Task ${name} was moved to the ${columnFromOverId(String(over.id))} column.`
+        : `Task ${name} was dropped without moving.`;
+    },
+    onDragCancel({ active }) {
+      return `Moving task ${taskTitle(String(active.id))} was cancelled.`;
+    },
+  };
+
+  const screenReaderInstructions: ScreenReaderInstructions = {
+    draggable:
+      "Drag a task with a pointer to move it between columns. Keyboard and " +
+      "screen-reader users can move a task from its actions menu.",
+  };
 
   function onDragStart(event: DragStartEvent) {
     const task = board.tasks.find((item) => item.id === event.active.id);
@@ -262,8 +306,7 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
     setActiveDragTask(null);
     const { active, over } = event;
     if (!over) return;
-    const toColumnName = String(over.id).replace(/^col:/, "");
-    void moveTask(String(active.id), toColumnName);
+    void moveTask(String(active.id), columnFromOverId(String(over.id)));
   }
 
   // --- Render -----------------------------------------------------------
@@ -301,18 +344,34 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
         <DndContext
           sensors={sensors}
           collisionDetection={pointerWithin}
+          accessibility={{ announcements, screenReaderInstructions }}
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
           onDragCancel={() => setActiveDragTask(null)}
         >
-          <div className="flex min-h-0 flex-1 gap-6 overflow-x-auto px-4 py-6 sm:px-6">
+          <div
+            role="region"
+            aria-label="Board columns"
+            tabIndex={0}
+            className="flex min-h-0 flex-1 gap-6 overflow-x-auto px-4 py-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-accent)] sm:px-6"
+          >
             {columns.map((column, index) => (
               <Column
                 key={column.id}
                 column={column}
                 index={index}
                 tasks={tasksFor(column.name)}
+                columns={columns}
                 onOpenTask={(task) => setSelectedTaskId(task.id)}
+                onMoveTask={(task, toColumnName) =>
+                  moveTask(task.id, toColumnName)
+                }
+                onEditTask={(task) =>
+                  setDialog({ type: "edit-task", taskId: task.id })
+                }
+                onDeleteTask={(task) =>
+                  setDialog({ type: "delete-task", taskId: task.id })
+                }
                 onEditColumn={(col) =>
                   setDialog({ type: "edit-column", columnId: col.id })
                 }
@@ -330,9 +389,9 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
             </button>
           </div>
 
-          <DragOverlay>
+          <DragOverlay dropAnimation={reducedMotion ? null : undefined}>
             {activeDragTask ? (
-              <div className="w-72 rotate-2">
+              <div className={reducedMotion ? "w-72" : "w-72 rotate-2"}>
                 <TaskCard task={activeDragTask} onOpen={() => {}} />
               </div>
             ) : null}
