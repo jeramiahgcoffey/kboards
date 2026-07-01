@@ -3,7 +3,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TaskCard } from "./TaskCard";
-import type { TaskDTO } from "@/lib/dto";
+import type { ColumnDTO, TaskDTO } from "@/lib/dto";
+
+const columns: ColumnDTO[] = [
+  { id: "c1", name: "todo", color: "" },
+  { id: "c2", name: "doing", color: "" },
+  { id: "c3", name: "done", color: "" },
+];
 
 function makeTask(overrides: Partial<TaskDTO> = {}): TaskDTO {
   return {
@@ -42,8 +48,58 @@ describe("TaskCard", () => {
     const task = makeTask();
     render(<TaskCard task={task} onOpen={onOpen} />);
 
-    await userEvent.click(screen.getByRole("button"));
+    await userEvent.click(
+      screen.getByRole("button", { name: /open task: build the board view/i }),
+    );
 
     expect(onOpen).toHaveBeenCalledWith(task);
+  });
+
+  it("has no actions menu when no action handlers are provided", () => {
+    render(<TaskCard task={makeTask()} onOpen={vi.fn()} />);
+
+    expect(screen.queryByRole("button", { name: /actions for/i })).toBeNull();
+  });
+
+  it("moves, edits, and deletes through the actions menu", async () => {
+    const onMove = vi.fn();
+    const onEdit = vi.fn();
+    const onDelete = vi.fn();
+    const task = makeTask();
+    render(
+      <TaskCard
+        task={task}
+        onOpen={vi.fn()}
+        columns={columns}
+        onMove={onMove}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />,
+    );
+
+    const openMenu = () =>
+      userEvent.click(
+        screen.getByRole("button", { name: /actions for build the board view/i }),
+      );
+
+    await openMenu();
+    // The current column ("todo") is not offered as a move target.
+    expect(
+      screen.queryByRole("menuitem", { name: /move to todo/i }),
+    ).toBeNull();
+    await userEvent.click(
+      screen.getByRole("menuitem", { name: /move to doing/i }),
+    );
+    expect(onMove).toHaveBeenCalledWith(task, "doing");
+
+    await openMenu();
+    await userEvent.click(screen.getByRole("menuitem", { name: /edit task/i }));
+    expect(onEdit).toHaveBeenCalledWith(task);
+
+    await openMenu();
+    await userEvent.click(
+      screen.getByRole("menuitem", { name: /delete task/i }),
+    );
+    expect(onDelete).toHaveBeenCalledWith(task);
   });
 });
