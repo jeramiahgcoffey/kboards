@@ -7,6 +7,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-07-01
+
+First production release of the v2 rebuild: a single Next.js 16 app deployed on Vercel with
+MongoDB Atlas, replacing the retired Vue/Quasar + Express (Render) stack.
+
 ### Added
 
 - Board interactivity: create/edit/delete dialogs for boards, columns (with a color

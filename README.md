@@ -5,10 +5,10 @@ optimistic updates, and a keyboard/screen-reader-accessible move path.
 
 [![CI](https://github.com/jeramiahgcoffey/kboards/actions/workflows/ci.yml/badge.svg)](https://github.com/jeramiahgcoffey/kboards/actions/workflows/ci.yml)
 
-- **Live:** _coming with the v2.0.0 release_
+- **Live:** [kboards.jeramiahcoffey.com](https://kboards.jeramiahcoffey.com)
 - **Source:** [github.com/jeramiahgcoffey/kboards](https://github.com/jeramiahgcoffey/kboards)
 
-> _Demo GIF coming with the v2.0.0 release._
+> _Demo GIF coming soon._
 
 kboards started in 2023 as a Vue 3 / Quasar 2 client plus a separate Express + TypeScript API. It is
 being rebuilt in 2026 as a single **Next.js 16** full-stack app — the flagship "maintenance and
