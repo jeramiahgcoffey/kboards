@@ -8,6 +8,9 @@ const PROTECTED_PREFIXES = ["/boards"];
 // its Mongoose lookup out of this file lets the proxy read sessions without
 // pulling the database layer into every request.
 export const authConfig = {
+  // Trust the forwarded host/proto behind Vercel's proxy so callback and
+  // redirect URLs resolve to the deployed origin (paired with AUTH_URL).
+  trustHost: true,
   pages: {
     signIn: "/login",
   },

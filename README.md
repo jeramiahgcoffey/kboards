@@ -1,75 +1,120 @@
-# K Boards
- **Productivity tracking app inspried by kanban boards.**
- 
- K Boards can be used to track project completion for software applications or otherwise! 
- Featuring a responsive layout, drag-n-drop functionality, and password reset capability.
+# kboards
 
-## Table of contents
+**A Kanban board for tracking work** — boards, columns, tasks, and subtasks, with drag-and-drop,
+optimistic updates, and a keyboard/screen-reader-accessible move path.
 
-- [Overview](#overview)
-  - [Screenshot](#screenshot)
-  - [Links](#links)
-- [My process](#my-process)
-  - [Built with](#built-with)
-  - [What I learned](#what-i-learned)
-  - [Continued development](#continued-development)
-  - [Useful resources](#useful-resources)
-- [Author](#author)
-- [Acknowledgments](#acknowledgments)
+[![CI](https://github.com/jeramiahgcoffey/kboards/actions/workflows/ci.yml/badge.svg)](https://github.com/jeramiahgcoffey/kboards/actions/workflows/ci.yml)
 
-## Overview
+- **Live:** _coming with the v2.0.0 release_
+- **Source:** [github.com/jeramiahgcoffey/kboards](https://github.com/jeramiahgcoffey/kboards)
 
+> _Demo GIF coming with the v2.0.0 release._
 
-### Screenshot
+kboards started in 2023 as a Vue 3 / Quasar 2 client plus a separate Express + TypeScript API. It is
+being rebuilt in 2026 as a single **Next.js 16** full-stack app — the flagship "maintenance and
+iteration" portfolio project. The rebuild is tracked visibly through commits, ADRs, PRs, and releases.
 
-**Desktop Layout**
+## Features
 
-![](./screenshot.png)
+- **Boards, columns, tasks, subtasks** — full CRUD through nested REST Route Handlers behind an
+  ownership-scoped service layer.
+- **Drag-and-drop** — move tasks between columns (pointer), with optimistic updates and rollback on
+  failure.
+- **Accessible by design** — every task can also be moved from a keyboard/screen-reader "…" menu;
+  stacked overlays share one Escape/focus registry; `prefers-reduced-motion` is respected.
+- **Authentication** — email/password (Auth.js v5, Credentials + JWT sessions) with a custom
+  password-reset flow whose tokens are stored only as SHA-256 hashes and are single-use.
+- **Responsive** — a board-list sidebar that becomes a slide-over drawer on small screens.
 
-**Mobile Layout**
+## Tech stack
 
-![](./screenshot_mobile.png)
+| Layer | Choice |
+| --- | --- |
+| Framework | Next.js 16 (App Router, Route Handlers, `proxy` middleware) |
+| UI | React 19, Tailwind CSS v4, [dnd-kit](https://dndkit.com), [sonner](https://sonner.emilkowal.ski) |
+| Language | TypeScript (strict) |
+| Data | MongoDB via Mongoose 9 (embedded board document model) |
+| Auth | Auth.js v5 (`next-auth`), Credentials provider, JWT sessions |
+| Validation | zod |
+| Email | nodemailer (SMTP; Resend in production) |
+| Tests | Vitest + Testing Library + jsdom, axe-core |
+| Hosting | Vercel + MongoDB Atlas |
 
+## Architecture
 
-### Links
+A single Next.js app. Server Components fetch through a framework-free service layer and serialize
+Mongoose documents into plain DTOs before crossing into Client Components. Route protection lives in
+the Next.js 16 `proxy` (the renamed Middleware). Key decisions are recorded as ADRs:
 
-- Solution URL: [GitHub](https://github.com/jeramiahgcoffey/kboards)
-- Live Site URL: [K Boards](https://kboards.onrender.com/)
+- [ADR 0002 — Rebuild to a single Next.js app](docs/adr/0002-rebuild-to-single-nextjs-app.md)
+- [ADR 0003 — Keep the embedded board document model](docs/adr/0003-keep-embedded-board-model.md)
+- [ADR 0004 — Adopt Auth.js v5](docs/adr/0004-adopt-authjs.md)
 
-## My process
+```
+app/            Routes: (auth) screens, /boards, and /api Route Handlers
+components/     UI primitives (Modal, Menu, …) and board components
+lib/            db (Mongoose models + connection), auth, services, DTOs, email
+docs/adr/       Architecture Decision Records
+```
 
-This application is inspired by Kanban, one of my preferred approaches to productivity tracking for software development, and tools such as the Jira platform. I have had a lot of fun developing this project so far, and I intend to continue iterating on it in order to exercise skills and implement new technologies.
+## Getting started
 
-### Built with
+**Prerequisites:** Node.js ≥ 22 and a MongoDB instance (local Docker is easiest).
 
-- Vue.js
-- Quasar
-- Pinia
-- Vite
-- Express.js
-- MongoDB
+```bash
+# 1. Install
+npm install
 
-### What I learned
-This enitre app began as a learning project, to learn the Quasar framework. At one point, I was trying to flesh out the tool to potentially advocate for using it as a replacement frontend library. When it was decided my previous organization would not be changing their stack, I continued development on the appliction because I had a great devloper expereince using Vue3 and Quasar.
-I learned a lot about the Quasar framework and it's built in features. I really enjoy the easy to implement toast notifications and theme customizations.
-I also learned about Pinia, the new recommened state management solution for Vue3. Boy oh boy, it is so nice to work with. Goodbye mutations! Hello seemless reactivity and painless state management.
+# 2. Configure environment
+cp .env.example .env.local
+#   then set AUTH_SECRET — generate one with:
+openssl rand -base64 32
 
+# 3. Start MongoDB (Docker example)
+docker run -d --name kboards-mongo -p 27017:27017 mongo:7
 
-### Continued development
-- In the future, I would love to extend the drag and drop functionality to include reordering task within their columns. I think this would make the application feel really nice to work with. I would also like to beef up the typescript usage, and testing coverage.
-- Another feature that this application needs is user setting configurations. Currently, the vertical dot menu acts as a logout button. The next feature I would like to implement is adding a user menu, to allow for configuration changes, board management, sharing, and a logout button.
-- I plan to add collaboration features to the app, allowing users to share boards between each other for viewing and editing.
+# 4. Run the dev server
+npm run dev            # http://localhost:3000
+```
 
+With `SMTP_HOST` left empty, password-reset links are logged to the server console instead of being
+emailed — handy for local development.
 
-### Useful resources
+## Scripts
 
-- Quasar Docs: [Here](https://quasar.dev/)
-- Vue Docs: [Here](https://vuejs.org/)
-- Pinia Docs: [Here](https://pinia.vuejs.org/)
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` / `npm start` | Production build / serve |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Run the Vitest suite once |
 
+## Testing
 
+Vitest with two modes: Node for service/integration tests (which talk to a real MongoDB), and jsdom
+for component tests (opted in per file with a `// @vitest-environment jsdom` docblock). Component
+tests query by accessible role/label; `axe-core` smoke tests guard against a11y regressions.
+Integration tests need a MongoDB at `MONGODB_URI` (defaults to `mongodb://localhost:27017/kboards-test`).
+CI runs lint, typecheck, tests (against a MongoDB service container), and a production build on every
+push and PR.
+
+## Deployment
+
+Deployed on **Vercel** (production branch: `main`) with **MongoDB Atlas** and **Resend** for email.
+The Mongoose connection uses a global cache so it survives serverless invocations, and sessions are
+JWT, so no session store is required. Set these environment variables in the Vercel project
+(Production + Preview):
+
+| Variable | Notes |
+| --- | --- |
+| `MONGODB_URI` | Atlas SRV string, with the `/kboards` database name |
+| `AUTH_SECRET` | `openssl rand -base64 32` |
+| `AUTH_URL` | The deployed origin, e.g. `https://kboards.vercel.app` |
+| `EMAIL_FROM` | Sender for reset emails |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` | Resend: `smtp.resend.com` / `465` / `resend` / _API key_ |
 
 ## Author
 
-- Website - [Jeramiah Coffey](https://github.com/jeramiahgcoffey)
-- LinkedIn - [jeramiah-coffey](https://www.linkedin.com/in/jeramiah-coffey/)
+Jeramiah Coffey — [GitHub](https://github.com/jeramiahgcoffey) ·
+[LinkedIn](https://www.linkedin.com/in/jeramiah-coffey/)
