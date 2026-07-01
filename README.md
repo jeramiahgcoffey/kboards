@@ -8,7 +8,7 @@ optimistic updates, and a keyboard/screen-reader-accessible move path.
 - **Live:** [kboards.jeramiahcoffey.com](https://kboards.jeramiahcoffey.com)
 - **Source:** [github.com/jeramiahgcoffey/kboards](https://github.com/jeramiahgcoffey/kboards)
 
-> _Demo GIF coming soon._
+![kboards demo — moving a task via the accessible actions menu and toggling a subtask](docs/demo.gif)
 
 kboards started in 2023 as a Vue 3 / Quasar 2 client plus a separate Express + TypeScript API. It is
 being rebuilt in 2026 as a single **Next.js 16** full-stack app — the flagship "maintenance and
