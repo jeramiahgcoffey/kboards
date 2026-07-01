@@ -14,6 +14,9 @@ vi.mock("next/link", () => ({
   }) => <a {...props}>{children}</a>,
 }));
 vi.mock("next-auth/react", () => ({ signOut: vi.fn() }));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+}));
 
 const boards = [{ id: "b1", name: "Platform Launch" }];
 

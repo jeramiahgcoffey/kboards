@@ -12,6 +12,9 @@ vi.mock("next/link", () => ({
     href: string;
   }) => <a {...props}>{children}</a>,
 }));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+}));
 
 const boards = [
   { id: "b1", name: "Platform Launch" },
@@ -31,6 +34,14 @@ describe("Sidebar", () => {
       "href",
       "/boards/b2",
     );
+  });
+
+  it("offers a create-board action", () => {
+    render(<Sidebar boards={boards} />);
+
+    expect(
+      screen.getByRole("button", { name: /create new board/i }),
+    ).toBeInTheDocument();
   });
 
   it("marks the active board for assistive tech", () => {

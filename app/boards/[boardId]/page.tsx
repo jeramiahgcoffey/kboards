@@ -6,7 +6,7 @@ import { getBoard, listBoards, type BoardDocument } from "@/lib/services/boards"
 import { ServiceError } from "@/lib/services/errors";
 import { toBoard, toBoardSummary } from "@/lib/dto";
 import { AppShell } from "@/components/board/AppShell";
-import { BoardView } from "@/components/board/BoardView";
+import { BoardWorkspace } from "@/components/board/BoardWorkspace";
 
 // Cached per request so generateMetadata and the page share one set of queries
 // instead of hitting Mongo twice. A missing/foreign board resolves to null so
@@ -55,7 +55,9 @@ export default async function BoardPage({
       userEmail={session.user.email ?? ""}
       title={board.name}
     >
-      <BoardView board={toBoard(board)} />
+      {/* Key on the board id so navigating boards remounts with fresh state
+          rather than carrying over the previous board's local edits. */}
+      <BoardWorkspace key={boardId} board={toBoard(board)} />
     </AppShell>
   );
 }

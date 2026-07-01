@@ -2,7 +2,7 @@
 // Map a stored value to a CSS color for the decorative column dot: honor an
 // explicit hex, otherwise spread columns across a fixed palette by position so
 // adjacent columns stay visually distinct.
-const PALETTE = [
+export const PALETTE = [
   "#49c4e5",
   "#8471f2",
   "#67e2ae",
