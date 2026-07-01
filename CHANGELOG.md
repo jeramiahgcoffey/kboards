@@ -9,6 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Board interactivity: create/edit/delete dialogs for boards, columns (with a color
+  picker), and tasks (title, description, status, and a dynamic subtask list); an
+  interactive task modal with subtask toggles and status changes; and dnd-kit drag of tasks
+  between columns. Mutations are optimistic with toast feedback (sonner) and roll back on
+  failure; the optimistic paths keep their own change rather than replacing the whole board
+  on success, so concurrent edits are not clobbered. Board/column/task/subtask mutation
+  Route Handlers now return the board as a serialized DTO, and a new `BoardWorkspace` client
+  component owns active-board state and routes every dialog. Drag is a pointer enhancement;
+  the keyboard-accessible way to move a task is the status select in the task modal. Covered
+  by Vitest tests and verified end to end.
 - Board view: a responsive boards workspace with a board-list sidebar (a slide-over drawer
   on small screens), columns rendered from each board's schema, task cards showing subtask
   progress, and a read-only task modal. The sidebar and task modal share one accessible
