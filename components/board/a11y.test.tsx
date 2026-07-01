@@ -2,7 +2,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { axe } from "vitest-axe";
+import axe from "axe-core";
 import { TaskCard } from "./TaskCard";
 import { TaskModal } from "./TaskModal";
 import { Menu, MenuItem } from "@/components/ui/Menu";
@@ -11,7 +11,7 @@ import type { ColumnDTO, TaskDTO } from "@/lib/dto";
 // color-contrast can't be evaluated in jsdom (no layout/paint), so disable that
 // one rule and assert on everything else axe checks.
 async function expectNoViolations(node: Element) {
-  const { violations } = await axe(node, {
+  const { violations } = await axe.run(node, {
     rules: { "color-contrast": { enabled: false } },
   });
   if (violations.length > 0) {

@@ -39,6 +39,7 @@
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-core": "^4.12.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "husky": "^9.1.7",
@@ -46,7 +47,6 @@
     "lint-staged": "^17.0.8",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.9",
-    "vitest-axe": "^0.1.0"
+    "vitest": "^4.1.9"
   }
 }
