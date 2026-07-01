@@ -17,7 +17,7 @@ export default defineConfig({
     // jsdom with a `// @vitest-environment jsdom` docblock.
     environment: "node",
     include: ["**/*.test.ts", "**/*.test.tsx"],
-    exclude: ["legacy/**", "node_modules/**", ".next/**"],
+    exclude: ["node_modules/**", ".next/**"],
     setupFiles: ["./vitest.setup.ts"],
     // Integration tests share one MongoDB database and reset it between cases.
     // Run test files one at a time so their setup/teardown cannot race.
