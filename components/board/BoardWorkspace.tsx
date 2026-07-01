@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   DndContext,
@@ -46,6 +46,10 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [activeDragTask, setActiveDragTask] = useState<TaskDTO | null>(null);
   const [confirmPending, setConfirmPending] = useState(false);
+  // Monotonic token: a mutation's full-board response is only applied if no
+  // newer mutation has started since, so a slow earlier response can't clobber
+  // a newer change by replacing the whole board wholesale.
+  const mutationToken = useRef(0);
 
   const boardId = board.id;
   const columns = board.columns;
@@ -65,9 +69,11 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
     run: () => Promise<{ board: BoardDTO }>,
     success: string,
   ): Promise<boolean> {
+    const token = ++mutationToken.current;
     try {
       const { board: next } = await run();
-      setBoard(next);
+      // Ignore this response if a newer mutation has since started.
+      if (token === mutationToken.current) setBoard(next);
       toast.success(success);
       return true;
     } catch (error) {
@@ -196,21 +202,23 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
 
   // --- Optimistic interactions (no toast on success) --------------------
 
+  // Both optimistic handlers keep the optimistic state on success rather than
+  // replacing the whole board with the response: the optimistic change already
+  // matches what the server persists for the displayed fields, and skipping the
+  // wholesale replace means a concurrent mutation in flight is never clobbered.
+  // On failure they undo just their own field on the *current* board.
   async function moveTask(taskId: string, toColumnName: string) {
     const task = board.tasks.find((item) => item.id === taskId);
     if (!task || task.status.name === toColumnName) return;
 
-    // Roll back by moving just this task back to its origin column, applied to
-    // the *current* board, so a concurrent change that already succeeded is not
-    // clobbered by restoring a whole stale snapshot.
     const fromColumnName = task.status.name;
+    mutationToken.current++;
     setBoard((current) => withMovedTask(current, taskId, toColumnName));
     try {
-      const { board: next } = await apiFetch<{ board: BoardDTO }>(
-        `/api/boards/${boardId}/tasks/${taskId}`,
-        { method: "PATCH", body: { status: { name: toColumnName } } },
-      );
-      setBoard(next);
+      await apiFetch(`/api/boards/${boardId}/tasks/${taskId}`, {
+        method: "PATCH",
+        body: { status: { name: toColumnName } },
+      });
     } catch (error) {
       setBoard((current) => withMovedTask(current, taskId, fromColumnName));
       toast.error(errorMessage(error, "Could not move the task."));
@@ -223,13 +231,13 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
     if (!task || !subtask) return;
 
     const completed = !subtask.completed;
+    mutationToken.current++;
     setBoard((current) => withToggledSubtask(current, taskId, subtaskId));
     try {
-      const { board: next } = await apiFetch<{ board: BoardDTO }>(
+      await apiFetch(
         `/api/boards/${boardId}/tasks/${taskId}/subtasks/${subtaskId}`,
         { method: "PATCH", body: { completed } },
       );
-      setBoard(next);
     } catch (error) {
       // Toggling the same subtask again on the current board is a self-inverse
       // undo that leaves any other concurrent change intact.
@@ -382,9 +390,14 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
         />
       ) : null}
 
-      {dialog.type === "edit-column"
-        ? renderColumnEdit(columns, dialog.columnId, submitEditColumn, closeDialog)
-        : null}
+      {dialog.type === "edit-column" ? (
+        <ColumnEditDialog
+          columns={columns}
+          columnId={dialog.columnId}
+          onSubmit={submitEditColumn}
+          onClose={closeDialog}
+        />
+      ) : null}
 
       {dialog.type === "add-task" ? (
         <TaskFormModal
@@ -395,9 +408,14 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
         />
       ) : null}
 
-      {dialog.type === "edit-task"
-        ? renderTaskEdit(board, dialog.taskId, submitEditTask, closeDialog)
-        : null}
+      {dialog.type === "edit-task" ? (
+        <TaskEditDialog
+          board={board}
+          taskId={dialog.taskId}
+          onSubmit={submitEditTask}
+          onClose={closeDialog}
+        />
+      ) : null}
 
       {dialog.type === "delete-board" ? (
         <ConfirmDialog
@@ -416,39 +434,45 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
         />
       ) : null}
 
-      {dialog.type === "delete-column"
-        ? renderColumnDelete(
-            columns,
-            dialog.columnId,
-            tasksFor,
-            confirmPending,
-            () => confirmDeleteColumn(dialog.columnId),
-            closeDialog,
-          )
-        : null}
+      {dialog.type === "delete-column" ? (
+        <ColumnDeleteDialog
+          columns={columns}
+          columnId={dialog.columnId}
+          tasksFor={tasksFor}
+          pending={confirmPending}
+          onConfirm={() => confirmDeleteColumn(dialog.columnId)}
+          onClose={closeDialog}
+        />
+      ) : null}
 
-      {dialog.type === "delete-task"
-        ? renderTaskDelete(
-            board,
-            dialog.taskId,
-            confirmPending,
-            () => confirmDeleteTask(dialog.taskId),
-            closeDialog,
-          )
-        : null}
+      {dialog.type === "delete-task" ? (
+        <TaskDeleteDialog
+          board={board}
+          taskId={dialog.taskId}
+          pending={confirmPending}
+          onConfirm={() => confirmDeleteTask(dialog.taskId)}
+          onClose={closeDialog}
+        />
+      ) : null}
     </div>
   );
 }
 
-// Lookups that may miss (the entity was deleted) render nothing rather than a
-// broken dialog, so each edit/delete case is guarded in a small helper.
+// Each edit/delete dialog is its own component so its handler is a JSX prop
+// (never invoked during render) and its lookup can bail to null when the entity
+// was already deleted, rather than rendering a broken dialog.
 
-function renderColumnEdit(
-  columns: ColumnDTO[],
-  columnId: string,
-  onSubmit: (columnId: string, values: ColumnFormValues) => Promise<boolean>,
-  onClose: () => void,
-) {
+function ColumnEditDialog({
+  columns,
+  columnId,
+  onSubmit,
+  onClose,
+}: {
+  columns: ColumnDTO[];
+  columnId: string;
+  onSubmit: (columnId: string, values: ColumnFormValues) => Promise<boolean>;
+  onClose: () => void;
+}) {
   const column = columns.find((item) => item.id === columnId);
   if (!column) return null;
   return (
@@ -461,14 +485,21 @@ function renderColumnEdit(
   );
 }
 
-function renderColumnDelete(
-  columns: ColumnDTO[],
-  columnId: string,
-  tasksFor: (name: string) => TaskDTO[],
-  pending: boolean,
-  onConfirm: () => void,
-  onClose: () => void,
-) {
+function ColumnDeleteDialog({
+  columns,
+  columnId,
+  tasksFor,
+  pending,
+  onConfirm,
+  onClose,
+}: {
+  columns: ColumnDTO[];
+  columnId: string;
+  tasksFor: (name: string) => TaskDTO[];
+  pending: boolean;
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
   const column = columns.find((item) => item.id === columnId);
   if (!column) return null;
   const count = tasksFor(column.name).length;
@@ -493,12 +524,17 @@ function renderColumnDelete(
   );
 }
 
-function renderTaskEdit(
-  board: BoardDTO,
-  taskId: string,
-  onSubmit: (taskId: string, values: TaskFormValues) => Promise<boolean>,
-  onClose: () => void,
-) {
+function TaskEditDialog({
+  board,
+  taskId,
+  onSubmit,
+  onClose,
+}: {
+  board: BoardDTO;
+  taskId: string;
+  onSubmit: (taskId: string, values: TaskFormValues) => Promise<boolean>;
+  onClose: () => void;
+}) {
   const task = board.tasks.find((item) => item.id === taskId);
   if (!task) return null;
   return (
@@ -517,13 +553,19 @@ function renderTaskEdit(
   );
 }
 
-function renderTaskDelete(
-  board: BoardDTO,
-  taskId: string,
-  pending: boolean,
-  onConfirm: () => void,
-  onClose: () => void,
-) {
+function TaskDeleteDialog({
+  board,
+  taskId,
+  pending,
+  onConfirm,
+  onClose,
+}: {
+  board: BoardDTO;
+  taskId: string;
+  pending: boolean;
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
   const task = board.tasks.find((item) => item.id === taskId);
   if (!task) return null;
   return (

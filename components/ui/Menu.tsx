@@ -51,16 +51,20 @@ export function Menu({ label, children, triggerClassName = "" }: MenuProps) {
     }
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
+        // Handled in the capture phase and stopped here so Escape dismisses
+        // only this menu, not a parent Modal whose own document-level Escape
+        // listener (registered earlier, on mount) would otherwise fire first.
+        event.stopPropagation();
         close();
         triggerRef.current?.focus();
       }
     }
 
     document.addEventListener("mousedown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keydown", onKeyDown, true);
     return () => {
       document.removeEventListener("mousedown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keydown", onKeyDown, true);
     };
   }, [open]);
 
