@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import type { BoardSummaryDTO } from "@/lib/dto";
 import { Modal } from "@/components/ui/Modal";
+import { LogoMark } from "@/components/ui/Logo";
 import { Sidebar } from "./Sidebar";
 import { SignOutButton } from "./SignOutButton";
 
@@ -66,6 +67,9 @@ export function AppShell({
                 </svg>
               </button>
             ) : null}
+            {/* The sidebar (and its brand mark) is hidden on small screens, so
+                surface the mark in the header there to keep the app branded. */}
+            <LogoMark className="h-6 w-6 shrink-0 lg:hidden" title="kboards" />
             <h1 className="truncate text-lg font-bold tracking-tight sm:text-xl">
               {title}
             </h1>
