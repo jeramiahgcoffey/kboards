@@ -20,9 +20,12 @@ export function withMovedTask(
   );
   // Append to the bottom of the destination column, matching the server, so the
   // moved card lands last instead of wherever its old column order placed it.
-  const endOrder = board.tasks.filter(
-    (task) => task.status.name === toColumnName && task.id !== taskId,
-  ).length;
+  // max(order)+1 (not a count) stays collision-free when the column's orders
+  // have a gap from an earlier cross-column move.
+  const destOrders = board.tasks
+    .filter((task) => task.status.name === toColumnName && task.id !== taskId)
+    .map((task) => task.order);
+  const endOrder = destOrders.length ? Math.max(...destOrders) + 1 : 0;
   return {
     ...board,
     tasks: board.tasks.map((task) =>

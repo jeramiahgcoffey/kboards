@@ -1,4 +1,4 @@
-import { isValidObjectId } from "mongoose";
+import { isValidObjectId, type Types } from "mongoose";
 import { dbConnect } from "@/lib/db/mongoose";
 import type { IStatus } from "@/lib/db/models/Board";
 import { badRequest, notFound } from "./errors";
@@ -16,6 +16,24 @@ function resolveStatusName(board: BoardDocument, status: IStatus): string {
   return column.name;
 }
 
+// The order to give a task appended to the bottom of `columnName`: one past the
+// current maximum, or 0 for an empty column. Optionally ignore one task (used
+// when moving a task into a column it should be placed after).
+function nextOrder(
+  board: BoardDocument,
+  columnName: string,
+  ignoreTaskId?: Types.ObjectId,
+): number {
+  const orders = board.tasks
+    .filter(
+      (task) =>
+        task.status.name === columnName &&
+        !(ignoreTaskId && task._id?.equals(ignoreTaskId)),
+    )
+    .map((task) => task.order ?? 0);
+  return orders.length ? Math.max(...orders) + 1 : 0;
+}
+
 export async function createTask(
   userId: string,
   boardId: string,
@@ -30,10 +48,10 @@ export async function createTask(
   const board = await findOwnedBoard(userId, boardId);
   const statusName = resolveStatusName(board, input.status);
 
-  // New tasks land at the bottom of their column, after any tasks already there.
-  const order = board.tasks.filter(
-    (existing) => existing.status.name === statusName,
-  ).length;
+  // New tasks land at the bottom of their column. Use max(order)+1 rather than a
+  // count so a column with non-contiguous orders (a gap left by a cross-column
+  // move) never reuses an order value already present.
+  const order = nextOrder(board, statusName);
 
   const task = board.tasks.create({
     title: input.title,
@@ -106,10 +124,7 @@ export async function updateTask(
     // column (matching new-task placement), so it never inherits a stale order
     // from its old column and sort into the middle of the destination.
     if (statusName !== task.status.name) {
-      task.order = board.tasks.filter(
-        (other) =>
-          other.status.name === statusName && !other._id?.equals(task._id),
-      ).length;
+      task.order = nextOrder(board, statusName, task._id);
     }
     task.status = { name: statusName, color: input.status.color };
   }

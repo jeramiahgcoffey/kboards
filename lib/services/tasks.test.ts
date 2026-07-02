@@ -99,6 +99,34 @@ describe("createTask", () => {
     expect(lastTask(board).order).toBe(0);
   });
 
+  it("gives a new task an order past a gap left by a cross-column move", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+    const ids: string[] = [];
+    for (const title of ["A", "B", "C"]) {
+      const board = await createTask(userId, boardId, {
+        title,
+        status: { name: "todo" },
+        subtasks: [],
+      });
+      ids.push(String(lastTask(board)._id));
+    }
+    // Move B out to "doing", leaving "todo" with orders [0 (A), 2 (C)] — a gap.
+    await reorderColumn(userId, boardId, {
+      columnName: "doing",
+      orderedTaskIds: [ids[1]],
+    });
+
+    const board = await createTask(userId, boardId, {
+      title: "D",
+      status: { name: "todo" },
+      subtasks: [],
+    });
+
+    // max(order)+1 = 3, not the count (2) which would collide with C's order.
+    expect(lastTask(board).order).toBe(3);
+  });
+
   it("stores the column's canonical name regardless of input casing", async () => {
     const userId = newId();
     const { boardId } = await boardWithColumns(userId);
