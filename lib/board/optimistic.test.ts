@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
 import type { BoardDTO } from "@/lib/dto";
-import { withMovedTask, withToggledSubtask } from "./optimistic";
+import {
+  withMovedTask,
+  withReorderedColumn,
+  withToggledSubtask,
+} from "./optimistic";
 
 function makeBoard(): BoardDTO {
   return {
@@ -15,6 +19,7 @@ function makeBoard(): BoardDTO {
         id: "t1",
         title: "Build it",
         status: { name: "todo", color: "" },
+        order: 0,
         subtasks: [
           { id: "s1", title: "Plan", completed: false },
           { id: "s2", title: "Ship", completed: true },
@@ -24,6 +29,14 @@ function makeBoard(): BoardDTO {
         id: "t2",
         title: "Test it",
         status: { name: "doing", color: "" },
+        order: 0,
+        subtasks: [],
+      },
+      {
+        id: "t3",
+        title: "Refine it",
+        status: { name: "todo", color: "" },
+        order: 1,
         subtasks: [],
       },
     ],
@@ -44,6 +57,8 @@ describe("withMovedTask", () => {
     expect(next.tasks.find((task) => task.id === "t2")?.status.name).toBe(
       "doing",
     );
+    // The moved task lands at the bottom of the destination column (after t2).
+    expect(moved?.order).toBe(1);
   });
 
   it("does not mutate the input board", () => {
@@ -51,6 +66,38 @@ describe("withMovedTask", () => {
     withMovedTask(board, "t1", "doing");
 
     expect(board.tasks[0].status.name).toBe("todo");
+  });
+});
+
+describe("withReorderedColumn", () => {
+  it("renumbers the listed tasks to their index in the new order", () => {
+    const board = makeBoard();
+    // Put t3 before t1 within "todo".
+    const next = withReorderedColumn(board, "todo", ["t3", "t1"]);
+
+    expect(next.tasks.find((task) => task.id === "t3")?.order).toBe(0);
+    expect(next.tasks.find((task) => task.id === "t1")?.order).toBe(1);
+    // A task in another column is left alone.
+    expect(next.tasks.find((task) => task.id === "t2")?.order).toBe(0);
+  });
+
+  it("snaps a task from another column into the target column with its color", () => {
+    const board = makeBoard();
+    board.columns[0].color = "#67e2ae"; // the "todo" column we drop into
+    // Drop t2 (from "doing") between t1 and t3 in "todo".
+    const next = withReorderedColumn(board, "todo", ["t1", "t2", "t3"]);
+
+    const moved = next.tasks.find((task) => task.id === "t2");
+    expect(moved?.status.name).toBe("todo");
+    expect(moved?.status.color).toBe("#67e2ae");
+    expect(moved?.order).toBe(1);
+  });
+
+  it("does not mutate the input board", () => {
+    const board = makeBoard();
+    withReorderedColumn(board, "todo", ["t3", "t1"]);
+
+    expect(board.tasks.find((task) => task.id === "t1")?.order).toBe(0);
   });
 });
 

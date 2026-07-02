@@ -1,6 +1,10 @@
 "use client";
 
 import { useDroppable } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import type { ColumnDTO, TaskDTO } from "@/lib/dto";
 import { Menu, MenuItem } from "@/components/ui/Menu";
 import { columnAccent } from "./colors";
@@ -14,6 +18,7 @@ interface ColumnProps {
   columns: ColumnDTO[];
   onOpenTask: (task: TaskDTO) => void;
   onMoveTask: (task: TaskDTO, toColumnName: string) => void;
+  onReorderTask: (task: TaskDTO, direction: "up" | "down") => void;
   onEditTask: (task: TaskDTO) => void;
   onDeleteTask: (task: TaskDTO) => void;
   onEditColumn: (column: ColumnDTO) => void;
@@ -27,6 +32,7 @@ export function Column({
   columns,
   onOpenTask,
   onMoveTask,
+  onReorderTask,
   onEditTask,
   onDeleteTask,
   onEditColumn,
@@ -74,17 +80,24 @@ export function Column({
             No tasks yet
           </p>
         ) : (
-          tasks.map((task) => (
-            <DraggableTaskCard
-              key={task.id}
-              task={task}
-              columns={columns}
-              onOpen={onOpenTask}
-              onMove={onMoveTask}
-              onEdit={onEditTask}
-              onDelete={onDeleteTask}
-            />
-          ))
+          <SortableContext
+            items={tasks.map((task) => task.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {tasks.map((task, taskIndex) => (
+              <DraggableTaskCard
+                key={task.id}
+                task={task}
+                columns={columns}
+                position={{ index: taskIndex, count: tasks.length }}
+                onOpen={onOpenTask}
+                onMove={onMoveTask}
+                onReorder={onReorderTask}
+                onEdit={onEditTask}
+                onDelete={onDeleteTask}
+              />
+            ))}
+          </SortableContext>
         )}
       </div>
     </section>

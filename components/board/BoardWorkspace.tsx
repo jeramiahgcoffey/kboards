@@ -7,7 +7,7 @@ import {
   DragOverlay,
   MouseSensor,
   TouchSensor,
-  pointerWithin,
+  closestCorners,
   useSensor,
   useSensors,
   type Announcements,
@@ -15,10 +15,15 @@ import {
   type DragStartEvent,
   type ScreenReaderInstructions,
 } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import { toast } from "sonner";
 import type { BoardDTO, ColumnDTO, TaskDTO } from "@/lib/dto";
 import { apiFetch, errorMessage } from "@/lib/api/client";
-import { withMovedTask, withToggledSubtask } from "@/lib/board/optimistic";
+import {
+  withMovedTask,
+  withReorderedColumn,
+  withToggledSubtask,
+} from "@/lib/board/optimistic";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { Button } from "@/components/ui/Button";
 import { Menu, MenuItem } from "@/components/ui/Menu";
@@ -62,8 +67,13 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
     board.tasks.find((task) => task.id === selectedTaskId) ?? null;
   const closeDialog = () => setDialog({ type: "none" });
 
+  // Tasks in a column, in display order. The DTO already arrives sorted, but
+  // sorting here too keeps the view correct after an optimistic reorder rewrites
+  // order values on the current board.
   const tasksFor = (name: string) =>
-    board.tasks.filter((task) => task.status.name === name);
+    board.tasks
+      .filter((task) => task.status.name === name)
+      .sort((a, b) => a.order - b.order);
 
   // --- Mutations that return the updated board ---------------------------
 
@@ -250,6 +260,37 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
     }
   }
 
+  // Apply a new order for one column optimistically, then persist it. On failure
+  // the pre-reorder board is restored, but only if no newer mutation has since
+  // started (guarded by the token), so a slow rollback can't clobber a newer
+  // change. `orderedTaskIds` is the column's full desired order.
+  async function reorderColumn(columnName: string, orderedTaskIds: string[]) {
+    const previous = board;
+    const token = ++mutationToken.current;
+    setBoard((current) =>
+      withReorderedColumn(current, columnName, orderedTaskIds),
+    );
+    try {
+      await apiFetch(`/api/boards/${boardId}/tasks/reorder`, {
+        method: "PATCH",
+        body: { columnName, orderedTaskIds },
+      });
+    } catch (error) {
+      if (token === mutationToken.current) setBoard(previous);
+      toast.error(errorMessage(error, "Could not reorder the tasks."));
+    }
+  }
+
+  // The keyboard/screen-reader reorder path (each card's "Move up"/"Move down"):
+  // swap the task with its neighbor within its column and persist the new order.
+  function reorderTaskByStep(task: TaskDTO, direction: "up" | "down") {
+    const ids = tasksFor(task.status.name).map((item) => item.id);
+    const index = ids.indexOf(task.id);
+    const target = direction === "up" ? index - 1 : index + 1;
+    if (index === -1 || target < 0 || target >= ids.length) return;
+    void reorderColumn(task.status.name, arrayMove(ids, index, target));
+  }
+
   // --- Drag and drop ----------------------------------------------------
 
   const reducedMotion = usePrefersReducedMotion();
@@ -266,7 +307,12 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
 
   const taskTitle = (id: string) =>
     board.tasks.find((item) => item.id === id)?.title ?? "task";
-  const columnFromOverId = (overId: string) => overId.replace(/^col:/, "");
+  // A drop target is either a column droppable ("col:<name>") or another task
+  // card; resolve both to the destination column's name.
+  const columnNameFromOver = (overId: string): string | null =>
+    overId.startsWith("col:")
+      ? overId.slice("col:".length)
+      : (board.tasks.find((item) => item.id === overId)?.status.name ?? null);
 
   // Live-region messages so assistive tech follows a pointer drag; the discrete
   // keyboard/screen-reader move path is each card's "Move to" menu.
@@ -276,14 +322,16 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
     },
     onDragOver({ active, over }) {
       const name = taskTitle(String(active.id));
-      return over
-        ? `Task ${name} is over the ${columnFromOverId(String(over.id))} column.`
+      const to = over ? columnNameFromOver(String(over.id)) : null;
+      return to
+        ? `Task ${name} is over the ${to} column.`
         : `Task ${name} is not over a column.`;
     },
     onDragEnd({ active, over }) {
       const name = taskTitle(String(active.id));
-      return over
-        ? `Task ${name} was moved to the ${columnFromOverId(String(over.id))} column.`
+      const to = over ? columnNameFromOver(String(over.id)) : null;
+      return to
+        ? `Task ${name} was dropped in the ${to} column.`
         : `Task ${name} was dropped without moving.`;
     },
     onDragCancel({ active }) {
@@ -306,7 +354,34 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
     setActiveDragTask(null);
     const { active, over } = event;
     if (!over) return;
-    void moveTask(String(active.id), columnFromOverId(String(over.id)));
+
+    const activeId = String(active.id);
+    const overId = String(over.id);
+    const activeTask = board.tasks.find((item) => item.id === activeId);
+    const toColumn = columnNameFromOver(overId);
+    if (!activeTask || !toColumn) return;
+
+    const targetIds = tasksFor(toColumn).map((item) => item.id);
+    // Dropping on a column's background (rather than a card) targets its end.
+    const droppedOnColumn = overId.startsWith("col:");
+
+    if (activeTask.status.name === toColumn) {
+      // Reorder within the same column.
+      const oldIndex = targetIds.indexOf(activeId);
+      const newIndex = droppedOnColumn
+        ? targetIds.length - 1
+        : targetIds.indexOf(overId);
+      if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
+      void reorderColumn(toColumn, arrayMove(targetIds, oldIndex, newIndex));
+    } else {
+      // Move into another column at the drop position, inserting before the card
+      // under the pointer (or at the end when dropped on the column background).
+      const overIndex = droppedOnColumn ? -1 : targetIds.indexOf(overId);
+      const insertAt = overIndex === -1 ? targetIds.length : overIndex;
+      const next = [...targetIds];
+      next.splice(insertAt, 0, activeId);
+      void reorderColumn(toColumn, next);
+    }
   }
 
   // --- Render -----------------------------------------------------------
@@ -343,7 +418,7 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
       {hasColumns ? (
         <DndContext
           sensors={sensors}
-          collisionDetection={pointerWithin}
+          collisionDetection={closestCorners}
           accessibility={{ announcements, screenReaderInstructions }}
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
@@ -365,6 +440,9 @@ export function BoardWorkspace({ board: initialBoard }: { board: BoardDTO }) {
                 onOpenTask={(task) => setSelectedTaskId(task.id)}
                 onMoveTask={(task, toColumnName) =>
                   moveTask(task.id, toColumnName)
+                }
+                onReorderTask={(task, direction) =>
+                  reorderTaskByStep(task, direction)
                 }
                 onEditTask={(task) =>
                   setDialog({ type: "edit-task", taskId: task.id })

@@ -11,10 +11,16 @@ interface TaskCardProps {
   dragListeners?: DraggableSyntheticListeners;
   dragging?: boolean;
   // Optional on-card actions. When provided, the card grows a "..." menu whose
-  // "Move to" items are the keyboard/screen-reader path to move a task (pointer
-  // users can also drag). Omitted for the drag overlay and static/test renders.
+  // "Move up/down" items reorder the task within its column and whose "Move to"
+  // items move it to another column — together the keyboard/screen-reader path
+  // for the moves pointer users make by dragging. Omitted for the drag overlay
+  // and static/test renders.
   columns?: ColumnDTO[];
+  // The card's index and count within its column, so reorder items can be
+  // limited at the ends. Present whenever onReorder is.
+  position?: { index: number; count: number };
   onMove?: (task: TaskDTO, toColumnName: string) => void;
+  onReorder?: (task: TaskDTO, direction: "up" | "down") => void;
   onEdit?: (task: TaskDTO) => void;
   onDelete?: (task: TaskDTO) => void;
 }
@@ -26,16 +32,22 @@ export function TaskCard({
   dragListeners,
   dragging = false,
   columns,
+  position,
   onMove,
+  onReorder,
   onEdit,
   onDelete,
 }: TaskCardProps) {
   const total = task.subtasks.length;
   const done = task.subtasks.filter((subtask) => subtask.completed).length;
-  const hasActions = Boolean(onMove || onEdit || onDelete);
+  const hasActions = Boolean(onMove || onReorder || onEdit || onDelete);
   // Every column except the one the task already sits in.
   const moveTargets =
     columns?.filter((column) => column.name !== task.status.name) ?? [];
+  const canMoveUp = Boolean(onReorder && position && position.index > 0);
+  const canMoveDown = Boolean(
+    onReorder && position && position.index < position.count - 1,
+  );
 
   return (
     <article className="group relative">
@@ -65,6 +77,16 @@ export function TaskCard({
             label={`Actions for ${task.title}`}
             triggerClassName="inline-flex h-7 w-7 items-center justify-center rounded-md text-[var(--color-dim)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
           >
+            {canMoveUp ? (
+              <MenuItem onSelect={() => onReorder!(task, "up")}>
+                Move up
+              </MenuItem>
+            ) : null}
+            {canMoveDown ? (
+              <MenuItem onSelect={() => onReorder!(task, "down")}>
+                Move down
+              </MenuItem>
+            ) : null}
             {onMove
               ? moveTargets.map((column) => (
                   <MenuItem

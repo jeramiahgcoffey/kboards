@@ -26,6 +26,11 @@ export interface ITask {
   title: string;
   description?: string;
   status: IStatus;
+  // Position of the task within its column, ascending. Tasks are stored in one
+  // flat array regardless of column, so ordering is by this field scoped to the
+  // task's status; ties (e.g. legacy tasks that predate the field, all 0) fall
+  // back to array order via a stable sort.
+  order: number;
   subtasks: Types.DocumentArray<ISubtask>;
 }
 
@@ -60,6 +65,7 @@ const TaskSchema = new Schema<ITask>(
     title: { type: String, required: [true, "Title is required"] },
     description: { type: String },
     status: { type: StatusSchema, required: true },
+    order: { type: Number, default: 0 },
     subtasks: { type: [SubtaskSchema], default: [] },
   },
   { timestamps: true },

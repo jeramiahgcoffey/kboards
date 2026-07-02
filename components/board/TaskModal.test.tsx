@@ -17,6 +17,7 @@ const task: TaskDTO = {
   title: "Ship the modal",
   description: "Interactive task details with subtask progress.",
   status: { name: "doing", color: "" },
+  order: 0,
   subtasks: [
     { id: "s1", title: "Markup", completed: true },
     { id: "s2", title: "Styles", completed: false },

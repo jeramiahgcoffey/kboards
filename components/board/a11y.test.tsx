@@ -34,6 +34,7 @@ const task: TaskDTO = {
   title: "Ship the accessibility pass",
   description: "Make the board usable by keyboard and screen readers.",
   status: { name: "todo", color: "" },
+  order: 0,
   subtasks: [
     { id: "s1", title: "Overlay stack", completed: true },
     { id: "s2", title: "Card actions menu", completed: false },
@@ -46,7 +47,9 @@ function renderCard() {
       task={task}
       onOpen={() => {}}
       columns={columns}
+      position={{ index: 1, count: 3 }}
       onMove={() => {}}
+      onReorder={() => {}}
       onEdit={() => {}}
       onDelete={() => {}}
     />,

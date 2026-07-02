@@ -55,6 +55,26 @@ describe("toBoard", () => {
     ]);
   });
 
+  it("emits tasks sorted by their in-column order", () => {
+    const board = new Board({
+      createdBy: new Types.ObjectId(),
+      name: "Ordered",
+      columns: [{ name: "todo", color: "default" }],
+      // Stored out of order; the DTO should sort them ascending by `order`.
+      tasks: [
+        { title: "Third", status: { name: "todo" }, order: 2, subtasks: [] },
+        { title: "First", status: { name: "todo" }, order: 0, subtasks: [] },
+        { title: "Second", status: { name: "todo" }, order: 1, subtasks: [] },
+      ],
+    });
+
+    expect(toBoard(board).tasks.map((task) => task.title)).toEqual([
+      "First",
+      "Second",
+      "Third",
+    ]);
+  });
+
   it("omits an absent description rather than emitting null", () => {
     const board = new Board({
       createdBy: new Types.ObjectId(),

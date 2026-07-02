@@ -7,6 +7,36 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-07-02
+
+A polish-and-feature release: task cards can now be reordered within a column, and the app
+gains a real brand identity (logo mark, favicon, and social share image).
+
+### Added
+
+- Within-column task reordering. Cards can be dragged to a new position inside their column
+  (previously drag only moved a task between columns), and the same drag can drop a card into
+  another column at a chosen position. Order is persisted on a new `order` field on the
+  embedded task model and surfaced through the DTO, which now emits each column's tasks
+  pre-sorted. A single idempotent `PATCH /api/boards/:id/tasks/reorder` endpoint applies a
+  column's full desired order, so reordering and cross-column drop-at-position share one
+  operation; updates are optimistic and roll back on failure. Cards use dnd-kit's sortable
+  wiring, and the keyboard/screen-reader path is each card's "Move up"/"Move down" menu items
+  (mirroring the existing "Move to <column>"). New tasks and column moves append to the bottom
+  of their column. Covered by service, DTO, optimistic, and component tests, and verified end
+  to end in a browser (drag reorder, cross-column drop, and the accessible menu all persist).
+- Brand identity and metadata. A three-column logo mark (reused across the landing hero,
+  sidebar, and mobile header), a code-generated favicon (`app/icon.svg`), apple-touch icon,
+  and a 1200×630 Open Graph / Twitter share image rendered from the same mark via
+  `next/og` — so the brand never drifts from a committed binary. Adds a web app manifest and
+  fills in `openGraph`/`twitter` metadata with an absolute `metadataBase`.
+
+### Changed
+
+- Visual polish: a subtle accent glow behind the app background and themed thin scrollbars for
+  the horizontal board, and the landing/sidebar/header now show the real logo mark in place of
+  the placeholder square.
+
 ## [2.0.0] - 2026-07-01
 
 First production release of the v2 rebuild: a single Next.js 16 app deployed on Vercel with
