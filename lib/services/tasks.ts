@@ -1,4 +1,4 @@
-import { isValidObjectId } from "mongoose";
+import { isValidObjectId, type Types } from "mongoose";
 import { dbConnect } from "@/lib/db/mongoose";
 import type { IStatus } from "@/lib/db/models/Board";
 import { badRequest, notFound } from "./errors";
@@ -16,6 +16,24 @@ function resolveStatusName(board: BoardDocument, status: IStatus): string {
   return column.name;
 }
 
+// The order to give a task appended to the bottom of `columnName`: one past the
+// current maximum, or 0 for an empty column. Optionally ignore one task (used
+// when moving a task into a column it should be placed after).
+function nextOrder(
+  board: BoardDocument,
+  columnName: string,
+  ignoreTaskId?: Types.ObjectId,
+): number {
+  const orders = board.tasks
+    .filter(
+      (task) =>
+        task.status.name === columnName &&
+        !(ignoreTaskId && task._id?.equals(ignoreTaskId)),
+    )
+    .map((task) => task.order ?? 0);
+  return orders.length ? Math.max(...orders) + 1 : 0;
+}
+
 export async function createTask(
   userId: string,
   boardId: string,
@@ -30,13 +48,48 @@ export async function createTask(
   const board = await findOwnedBoard(userId, boardId);
   const statusName = resolveStatusName(board, input.status);
 
+  // New tasks land at the bottom of their column. Use max(order)+1 rather than a
+  // count so a column with non-contiguous orders (a gap left by a cross-column
+  // move) never reuses an order value already present.
+  const order = nextOrder(board, statusName);
+
   const task = board.tasks.create({
     title: input.title,
     status: { name: statusName, color: input.status.color },
+    order,
     description: input.description,
     subtasks: input.subtasks.map((title) => ({ title, completed: false })),
   });
   board.tasks.push(task);
+
+  await board.save();
+  return board;
+}
+
+// Applies a new within-column order. `orderedTaskIds` is the target column's
+// full desired ordering; each listed task is renumbered to its index and, if it
+// lived in another column, moved into this one. This one operation covers both
+// reordering within a column and dropping a card into a column at a position.
+export async function reorderColumn(
+  userId: string,
+  boardId: string,
+  input: { columnName: string; orderedTaskIds: string[] },
+): Promise<BoardDocument> {
+  await dbConnect();
+  const board = await findOwnedBoard(userId, boardId);
+
+  // Canonical column name (and its color) so the moved tasks' status snapshots
+  // match the column exactly, as elsewhere in the service.
+  const columnName = resolveStatusName(board, { name: input.columnName });
+  const column = board.columns.find((col) => col.name === columnName);
+
+  input.orderedTaskIds.forEach((taskId, index) => {
+    if (!isValidObjectId(taskId)) throw badRequest("Unknown task in reorder");
+    const task = board.tasks.id(taskId);
+    if (!task) throw badRequest("Unknown task in reorder");
+    task.order = index;
+    task.status = { name: columnName, color: column?.color };
+  });
 
   await board.save();
   return board;
@@ -67,6 +120,12 @@ export async function updateTask(
   if (input.title !== undefined) task.title = input.title;
   if (input.description !== undefined) task.description = input.description;
   if (input.status !== undefined && statusName !== null) {
+    // Moving to a different column appends the task to the bottom of that
+    // column (matching new-task placement), so it never inherits a stale order
+    // from its old column and sort into the middle of the destination.
+    if (statusName !== task.status.name) {
+      task.order = nextOrder(board, statusName, task._id);
+    }
     task.status = { name: statusName, color: input.status.color };
   }
 

@@ -15,6 +15,9 @@ export interface TaskDTO {
   title: string;
   description?: string;
   status: { name: string; color: string };
+  // Position within the task's column, ascending. The UI sorts each column by
+  // this so reordering survives a round-trip.
+  order: number;
   subtasks: SubtaskDTO[];
 }
 
@@ -55,16 +58,21 @@ export function toBoard(board: BoardDocument): BoardDTO {
       name: column.name,
       color: column.color,
     })),
-    tasks: board.tasks.map((task) => ({
-      id: String(task._id),
-      title: task.title,
-      ...(task.description != null ? { description: task.description } : {}),
-      status: { name: task.status.name, color: task.status.color ?? "" },
-      subtasks: task.subtasks.map((subtask) => ({
-        id: String(subtask._id),
-        title: subtask.title,
-        completed: subtask.completed,
+    // Emit tasks pre-sorted by their in-column position. The sort is stable, so
+    // legacy tasks that share order 0 keep their stored array order.
+    tasks: [...board.tasks]
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      .map((task) => ({
+        id: String(task._id),
+        title: task.title,
+        ...(task.description != null ? { description: task.description } : {}),
+        status: { name: task.status.name, color: task.status.color ?? "" },
+        order: task.order ?? 0,
+        subtasks: task.subtasks.map((subtask) => ({
+          id: String(subtask._id),
+          title: subtask.title,
+          completed: subtask.completed,
+        })),
       })),
-    })),
   };
 }

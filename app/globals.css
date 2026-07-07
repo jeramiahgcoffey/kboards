@@ -19,13 +19,43 @@ html {
 }
 
 body {
-  background: var(--color-bg);
+  /* A faint accent glow at the top-left lifts the flat dark fill without
+     competing with content; the base color still shows through everywhere. */
+  background:
+    radial-gradient(
+      1200px 600px at 0% -10%,
+      color-mix(in srgb, var(--color-accent) 12%, transparent),
+      transparent 60%
+    ),
+    var(--color-bg);
+  background-attachment: fixed;
   color: var(--color-fg);
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
   background: color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+/* Themed, unobtrusive scrollbars so the horizontal board and long columns match
+   the dark surface instead of showing the OS default light track. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-surface-2);
+  background-clip: content-box;
 }
 
 /* Honor the OS "reduce motion" setting everywhere: neutralize transitions and

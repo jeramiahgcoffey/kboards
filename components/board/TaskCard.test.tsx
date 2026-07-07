@@ -16,6 +16,7 @@ function makeTask(overrides: Partial<TaskDTO> = {}): TaskDTO {
     id: "t1",
     title: "Build the board view",
     status: { name: "todo", color: "" },
+    order: 0,
     subtasks: [
       { id: "s1", title: "Columns", completed: true },
       { id: "s2", title: "Cards", completed: false },
@@ -101,5 +102,43 @@ describe("TaskCard", () => {
       screen.getByRole("menuitem", { name: /delete task/i }),
     );
     expect(onDelete).toHaveBeenCalledWith(task);
+  });
+
+  it("offers reorder items scoped to the card's position in its column", async () => {
+    const onReorder = vi.fn();
+    const task = makeTask();
+
+    // First of three: only "Move down" is available.
+    const first = render(
+      <TaskCard
+        task={task}
+        onOpen={vi.fn()}
+        position={{ index: 0, count: 3 }}
+        onReorder={onReorder}
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /actions for build the board view/i }),
+    );
+    expect(screen.queryByRole("menuitem", { name: /move up/i })).toBeNull();
+    await userEvent.click(screen.getByRole("menuitem", { name: /move down/i }));
+    expect(onReorder).toHaveBeenCalledWith(task, "down");
+    first.unmount();
+
+    // Last of three: only "Move up" is available.
+    render(
+      <TaskCard
+        task={task}
+        onOpen={vi.fn()}
+        position={{ index: 2, count: 3 }}
+        onReorder={onReorder}
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /actions for build the board view/i }),
+    );
+    expect(screen.queryByRole("menuitem", { name: /move down/i })).toBeNull();
+    await userEvent.click(screen.getByRole("menuitem", { name: /move up/i }));
+    expect(onReorder).toHaveBeenCalledWith(task, "up");
   });
 });
