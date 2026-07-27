@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { BoardSummaryDTO } from "@/lib/dto";
+import { LogoMark } from "@/components/ui/Logo";
 import { CreateBoardButton } from "./CreateBoardButton";
 
 interface SidebarProps {
@@ -15,7 +16,7 @@ export function Sidebar({ boards, activeBoardId, onNavigate }: SidebarProps) {
   return (
     <div className="flex h-full flex-col gap-6 py-6">
       <div className="flex items-center gap-2 px-6">
-        <span aria-hidden className="h-5 w-5 rounded bg-[var(--color-accent)]" />
+        <LogoMark className="h-6 w-6" />
         <span className="text-lg font-bold tracking-tight">kboards</span>
       </div>
 

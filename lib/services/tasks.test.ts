@@ -10,6 +10,7 @@ import {
   updateTask,
   updateSubtask,
   deleteTask,
+  reorderColumn,
 } from "@/lib/services/tasks";
 
 const newId = () => new mongoose.Types.ObjectId().toString();
@@ -69,6 +70,61 @@ describe("createTask", () => {
       "open PR",
     ]);
     expect(task.subtasks.every((s) => s.completed === false)).toBe(true);
+  });
+
+  it("assigns each new task the next order within its column", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+
+    let board = await createTask(userId, boardId, {
+      title: "First",
+      status: { name: "todo" },
+      subtasks: [],
+    });
+    expect(lastTask(board).order).toBe(0);
+
+    board = await createTask(userId, boardId, {
+      title: "Second",
+      status: { name: "todo" },
+      subtasks: [],
+    });
+    expect(lastTask(board).order).toBe(1);
+
+    // A different column starts its own numbering.
+    board = await createTask(userId, boardId, {
+      title: "Elsewhere",
+      status: { name: "doing" },
+      subtasks: [],
+    });
+    expect(lastTask(board).order).toBe(0);
+  });
+
+  it("gives a new task an order past a gap left by a cross-column move", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+    const ids: string[] = [];
+    for (const title of ["A", "B", "C"]) {
+      const board = await createTask(userId, boardId, {
+        title,
+        status: { name: "todo" },
+        subtasks: [],
+      });
+      ids.push(String(lastTask(board)._id));
+    }
+    // Move B out to "doing", leaving "todo" with orders [0 (A), 2 (C)] — a gap.
+    await reorderColumn(userId, boardId, {
+      columnName: "doing",
+      orderedTaskIds: [ids[1]],
+    });
+
+    const board = await createTask(userId, boardId, {
+      title: "D",
+      status: { name: "todo" },
+      subtasks: [],
+    });
+
+    // max(order)+1 = 3, not the count (2) which would collide with C's order.
+    expect(lastTask(board).order).toBe(3);
   });
 
   it("stores the column's canonical name regardless of input casing", async () => {
@@ -153,6 +209,35 @@ describe("updateTask", () => {
     ).toBe(400);
   });
 
+  it("appends the task to the bottom of the destination column when moved", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+    // Two tasks already sit in "doing" (orders 0 and 1).
+    await createTask(userId, boardId, {
+      title: "Doing A",
+      status: { name: "doing" },
+      subtasks: [],
+    });
+    await createTask(userId, boardId, {
+      title: "Doing B",
+      status: { name: "doing" },
+      subtasks: [],
+    });
+    let board = await createTask(userId, boardId, {
+      title: "Mover",
+      status: { name: "todo" },
+      subtasks: [],
+    });
+    const taskId = String(lastTask(board)._id);
+
+    board = await updateTask(userId, boardId, taskId, {
+      status: { name: "doing" },
+    });
+
+    // Lands after the two existing "doing" tasks rather than keeping order 0.
+    expect(board.tasks.id(taskId)!.order).toBe(2);
+  });
+
   it("404s a missing task", async () => {
     const userId = newId();
     const { boardId } = await boardWithColumns(userId);
@@ -160,6 +245,118 @@ describe("updateTask", () => {
     expect(
       await rejectionStatus(
         updateTask(userId, boardId, newId(), { title: "x" }),
+      ),
+    ).toBe(404);
+  });
+});
+
+describe("reorderColumn", () => {
+  // Seeds three tasks in "todo" and returns their ids in creation order.
+  async function threeInTodo(userId: string, boardId: string) {
+    const ids: string[] = [];
+    for (const title of ["A", "B", "C"]) {
+      const board = await createTask(userId, boardId, {
+        title,
+        status: { name: "todo" },
+        subtasks: [],
+      });
+      ids.push(String(lastTask(board)._id));
+    }
+    return ids;
+  }
+
+  it("renumbers the column's tasks to the given order", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+    const [a, b, c] = await threeInTodo(userId, boardId);
+
+    const board = await reorderColumn(userId, boardId, {
+      columnName: "todo",
+      orderedTaskIds: [c, a, b],
+    });
+
+    expect(board.tasks.id(c)!.order).toBe(0);
+    expect(board.tasks.id(a)!.order).toBe(1);
+    expect(board.tasks.id(b)!.order).toBe(2);
+  });
+
+  it("moves a task into the column at the requested position", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+    const [a, b, c] = await threeInTodo(userId, boardId);
+    let board = await createTask(userId, boardId, {
+      title: "FromDoing",
+      status: { name: "doing" },
+      subtasks: [],
+    });
+    const moved = String(lastTask(board)._id);
+
+    // Drop the "doing" task between A and B.
+    board = await reorderColumn(userId, boardId, {
+      columnName: "todo",
+      orderedTaskIds: [a, moved, b, c],
+    });
+
+    const task = board.tasks.id(moved)!;
+    expect(task.status.name).toBe("todo");
+    expect(task.order).toBe(1);
+    expect(board.tasks.id(b)!.order).toBe(2);
+  });
+
+  it("resolves the column name case-insensitively to its canonical form", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+    const [a] = await threeInTodo(userId, boardId);
+
+    const board = await reorderColumn(userId, boardId, {
+      columnName: "TODO",
+      orderedTaskIds: [a],
+    });
+
+    expect(board.tasks.id(a)!.status.name).toBe("todo");
+  });
+
+  it("rejects an unknown task id", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+    const [a] = await threeInTodo(userId, boardId);
+
+    expect(
+      await rejectionStatus(
+        reorderColumn(userId, boardId, {
+          columnName: "todo",
+          orderedTaskIds: [a, newId()],
+        }),
+      ),
+    ).toBe(400);
+  });
+
+  it("rejects a column that is not on the board", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+    const [a] = await threeInTodo(userId, boardId);
+
+    expect(
+      await rejectionStatus(
+        reorderColumn(userId, boardId, {
+          columnName: "ghost",
+          orderedTaskIds: [a],
+        }),
+      ),
+    ).toBe(400);
+  });
+
+  it("404s when the board does not belong to the user", async () => {
+    const userId = newId();
+    const { boardId } = await boardWithColumns(userId);
+    const [a] = await threeInTodo(userId, boardId);
+
+    expect(
+      await rejectionStatus(
+        reorderColumn(newId(), boardId, {
+          columnName: "todo",
+          orderedTaskIds: [a],
+        }),
       ),
     ).toBe(404);
   });

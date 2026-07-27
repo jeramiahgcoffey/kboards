@@ -18,8 +18,9 @@ iteration" portfolio project. The rebuild is tracked visibly through commits, AD
 
 - **Boards, columns, tasks, subtasks** — full CRUD through nested REST Route Handlers behind an
   ownership-scoped service layer.
-- **Drag-and-drop** — move tasks between columns (pointer), with optimistic updates and rollback on
-  failure.
+- **Drag-and-drop** — reorder tasks within a column and move them between columns (pointer), with
+  optimistic updates and rollback on failure. Keyboard/screen-reader users get the same moves from
+  each card's "Move up/down" and "Move to <column>" menu.
 - **Accessible by design** — every task can also be moved from a keyboard/screen-reader "…" menu;
   stacked overlays share one Escape/focus registry; `prefers-reduced-motion` is respected.
 - **Authentication** — email/password (Auth.js v5, Credentials + JWT sessions) with a custom

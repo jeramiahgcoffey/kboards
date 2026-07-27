@@ -75,6 +75,21 @@ export const taskUpdateSchema = z
     message: "Provide at least one field to update",
   });
 
+// Reordering sends the target column's full desired task order. The server
+// renumbers those tasks and moves any into the column, so within-column
+// reordering and cross-column drop-at-position share one idempotent operation.
+export const taskReorderSchema = z.object({
+  columnName: z.string().min(1),
+  // Reject duplicate ids: the service assigns `order = index` per entry, so a
+  // repeated id would silently collide orders and leave the column half-numbered.
+  orderedTaskIds: z
+    .array(z.string().min(1))
+    .min(1)
+    .refine((ids) => new Set(ids).size === ids.length, {
+      message: "orderedTaskIds must not contain duplicates",
+    }),
+});
+
 export const subtaskUpdateSchema = z
   .object({
     title: z.string().min(1).optional(),
