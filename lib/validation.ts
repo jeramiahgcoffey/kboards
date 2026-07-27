@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BOARD_TEMPLATE_IDS } from "@/lib/board/templates";
 
 // bcrypt only considers the first 72 bytes of a password, so cap input there.
 const password = z
@@ -21,6 +22,7 @@ export const loginSchema = z.object({
 export const boardSchema = z.object({
   name: z.string().min(1).max(25),
   description: z.string().min(3).max(100).optional(),
+  template: z.enum(BOARD_TEMPLATE_IDS).default("blank"),
 });
 
 // Boards can be renamed or re-described; require at least one field to change.

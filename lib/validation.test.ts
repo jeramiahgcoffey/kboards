@@ -1,5 +1,23 @@
 import { describe, it, expect } from "vitest";
-import { taskReorderSchema } from "./validation";
+import { boardSchema, taskReorderSchema } from "./validation";
+
+describe("boardSchema", () => {
+  it("defaults to a blank template for existing API clients", () => {
+    expect(boardSchema.parse({ name: "Roadmap" }).template).toBe("blank");
+  });
+
+  it("accepts the personal starter template", () => {
+    expect(
+      boardSchema.parse({ name: "My week", template: "personal" }).template,
+    ).toBe("personal");
+  });
+
+  it("rejects unknown templates", () => {
+    expect(() =>
+      boardSchema.parse({ name: "Roadmap", template: "company-secret" }),
+    ).toThrow();
+  });
+});
 
 describe("taskReorderSchema", () => {
   it("accepts a column name and a list of unique task ids", () => {

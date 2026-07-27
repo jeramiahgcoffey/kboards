@@ -12,8 +12,8 @@ export default async function RegisterPage() {
 
   return (
     <AuthCard
-      title="Create an account"
-      subtitle="Start tracking your work in minutes."
+      title="Start your board"
+      subtitle="Create your account and open a ready-to-edit Personal flow."
       footer={
         <>
           Already have an account?{" "}

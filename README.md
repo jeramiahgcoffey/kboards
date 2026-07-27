@@ -26,6 +26,10 @@ iteration" portfolio project. The rebuild is tracked visibly through commits, AD
 - **Authentication** — email/password (Auth.js v5, Credentials + JWT sessions) with a custom
   password-reset flow whose tokens are stored only as SHA-256 hashes and are single-use.
 - **Responsive** — a board-list sidebar that becomes a slide-over drawer on small screens.
+- **Fast first board** — new accounts open on a ready-to-edit Personal flow with Backlog,
+  This week, and Done; later boards can start Personal or blank.
+- **Product-led preview** — visitors can move a task through a real interactive board preview
+  before creating an account.
 
 ## Tech stack
 
@@ -37,7 +41,8 @@ iteration" portfolio project. The rebuild is tracked visibly through commits, AD
 | Data | MongoDB via Mongoose 9 (embedded board document model) |
 | Auth | Auth.js v5 (`next-auth`), Credentials provider, JWT sessions |
 | Validation | zod |
-| Email | nodemailer (SMTP; Resend in production) |
+| Email | Resend Email API |
+| Analytics | Vercel Web Analytics with sensitive-route redaction |
 | Tests | Vitest + Testing Library + jsdom, axe-core |
 | Hosting | Vercel + MongoDB Atlas |
 
@@ -112,8 +117,16 @@ JWT, so no session store is required. Set these environment variables in the Ver
 | `MONGODB_URI` | Atlas SRV string, with the `/kboards` database name |
 | `AUTH_SECRET` | `openssl rand -base64 32` |
 | `AUTH_URL` | The deployed origin, e.g. `https://kboards.vercel.app` |
-| `EMAIL_FROM` | Sender for reset emails |
-| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` | Resend: `smtp.resend.com` / `465` / `resend` / _API key_ |
+| `EMAIL_FROM` | Verified sender for reset emails |
+| `RESEND_API_KEY` | Resend API key; leave empty locally to log reset links |
+
+Enable Web Analytics from the Vercel project’s **Analytics** page before deploying the analytics
+integration. Page views are anonymous; kboards strips board ids, password-reset links, and query
+parameters in `beforeSend`.
+
+The email sender temporarily accepts the existing Resend SMTP configuration
+(`SMTP_HOST=smtp.resend.com` plus `SMTP_PASS`) as a compatibility fallback. Move the same API key to
+`RESEND_API_KEY` in Vercel; no immediate production cutover is required.
 
 ## Author
 

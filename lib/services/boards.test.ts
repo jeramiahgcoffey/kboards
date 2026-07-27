@@ -50,6 +50,25 @@ describe("board CRUD", () => {
     expect(board.columns).toHaveLength(0);
   });
 
+  it("can create a ready-to-use personal board", async () => {
+    const userId = newId();
+    const board = await createBoard(userId, {
+      name: "My week",
+      template: "personal",
+    });
+
+    expect(board.columns.map((column) => column.name)).toEqual([
+      "backlog",
+      "this week",
+      "done",
+    ]);
+    expect(board.tasks).toHaveLength(3);
+    expect(
+      board.tasks.filter((task) => task.status.name === "this week"),
+    ).toHaveLength(2);
+    expect(board.tasks[0].subtasks).toHaveLength(2);
+  });
+
   it("lists only the requesting user's boards", async () => {
     const userId = newId();
     const otherId = newId();

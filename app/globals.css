@@ -33,6 +33,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.landing-shell {
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(8, 10, 14, 0.45) 100%),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent calc(25% - 1px),
+      rgba(255, 255, 255, 0.025) 25%
+    );
+}
+
 ::selection {
   background: color-mix(in srgb, var(--color-accent) 40%, transparent);
 }
