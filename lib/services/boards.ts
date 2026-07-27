@@ -1,6 +1,10 @@
 import { isValidObjectId } from "mongoose";
 import { dbConnect } from "@/lib/db/mongoose";
 import { Board } from "@/lib/db/models/Board";
+import {
+  fieldsForBoardTemplate,
+  type BoardTemplateId,
+} from "@/lib/board/templates";
 import { conflict, notFound } from "./errors";
 import { findOwnedBoard, type BoardDocument } from "./access";
 
@@ -33,13 +37,18 @@ export async function getBoard(
 
 export async function createBoard(
   userId: string,
-  input: { name: string; description?: string },
+  input: {
+    name: string;
+    description?: string;
+    template?: BoardTemplateId;
+  },
 ): Promise<BoardDocument> {
   await dbConnect();
   return Board.create({
     createdBy: userId,
     name: input.name,
     description: input.description,
+    ...fieldsForBoardTemplate(input.template ?? "blank"),
   });
 }
 

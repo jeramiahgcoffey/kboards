@@ -7,7 +7,26 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [2.1.0] - 2026-07-02
+### Added
+
+- Product-led landing experience centered on an interactive three-column board
+  preview, clearer personal-productivity positioning, and direct first-use calls
+  to action.
+- Optional Personal-flow board template with Backlog, This week, and Done
+  columns plus editable starter prompts; existing API clients continue to create
+  blank boards by default.
+- Privacy-redacted Vercel Web Analytics integration. Board identifiers,
+  password-reset credentials, and query parameters are removed before page-view
+  events are sent.
+
+### Changed
+
+- Updated Next.js, Auth.js, Tailwind/PostCSS, Sharp, and related dependencies to
+  patched compatible releases; removed the unused Auth MongoDB adapter.
+- Replaced Nodemailer/SMTP delivery with Resend’s HTTPS Email API, retaining a
+  temporary compatibility path for the current Resend SMTP environment values.
+
+## [2.1.0] - 2026-07-27
 
 A polish-and-feature release: task cards can now be reordered within a column, and the app
 gains a real brand identity (logo mark, favicon, and social share image).
