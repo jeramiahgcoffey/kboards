@@ -6,6 +6,8 @@ import { signIn } from "next-auth/react";
 import { TextField } from "@/components/ui/TextField";
 import { Button } from "@/components/ui/Button";
 import { FormStatus } from "@/components/ui/FormStatus";
+import { apiFetch } from "@/lib/api/client";
+import type { BoardDTO } from "@/lib/dto";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -44,7 +46,8 @@ export function RegisterForm() {
         return;
       }
 
-      // Account created: sign in so the user lands straight on their boards.
+      // Account created: sign in, then fulfill the landing-page promise by
+      // opening a useful Personal board instead of another setup screen.
       const result = await signIn("credentials", {
         email,
         password,
@@ -55,7 +58,21 @@ export function RegisterForm() {
         router.push("/login");
         return;
       }
-      router.push("/boards");
+
+      let destination = "/boards";
+      try {
+        const { board } = await apiFetch<{ board: BoardDTO }>("/api/boards", {
+          method: "POST",
+          body: { name: "My week", template: "personal" },
+        });
+        destination = `/boards/${board.id}`;
+      } catch {
+        // The account and session are already valid. Fall back to the existing
+        // empty state so a transient board-creation failure never strands the
+        // new user or asks them to register again.
+      }
+
+      router.push(destination);
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
@@ -92,7 +109,7 @@ export function RegisterForm() {
         placeholder="At least 8 characters"
       />
       <Button type="submit" loading={pending}>
-        Create account
+        Create account &amp; board
       </Button>
     </form>
   );
