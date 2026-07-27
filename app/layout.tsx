@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import { WebAnalytics } from "@/components/analytics/WebAnalytics";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kboards.jeramiahcoffey.com";
 
@@ -42,6 +43,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>{children}</Providers>
+        <WebAnalytics />
       </body>
     </html>
   );

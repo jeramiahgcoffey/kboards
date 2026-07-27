@@ -39,6 +39,7 @@ describe("BoardFormModal", () => {
     expect(onSubmit).toHaveBeenCalledWith({
       name: "Platform Launch",
       description: undefined,
+      template: "personal",
     });
     await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1));
   });
@@ -56,5 +57,27 @@ describe("BoardFormModal", () => {
     expect(screen.getByRole("dialog", { name: /edit board/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/board name/i)).toHaveValue("Roadmap");
     expect(screen.getByLabelText(/description/i)).toHaveValue("Long term plan");
+    expect(
+      screen.queryByRole("group", { name: /starting layout/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("can create a blank board", async () => {
+    const onSubmit = vi.fn().mockResolvedValue(true);
+    render(
+      <BoardFormModal mode="create" onSubmit={onSubmit} onClose={vi.fn()} />,
+    );
+
+    await userEvent.type(screen.getByLabelText(/board name/i), "Scratch");
+    await userEvent.click(screen.getByRole("radio", { name: /blank board/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /create board/i }),
+    );
+
+    expect(onSubmit).toHaveBeenCalledWith({
+      name: "Scratch",
+      description: undefined,
+      template: "blank",
+    });
   });
 });

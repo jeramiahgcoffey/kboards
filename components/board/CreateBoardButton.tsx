@@ -15,9 +15,11 @@ import { BoardFormModal, type BoardFormValues } from "./BoardFormModal";
 export function CreateBoardButton({
   onCreated,
   variant = "sidebar",
+  label,
 }: {
   onCreated?: () => void;
   variant?: "sidebar" | "primary";
+  label?: string;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -44,7 +46,7 @@ export function CreateBoardButton({
     <>
       {variant === "primary" ? (
         <Button type="button" onClick={() => setOpen(true)}>
-          + Create New Board
+          {label ?? "+ Create New Board"}
         </Button>
       ) : (
         <button
