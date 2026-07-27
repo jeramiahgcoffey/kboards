@@ -26,8 +26,8 @@ iteration" portfolio project. The rebuild is tracked visibly through commits, AD
 - **Authentication** — email/password (Auth.js v5, Credentials + JWT sessions) with a custom
   password-reset flow whose tokens are stored only as SHA-256 hashes and are single-use.
 - **Responsive** — a board-list sidebar that becomes a slide-over drawer on small screens.
-- **Fast first board** — start blank or choose a Personal flow with Backlog, This week, and Done
-  columns plus editable prompts.
+- **Fast first board** — new accounts open on a ready-to-edit Personal flow with Backlog,
+  This week, and Done; later boards can start Personal or blank.
 - **Product-led preview** — visitors can move a task through a real interactive board preview
   before creating an account.
 

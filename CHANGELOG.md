@@ -15,6 +15,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Optional Personal-flow board template with Backlog, This week, and Done
   columns plus editable starter prompts; existing API clients continue to create
   blank boards by default.
+- New accounts now open directly on a ready-to-edit Personal board, with the
+  existing empty state retained as a safe fallback if starter setup is
+  temporarily unavailable.
 - Privacy-redacted Vercel Web Analytics integration. Board identifiers,
   password-reset credentials, and query parameters are removed before page-view
   events are sent.
